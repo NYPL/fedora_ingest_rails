@@ -5,37 +5,20 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.5'
-# Use postgresql as the database for Active Record
 gem 'pg', '>= 0.18', '< 2.0'
-# Use Puma as the app server
-gem 'puma', '~> 3.7'
-# Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
-# Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 gem 'delayed_job_active_record', '~> 4.1', '>= 4.1.2'
 gem 'mysql2', '~> 0.4.5' #used to connect to Filestore Databases
-# See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
-
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
 
 group :test do
   gem 'shoulda-matchers', '~> 3.1', '>= 3.1.2'
 end
 
 group :development, :test do
+  gem 'puma', '~> 3.7'
   gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
   gem 'rspec-rails', '~> 3.7', '>= 3.7.2'
   gem 'pry', '~> 0.11.3'
