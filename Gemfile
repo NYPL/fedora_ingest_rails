@@ -16,7 +16,7 @@ gem 'puma', '~> 3.7'
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
-
+gem 'delayed_job_active_record', '~> 4.1', '>= 4.1.2'
 gem 'mysql2', '~> 0.4.5' #used to connect to Filestore Databases
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -36,6 +36,7 @@ group :test do
 end
 
 group :development, :test do
+  gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
   gem 'rspec-rails', '~> 3.7', '>= 3.7.2'
   gem 'pry', '~> 0.11.3'
 end
