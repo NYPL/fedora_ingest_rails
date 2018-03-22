@@ -12,6 +12,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'delayed_job_active_record', '~> 4.1', '>= 4.1.2'
 gem 'mysql2', '~> 0.4.5' #used to connect to Filestore Databases
 gem 'jbuilder', '~> 2.5'
+gem 'rubydora', '~> 2.0'
 
 group :test do
   gem 'shoulda-matchers', '~> 3.1', '>= 3.1.2'
