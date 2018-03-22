@@ -33,6 +33,7 @@ gem 'jbuilder', '~> 2.5'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.7', '>= 3.7.2'
+  gem 'pry', '~> 0.11.3'
 end
 
 group :development do
