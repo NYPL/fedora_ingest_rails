@@ -1,20 +1,18 @@
 ## Overview
 
-This is a (experimental for now) Rails port of the Java application [FedoraIngest](https://github.com/NYPL/FedoraIngest/blob/master/README.md) which is running in production.
+This is a Rails port of the Java application [FedoraIngest](https://github.com/NYPL/FedoraIngest/blob/master/README.md).
 
-## Purpose
-
-This application exposes an endpoint that [MMS](https://bitbucket.org/NYPL/mms/) hits (with
-an item's UUID as a parameter). It records the UUID in an internal database.
+It an endpoint that [MMS](https://bitbucket.org/NYPL/mms/) hits (with
+an items' UUIDs as a parameter). It records the UUID in an internal database.
 
 Then (via DelayedJob):
 
 * Iterates through those UUIDS and asks MMS for the latest information.
   - Asks other services (like Filestore DB) for more information about the item.
+
 * Turns around and posts that information to Fedora.
 
-This decouples MMS from direct communication with Fedora in the event
-of Fedora API changes or downtime.
+This decouples MMS from direct communication with Fedora in the event of Fedora API changes or downtime.
 
 ## Installing
 
