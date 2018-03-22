@@ -4,7 +4,7 @@ This is a (experimental for now) Rails port of the Java application [FedoraInges
 
 ## Purpose
 
-This application exposes an endpoint that [MMS](bitbucket.org/NYPL/mms) hits (with
+This application exposes an endpoint that [MMS](https://bitbucket.org/NYPL/mms/) hits (with
 an item's UUID as a parameter). It records the UUID in an internal database.
 
 Then (via DelayedJob):
