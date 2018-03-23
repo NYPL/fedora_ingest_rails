@@ -1,0 +1,14 @@
+language: ruby
+services:
+  - postgresql
+  - mysql
+rvm:
+- 2.5.0
+cache: bundler
+before_script:
+  - psql -c 'create database fedora_ingest_rails_test;' -U postgres
+  - mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
+  - mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
+  - mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
+script:
+- bundle exec rspec

@@ -28,7 +28,12 @@ day, they should be combined.
 
 #### Bootstrapping the image filestore database
 
-1. Create a MySQL database
+1. Create MySQL Database
+  - `create database ami_filestore_development;`
+  - `create database ami_filestore_test;`
+  - `create database image_filestore_development;`
+  - `create database image_filestore_test;`
+  
 2. Load its contents with a command like `mysql -uroot DBNAME < ./db/resources/image_filestore_schema.sql`
 
 #### Bootstrapping the AMI filestore database

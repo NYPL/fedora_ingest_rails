@@ -1,11 +1,9 @@
 # This class talks to the MySQL database that stores the images that are in isilon.
-class AmiFilestoreEntry < ActiveRecord::Base
+class Source < ActiveRecord::Base
   establish_connection(:ami_filestore)
-  self.table_name = 'assets'
-
-  belongs_to :source
+  self.table_name = 'sources'
 
   def readonly?
-    true
+    !Rails.env.test?
   end
 end
