@@ -1,4 +1,8 @@
-## Overview
+| Branch   | Status                                                                                                                                    |
+|:---------|:------------------------------------------------------------------------------------------------------------------------------------------|
+| `master` | [![Build Status](https://travis-ci.org/NYPL-Simplified/circulation.svg?branch=master)](https://travis-ci.org/NYPL-Simplified/circulation) |
+
+## Fedora Ingest Rails
 
 This is a Rails port of the Java application [FedoraIngest](https://github.com/NYPL/FedoraIngest/blob/master/README.md).
 
