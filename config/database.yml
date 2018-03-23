@@ -9,14 +9,14 @@ development:
   <<: *default
   database: fedora_ingest_rails_development
 
-development_image_filestore:
+image_filestore:
   adapter: mysql2
   host:     <%= ENV.fetch("IMAGE_FILESTORE_DATABASE_HOST") {'localhost'} %>
   database: <%= ENV.fetch("IMAGE_FILESTORE_DATABASE_NAME") %>
   username: <%= ENV.fetch("IMAGE_FILESTORE_DATABASE_USER") %>
   password: <%= ENV.fetch("IMAGE_FILESTORE_DATABASE_PASSWORD") {nil} %>
 
-development_ami_filestore:
+ami_filestore:
   adapter: mysql2
   host:     <%= ENV.fetch("AMI_FILESTORE_DATABASE_HOST") {'localhost'} %>
   database: <%= ENV.fetch("AMI_FILESTORE_DATABASE_NAME") %>
