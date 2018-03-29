@@ -1,7 +1,6 @@
 require 'http'
 
 class MMSClient
-
   def initialize(options = {})
     @url = options[:mms_url]
     @basic_username = options[:user_name]
@@ -22,6 +21,10 @@ class MMSClient
 
   def dublin_core_for(uuid)
     authed_request.get(mms_export_of('dc', uuid)).to_s
+  end
+
+  def captures_for_item(uuid)
+    authed_request.get(mms_export_of('get_captures', uuid), params: { showAll: 'true' }).to_s
   end
 
   private
