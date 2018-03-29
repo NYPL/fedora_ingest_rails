@@ -10,6 +10,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'delayed_job_active_record', '~> 4.1', '>= 4.1.2'
+gem 'daemons', '~> 1.2', '>= 1.2.6'
 gem 'mysql2', '~> 0.4.5' #used to connect to Filestore Databases
 gem 'jbuilder', '~> 2.5'
 gem 'rubydora', '~> 2.0'
