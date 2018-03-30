@@ -14,6 +14,7 @@ IngestJob = Struct.new(:ingest_request_id) do
     # Fetch stuff from MMS
     mods   = mms_client.mods_for(@ingest_request.uuid)
     rights = mms_client.rights_for(@ingest_request.uuid)
+    dublin_core = mms_client.dublin_core_for(@ingest_request.uuid)
 
     pid = "uuid:#{@ingest_request.uuid}"
     digital_object = fedora_client.repository.find_or_initialize(pid)
@@ -24,11 +25,10 @@ IngestJob = Struct.new(:ingest_request_id) do
     digital_object.models << 'info:fedora/nypl-model:image'
 
     # TODO:
-    #  * This should be a add-or creation of the datastream
-    #  * Figure "Datastream Location Type", and MD5 Checksuming
     #  * React to MMS giving a sucsessful response (Should probably be a feature of MMSClient)
     fedora_client.repository.add_datastream(pid: pid, dsid: 'MODSXML', content: mods, content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'MODS XML record for this object')
     fedora_client.repository.add_datastream(pid: pid, dsid: 'RIGHTS',  content: rights, content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'Rights XML record for this object')
+    fedora_client.repository.add_datastream(pid: pid, dsid: 'DC',      content: dublin_core, formatURI: 'http://www.openarchives.org/OAI/2.0/oai_dc/', content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'DC XML record for this object')
     digital_object.save
     Delayed::Worker.logger.debug({ uuid: pid, message: 'done ingesting' }.to_json)
   end
