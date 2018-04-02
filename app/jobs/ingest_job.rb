@@ -20,13 +20,11 @@ IngestJob = Struct.new(:ingest_request_id) do
     type_of_resource = Nokogiri::XML(mods).css('typeOfResource:first').text
 
     mms_client.captures_for_item(@ingest_request.uuid).each do |capture|
-      # TODO: change reference to capture
       uuid = capture[:uuid]
       image_id = capture[:image_id]
 
       pid = "uuid:#{uuid}"
       digital_object = fedora_client.repository.find_or_initialize(pid)
-      # We can check digital_object.new? here.
       digital_object.label = extract_title_from_dublin_core(dublin_core)
       digital_object.save
       ##  For some reason this can only be done on saved objects
