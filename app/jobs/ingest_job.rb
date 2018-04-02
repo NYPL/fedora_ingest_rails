@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 IngestJob = Struct.new(:ingest_request_id) do
   def perform
     @ingest_request = IngestRequest.where(id: ingest_request_id).first
@@ -16,20 +18,39 @@ IngestJob = Struct.new(:ingest_request_id) do
     rights = mms_client.rights_for(@ingest_request.uuid)
     dublin_core = mms_client.dublin_core_for(@ingest_request.uuid)
 
-    pid = "uuid:#{@ingest_request.uuid}"
-    digital_object = fedora_client.repository.find_or_initialize(pid)
-    # We can check digital_object.new? here.
-    digital_object.label = "This object's title - we'll grab it from MMS"
-    digital_object.save
-    ##  For some reason this can only be done on saved objects
-    digital_object.models << 'info:fedora/nypl-model:image'
+    mms_client.captures_for_item(@ingest_request.uuid).each do |capture|
+      # TODO: change reference to capture
+      uuid = capture[:uuid]
+      image_id = capture[:image_id]
 
-    # TODO:
-    #  * React to MMS giving a sucsessful response (Should probably be a feature of MMSClient)
-    fedora_client.repository.add_datastream(pid: pid, dsid: 'MODSXML', content: mods, content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'MODS XML record for this object')
-    fedora_client.repository.add_datastream(pid: pid, dsid: 'RIGHTS',  content: rights, content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'Rights XML record for this object')
-    fedora_client.repository.add_datastream(pid: pid, dsid: 'DC',      content: dublin_core, formatURI: 'http://www.openarchives.org/OAI/2.0/oai_dc/', content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'DC XML record for this object')
-    digital_object.save
-    Delayed::Worker.logger.debug({ uuid: pid, message: 'done ingesting' }.to_json)
+      pid = "uuid:#{uuid}"
+      digital_object = fedora_client.repository.find_or_initialize(pid)
+      # We can check digital_object.new? here.
+      digital_object.label = extract_title_from_dublin_core(dublin_core)
+      digital_object.save
+      ##  For some reason this can only be done on saved objects
+      digital_object.models << 'info:fedora/nypl-model:image'
+
+      # Datastreams with info from the `Item` Level
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'MODSXML', content: mods, content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'MODS XML record for this object')
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'RIGHTS',  content: rights, content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'Rights XML record for this object')
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'DC',      content: dublin_core, formatURI: 'http://www.openarchives.org/OAI/2.0/oai_dc/', content_type: 'text/xml', checksumType: 'MD5', dsLabel: 'DC XML record for this object')
+
+      rels_ext = mms_client.rels_ext_for(uuid)
+
+      # Datastreams with info from the `Capture` Level
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, content_type: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
+      digital_object.save
+      Delayed::Worker.logger.debug({ uuid: pid, message: 'done ingesting' }.to_json)
+    end
+
+    Delayed::Worker.logger.debug({ uuid: @ingest_request.uuid, message: 'done ingesting all captures of Item' }.to_json)
   end
+
+  private
+
+  def extract_title_from_dublin_core(dublin_core)
+    Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip
+  end
+
 end

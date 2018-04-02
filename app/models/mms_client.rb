@@ -1,4 +1,5 @@
 require 'http'
+require 'nokogiri'
 
 class MMSClient
   def initialize(options = {})
@@ -23,8 +24,18 @@ class MMSClient
     authed_request.get(mms_export_of('dc', uuid)).to_s
   end
 
+  # Takes the UUID of an Item & returns an Array of hashes that looks like:
+  # [{image_uuid: '123-456', image_id: '1234'}]
   def captures_for_item(uuid)
-    authed_request.get(mms_export_of('get_captures', uuid), params: { showAll: 'true' }).to_s
+    response = []
+    api_response = authed_request.get(mms_export_of('get_captures', uuid), params: { showAll: 'true' }).to_s
+    capture_nodes = Nokogiri::XML(api_response).css('capture')
+
+    capture_nodes.each do |capture_node|
+      response << { image_id: capture_node.css('image_id').text, uuid: capture_node.css('uuid').text }
+    end
+
+    response
   end
 
   private
