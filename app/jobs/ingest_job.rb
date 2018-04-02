@@ -17,6 +17,7 @@ IngestJob = Struct.new(:ingest_request_id) do
     mods   = mms_client.mods_for(@ingest_request.uuid)
     rights = mms_client.rights_for(@ingest_request.uuid)
     dublin_core = mms_client.dublin_core_for(@ingest_request.uuid)
+    type_of_resource = Nokogiri::XML(mods).css('typeOfResource:first').text
 
     mms_client.captures_for_item(@ingest_request.uuid).each do |capture|
       # TODO: change reference to capture
