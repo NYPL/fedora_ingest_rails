@@ -15,6 +15,10 @@ gem 'mysql2', '~> 0.4.5' #used to connect to Filestore Databases
 gem 'jbuilder', '~> 2.5'
 gem 'rubydora', '~> 2.0'
 gem 'http', '~> 3.0'
+gem 'will_paginate', '~> 3.1', '>= 3.1.6'
+
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 group :test do
   gem 'shoulda-matchers', '~> 3.1', '>= 3.1.2'
@@ -37,6 +41,3 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
