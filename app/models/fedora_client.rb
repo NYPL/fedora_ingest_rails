@@ -19,7 +19,7 @@ class FedoraClient
       file_uuid   = f.uuid
       file_label  = f.get_type(f.type)
       checksum    = f.checksum
-      file_name   = f.filename
+      file_name   = f.file_name
       extension   = file_name.split('.')[-1]
       mime_type   = f.get_mimetype(extension)
       permalinks  = []
@@ -30,6 +30,7 @@ class FedoraClient
       #       permalinks.add(permalink);
       #     }
       if file_label != 'Unknown'
+        puts "Creating datastream for #{pid}, dsid: #{file_label}"
         self.repository.add_datastream(pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, checksumType: 'MD5', checksum: checksum, dsLabel: file_label + ' for this object', altIds: permalinks )
       end
       

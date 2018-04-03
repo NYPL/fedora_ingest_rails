@@ -36,7 +36,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       fedora_client.repository.add_datastream(pid: pid, dsid: 'DC',      content: dublin_core, formatURI: 'http://www.openarchives.org/OAI/2.0/oai_dc/', mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'DC XML record for this object')
 
       # Datastreams with info from the filestore database of image derivatives
-      image_filestore_entries = ImageFilestoreEntries.where(file_id: capture[:image_id])
+      image_filestore_entries = ImageFilestoreEntry.where(file_id: capture[:image_id])
       if image_filestore_entries.count > 0 # KK TODO: && !ami_type.include(type_of_resource) # might be covered by a lack of entries in filestore db. 
         fedora_client.add_image_filestore_entry_datastreams(image_filestore_entries, pid)
       end
