@@ -15,6 +15,7 @@ gem 'mysql2', '~> 0.4.5' #used to connect to Filestore Databases
 gem 'jbuilder', '~> 2.5'
 gem 'rubydora', '~> 2.0'
 gem 'http', '~> 3.0'
+gem 'will_paginate', '~> 3.1', '>= 3.1.6'
 
 group :test do
   gem 'shoulda-matchers', '~> 3.1', '>= 3.1.2'
