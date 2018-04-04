@@ -11,13 +11,15 @@ IngestJob = Struct.new(:ingest_request_id) do
 
   def ingest!
     fedora_client = FedoraClient.new
-    mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url, user_name: Rails.application.secrets.mms_http_basic_username, password: Rails.application.secrets.mms_http_basic_password)
+    mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url, 
+                               user_name: Rails.application.secrets.mms_http_basic_username, 
+                               password: Rails.application.secrets.mms_http_basic_password)
 
     # Fetch stuff from MMS
-    mods   = mms_client.mods_for(@ingest_request.uuid)
-    rights = mms_client.rights_for(@ingest_request.uuid)
-    dublin_core = mms_client.dublin_core_for(@ingest_request.uuid)
-    type_of_resource = Nokogiri::XML(mods).css('typeOfResource:first').text
+    mods              = mms_client.mods_for(@ingest_request.uuid)
+    rights            = mms_client.rights_for(@ingest_request.uuid)
+    dublin_core       = mms_client.dublin_core_for(@ingest_request.uuid)
+    type_of_resource  = Nokogiri::XML(mods).css('typeOfResource:first').text
 
     mms_client.captures_for_item(@ingest_request.uuid).each do |capture|
       uuid = capture[:uuid]
@@ -28,7 +30,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       digital_object.label = extract_title_from_dublin_core(dublin_core)
       digital_object.save
       ##  For some reason this can only be done on saved objects
-      digital_object.models << 'info:fedora/nypl-model:image'
+      digital_object.models << 'info:fedora/nypl-model:image' # KK TODO: Ask JV why we do this and if it should apply to AMI. 
 
       # Datastreams with info from the `Item` Level
       fedora_client.repository.add_datastream(pid: pid, dsid: 'MODSXML', content: mods, mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'MODS XML record for this object')
@@ -38,7 +40,29 @@ IngestJob = Struct.new(:ingest_request_id) do
       # Datastreams with info from the filestore database of image derivatives
       image_filestore_entries = ImageFilestoreEntry.where(file_id: capture[:image_id])
       if image_filestore_entries.count > 0 # KK TODO: && !ami_type.include(type_of_resource) # might be covered by a lack of entries in filestore db. 
-        fedora_client.add_image_filestore_entry_datastreams(image_filestore_entries, pid)
+        # fedora_client.add_image_filestore_entry_datastreams(image_filestore_entries, pid)
+        image_filestore_entries.each do |f|
+          file_uuid   = f.uuid
+          file_label  = f.get_type(f.type)
+          checksum    = f.checksum
+          file_name   = f.file_name
+          extension   = file_name.split('.')[-1]
+          mime_type   = f.get_mimetype(extension)
+          permalinks  = []
+          # KK TODO: add permalink to master image to permalinks / altIds
+          # Legacy related java code 
+          #     if(label.equals("MASTER_IMAGE") && releaseMaster){
+          #       String permalink = getPermalink("http://repo.nypl.org/fedora/objects/uuid:"+id[1]+"/datastreams/MASTER_IMAGE/content");
+          #       permalinks.add(permalink);
+          #     }
+          if file_label != 'Unknown'
+            # dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, 
+            # checksumType: 'MD5', checksum: checksum, 
+            #  controlGroup: 'E', mimeType: mime_type, 
+            puts "Creating datastream for #{pid}, dsid: #{file_label}"
+            fedora_client.repository.add_datastream(pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'MD5', checksum: checksum, dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks )
+          end
+        end
       end
 
       rels_ext = mms_client.rels_ext_for(uuid)

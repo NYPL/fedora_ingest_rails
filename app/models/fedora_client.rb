@@ -30,6 +30,7 @@ class FedoraClient
       #       permalinks.add(permalink);
       #     }
       if file_label != 'Unknown'
+        require 'pry'; binding.pry;
         puts "Creating datastream for #{pid}, dsid: #{file_label}"
         self.repository.add_datastream(pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, checksumType: 'MD5', checksum: checksum, dsLabel: file_label + ' for this object', altIds: permalinks )
       end
