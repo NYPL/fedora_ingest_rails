@@ -56,10 +56,6 @@ IngestJob = Struct.new(:ingest_request_id) do
               #   permalinks.add(permalink);
               # }
           if file_label != 'Unknown'
-            # dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, 
-            # checksumType: 'MD5', checksum: checksum, 
-            #  controlGroup: 'E', mimeType: mime_type, 
-            puts "Creating datastream for #{pid}, dsid: #{file_label}"
             if Rails.env == 'production'
               fedora_client.repository.add_datastream(pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksum: checksum, checksumType: 'MD5', dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks )
             else
@@ -72,7 +68,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       rels_ext = mms_client.rels_ext_for(uuid)
 
       # Datastreams with info from the `Capture` Level
-      fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, content_type: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
       digital_object.save
       Delayed::Worker.logger.debug({ uuid: pid, message: 'done ingesting' }.to_json)
     end
