@@ -49,14 +49,10 @@ IngestJob = Struct.new(:ingest_request_id) do
           extension   = file_name.split('.')[-1]
           mime_type   = f.get_mimetype(extension)
           permalinks  = []
-          # KK TODO: add permalink to master image to permalinks / altIds
-          # Legacy related java code 
-              # if(label.equals("MASTER_IMAGE") && releaseMaster){
-              #   String permalink = getPermalink("http://repo.nypl.org/fedora/objects/uuid:"+id[1]+"/datastreams/MASTER_IMAGE/content");
-              #   permalinks.add(permalink);
-              # }
           if file_label != 'Unknown'
             if Rails.env == 'production'
+              permalink = find_or_create_permalink("http://repo.nypl.org/fedora/objects/uuid:"+capture[:uuid]+"/datastreams/MASTER_IMAGE/content")
+              permalinks << permalink
               fedora_client.repository.add_datastream(pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksum: checksum, checksumType: 'MD5', dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks )
             else
               fedora_client.repository.add_datastream(pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'MD5', dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks )
@@ -77,6 +73,10 @@ IngestJob = Struct.new(:ingest_request_id) do
   end
 
   private
+  
+  def find_or_create_permalink(link)
+    # KK TODO: Hook this up for real to production resources
+  end
 
   def extract_title_from_dublin_core(dublin_core)
     Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip
