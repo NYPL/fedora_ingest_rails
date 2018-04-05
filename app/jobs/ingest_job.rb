@@ -39,30 +39,26 @@ IngestJob = Struct.new(:ingest_request_id) do
 
       # Datastreams with info from the filestore database of image derivatives
       image_filestore_entries = ImageFilestoreEntry.where(file_id: capture[:image_id])
-      if image_filestore_entries.count > 0 # KK TODO: && !ami_type.include(type_of_resource) # might be covered by a lack of entries in filestore db. 
-        # fedora_client.add_image_filestore_entry_datastreams(image_filestore_entries, pid)
-        image_filestore_entries.each do |f|
-          file_uuid   = f.uuid
-          file_label  = f.get_type(f.type)
-          checksum    = f.checksum
-          file_name   = f.file_name
-          extension   = file_name.split('.')[-1]
-          mime_type   = f.get_mimetype(extension)
-          permalinks  = []
-          # KK TODO: add permalink to master image to permalinks / altIds
-          # Legacy related java code 
-              # if(label.equals("MASTER_IMAGE") && releaseMaster){
-              #   String permalink = getPermalink("http://repo.nypl.org/fedora/objects/uuid:"+id[1]+"/datastreams/MASTER_IMAGE/content");
-              #   permalinks.add(permalink);
-              # }
-          if file_label != 'Unknown'
-            if Rails.env == 'production'
-              fedora_client.repository.add_datastream(pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksum: checksum, checksumType: 'MD5', dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks )
-            else
-              fedora_client.repository.add_datastream(pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'MD5', dsLocation: 'http://local.fedora.server/resolver/'+file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks )
-            end
-          end
+      image_filestore_entries.each do |f|
+        file_uuid   = f.uuid
+        file_label  = f.get_type(f.type)
+        checksum    = f.checksum
+        file_name   = f.file_name
+        extension   = file_name.split('.')[-1]
+        mime_type   = f.get_mimetype(extension)
+        permalinks  = []
+        # KK TODO: add permalink to master image to permalinks / altIds
+        # Legacy related java code
+        # if(label.equals("MASTER_IMAGE") && releaseMaster){
+        #   String permalink = getPermalink("http://repo.nypl.org/fedora/objects/uuid:"+id[1]+"/datastreams/MASTER_IMAGE/content");
+        #   permalinks.add(permalink);
+        # }
+        if file_label != 'Unknown'
+          datastream_options = {pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'MD5', dsLocation: 'http://local.fedora.server/resolver/' + file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks}
+          datastream_options.merge!({checksum: checksum}) if Rails.env.production?
+          fedora_client.repository.add_datastream(datastream_options)
         end
+
       end
 
       rels_ext = mms_client.rels_ext_for(uuid)
