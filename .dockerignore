@@ -1,0 +1,20 @@
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+/node_modules
+/yarn-error.log
+
+.byebug_history
+
+# Let's not bake secrets into our Docker images
+.env
+
+# This messes with how phusion/passenger-ruby wants to install gems
+.ruby-version
+.ruby-gemset
