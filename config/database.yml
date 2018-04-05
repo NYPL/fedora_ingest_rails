@@ -31,4 +31,5 @@ production:
   <<: *default
   database: fedora_ingest_rails_production
   username: fedora_ingest_rails
+  host:  <%= ENV['FEDORA_INGEST_RAILS_DATABASE_HOST'] %>
   password: <%= ENV['FEDORA_INGEST_RAILS_DATABASE_PASSWORD'] %>
