@@ -72,9 +72,6 @@ _this is mostly a stub until we actually deploy and can fill in more details_
 
 This app is meant to be deployed on ECS.
 
-We should build & push 2 different Docker images, one for the web app,
-and the second won't start nginx. It will be used for delayed_job workers.
-
 We should create 2 task definitions.
 One for the web app, the second will be for a worker.
 The worker nodes' entry points should be overwritten to `["/home/app/fedora_ingest_rails/bin/delayed_job", "run"]`.
