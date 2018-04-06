@@ -1,7 +1,9 @@
+sudo: required
 language: ruby
 services:
   - postgresql
   - mysql
+  - docker #(to use docker exec for continuous deployment)
 rvm:
 - 2.5.0
 cache: bundler
@@ -12,3 +14,5 @@ before_script:
   - mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 script:
 - bundle exec rspec
+after_success:
+- provisioning/travis_ci_and_cd/build_and_push_to_ecr.sh
