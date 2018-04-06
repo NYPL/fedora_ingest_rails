@@ -36,12 +36,12 @@ class ImageFilestoreEntry < ActiveRecord::Base
       "sid" => "image/x-mrsid",
       "unknown" => "application/octet-stream" }
   end
-  
+
   def get_type(string)
-    types_dictionary[string].present? ? types_dictionary[string] : "Unknown"
+    types_dictionary[string] || "Unknown"
   end
-  
+
   def get_mimetype(string)
-    mimetypes_dictionary[string].present? ? mimetypes_dictionary[string] : mimetypes_dictionary["unknown"]
+    mimetypes_dictionary[string] || mimetypes_dictionary["unknown"]
   end
 end
