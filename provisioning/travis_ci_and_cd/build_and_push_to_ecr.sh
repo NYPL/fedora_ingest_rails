@@ -6,13 +6,13 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
 
     case "$TRAVIS_BRANCH" in
       production)
-        export AWS_ACCESS_KEY_ID=$aws_access_key_id_production
-        export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key_production
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
         DOCKER_REPO_URL=$REMOTE_IMAGE_URL_PRODUCTION
         ;;
       *)
-        export AWS_ACCESS_KEY_ID=$aws_access_key_id_development
-        export AWS_SECRET_ACCESS_KEY=$aws_secret_access_key_development
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEVELOPMENT
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEVELOPMENT
         DOCKER_REPO_URL=$REMOTE_IMAGE_URL_DEVELOPMENT
         ;;
     esac
