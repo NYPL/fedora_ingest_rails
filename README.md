@@ -2,6 +2,7 @@
 |:--------------|:-----------------------------------------------------------------------------------------------------------------------------------------|
 | `master`      | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=master)](https://travis-ci.org/NYPL/fedora_ingest_rails)      |
 | `development` | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=development)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
+| `qa`          | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)          |
 | `production`  | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=production)](https://travis-ci.org/NYPL/fedora_ingest_rails)  |
 
 ## Fedora Ingest Rails
@@ -72,6 +73,7 @@ Our branches (in order or stability are):
 |:------------|:------------|:----------------|
 | master      | none        | none            |
 | development | development | aws-sandbox     |
+| qa          | qa          | aws-digital-dev |
 | production  | production  | aws-digital-dev |
 
 ### Cutting A Feature Branch
