@@ -11,8 +11,8 @@ IngestJob = Struct.new(:ingest_request_id) do
 
   def ingest!
     fedora_client = FedoraClient.new
-    mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url, 
-                               user_name: Rails.application.secrets.mms_http_basic_username, 
+    mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url,
+                               user_name: Rails.application.secrets.mms_http_basic_username,
                                password: Rails.application.secrets.mms_http_basic_password)
 
     # Fetch stuff from MMS
@@ -30,7 +30,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       digital_object.label = extract_title_from_dublin_core(dublin_core)
       digital_object.save
       ##  For some reason this can only be done on saved objects
-      digital_object.models << 'info:fedora/nypl-model:image' # KK TODO: Ask JV why we do this and if it should apply to AMI. 
+      digital_object.models << 'info:fedora/nypl-model:image' # KK TODO: Ask JV why we do this and if it should apply to AMI.
 
       # Datastreams with info from the `Item` Level
       fedora_client.repository.add_datastream(pid: pid, dsid: 'MODSXML', content: mods, mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'MODS XML record for this object')
@@ -65,10 +65,10 @@ IngestJob = Struct.new(:ingest_request_id) do
       # Datastreams with info from the `Capture` Level
       fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
       digital_object.save
-      Delayed::Worker.logger.debug({ uuid: pid, message: 'done ingesting' }.to_json)
+      Delayed::Worker.logger.debug("ingested capture #{uuid}", uuid: @ingest_request.uuid)
     end
 
-    Delayed::Worker.logger.debug({ uuid: @ingest_request.uuid, message: 'done ingesting all captures of Item' }.to_json)
+    Delayed::Worker.logger.debug('Done ingesting all captures of Item', uuid: @ingest_request.uuid)
   end
 
   private

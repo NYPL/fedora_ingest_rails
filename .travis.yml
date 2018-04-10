@@ -1,14 +1,22 @@
+sudo: required
 language: ruby
 services:
-  - postgresql
-  - mysql
+- postgresql
+- mysql
+- docker
 rvm:
 - 2.5.0
 cache: bundler
 before_script:
-  - psql -c 'create database fedora_ingest_rails_test;' -U postgres
-  - mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
-  - mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
-  - mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
+- psql -c 'create database fedora_ingest_rails_test;' -U postgres
+- mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
+- mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
+- mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 script:
 - bundle exec rspec
+after_success:
+- provisioning/travis_ci_and_cd/build_and_push_to_ecr.sh
+- provisioning/travis_ci_and_cd/ecs_deploy.sh
+env:
+  global:
+    secure: BQA/0MRMKkMNdInR++PDFk6i9skBvXkRUT+CbKULhZh9Z3TVRiDQ9gAP4x0ev8mdhQIL6Ge2Yx16VodqGvix6IFKaZgmfwajyb31KsPzHqXAEkn4A4Dx2BXuc7rG2V+0Mwqdjmb6cu+AxRCIzd4n+XfevtTWcbrZOR+dYewhQdvpkltWWo1B8eZt61p4Uj3iY5fZnd9VDKlX9p1w1nrdLey0OJcQ91wS28zrNgOK9eQBZWiV6pSTjpZ65VdFEdB7gHvpB/Usvk1ua1BVKSpQXp+3ubiGOBru/AhemC3FoycxDRYPFT/A2o+FYPMicLD/MMPr3f/YwXV04DzthTkzXa7TJiM3aCdAkFUtlZ7Xr7QbSWDGeUZbPulf61RwBVvaQXs9+2+HfzUVqXyJX/H554aD2nLEe0vpFmoeM0OmV+XuYLz1oUxfxem8m0fZP6wRF2hL3t0HLQjIqDD9XPFJqUKAR2epvdML7gX34XDLTpBdPeHr6lxOe4ws8948JB6tcATVdpUxjMJj3hnuC0+awXBHyNMU/o5K6W5pzFw6vuVKsKk3d+bJ1yxs75R0TdjxYHQRxJZP520SUXSWLy5scBMIEHOH6OwWGji966Oo042JBPm6yc7kDJ4FT+kduH9Rd3Mk2KWjx49gLrFxBMc4g+IEcQ9OJMRC4FJZb4aWGjI=

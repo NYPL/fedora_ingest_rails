@@ -1,6 +1,9 @@
-| Branch   | Status                                                                                                                              |
-|:---------|:------------------------------------------------------------------------------------------------------------------------------------|
-| `master` | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=master)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
+| Branch        | Status                                                                                                                                   |
+|:--------------|:-----------------------------------------------------------------------------------------------------------------------------------------|
+| `master`      | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=master)](https://travis-ci.org/NYPL/fedora_ingest_rails)      |
+| `development` | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=development)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
+| `qa`          | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)          |
+| `production`  | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=production)](https://travis-ci.org/NYPL/fedora_ingest_rails)  |
 
 ## Fedora Ingest Rails
 
@@ -64,9 +67,34 @@ additional workers.
 
 ## Git Workflow & Deployment
 
-* TODO: Fill this in...
+Our branches (in order or stability are):
 
-## Provisioning Setup
+| Branch      | Environment | AWS Account     |
+|:------------|:------------|:----------------|
+| master      | none        | none            |
+| development | development | aws-sandbox     |
+| qa          | qa          | aws-digital-dev |
+| production  | production  | aws-digital-dev |
+
+### Cutting A Feature Branch
+
+1. Feature branches are cut from `master`.
+2. Once the feature branch is ready to be merged, file a pull request of the branch _into_ master.
+
+### Deploying
+
+We use Travis for continuous deployment.
+Merging to certain branches automatically deploys to the environment associated to
+that branch.
+
+Merging `master` => `development` automatically deploys to the development environment. (after tests pass).  
+Merging `development` => `production` automatically deploys to the production environment. (after tests pass).
+
+For insight into how CD works look at [.travis.yml](./.travis.yml) and the
+[provisioning/travis_ci_and_cd](./provisioning/travis_ci_and_cd) directory.
+The approach is inspired by [this blog post](https://dev.mikamai.com/2016/05/17/continuous-delivery-with-travis-and-ecs/) ([google cached version](https://webcache.googleusercontent.com/search?q=cache:NodZ-GZnk6YJ:https://dev.mikamai.com/2016/05/17/continuous-delivery-with-travis-and-ecs/+&cd=1&hl=en&ct=clnk&gl=us&client=firefox-b-1-ab)).
+
+## ECS Configuration
 
 _this is mostly a stub until we actually deploy and can fill in more details_
 
