@@ -76,10 +76,6 @@ IngestJob = Struct.new(:ingest_request_id) do
   end
 
   private
-  
-  def find_or_create_permalink(link)
-    # KK TODO: Hook this up for real to production resources
-  end
 
   def extract_title_from_dublin_core(dublin_core)
     Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip
