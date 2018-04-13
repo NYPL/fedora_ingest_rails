@@ -9,26 +9,26 @@ class MMSClient
   end
 
   def mods_for(uuid)
-    authed_request.get(mms_export_of('mods', uuid)).to_s
+    make_request_for('mods', uuid)
   end
 
   def rights_for(uuid)
-    authed_request.get(mms_export_of('rights', uuid)).to_s
+    make_request_for('rights', uuid)
   end
 
   def rels_ext_for(uuid)
-    authed_request.get(mms_export_of('rels_ext', uuid)).to_s
+    make_request_for('rels_ext', uuid)
   end
 
   def dublin_core_for(uuid)
-    authed_request.get(mms_export_of('dc', uuid)).to_s
+    make_request_for('dc', uuid)
   end
 
   # Takes the UUID of an Item & returns an Array of hashes that looks like:
   # [{image_uuid: '123-456', image_id: '1234'}]
   def captures_for_item(uuid)
     response = []
-    api_response = authed_request.get(mms_export_of('get_captures', uuid), params: { showAll: 'true' }).to_s
+    api_response = make_request_for('get_captures', uuid, {showAll: 'true'})
     capture_nodes = Nokogiri::XML(api_response).css('capture')
 
     capture_nodes.each do |capture_node|
@@ -40,8 +40,18 @@ class MMSClient
 
   private
 
+  # This DRYs up the pattern of making a request and throwing an exception for bad trsponses
+  def make_request_for(export_type, uuid, params = {})
+    response = authed_request.get(export_url_for(export_type, uuid), params: params)
+    if response.code >= 400
+      throw RuntimeError.new("Error getting #{export_type} for UUID #{uuid}: #{response.code} #{response}")
+    else
+      response.to_s
+    end
+  end
+
   # Builds a URL like http://metadata.nypl.org/exports/mods/123-456
-  def mms_export_of(export_type, uuid)
+  def export_url_for(export_type, uuid)
     "#{@url}/exports/#{export_type}/#{uuid}"
   end
 

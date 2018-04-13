@@ -59,7 +59,7 @@ IngestJob = Struct.new(:ingest_request_id) do
         end
         if file_label != 'Unknown'
           datastream_options = {pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'MD5', dsLocation: 'http://local.fedora.server/resolver/' + file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks}
-          datastream_options.merge!({checksum: checksum}) if Rails.env.production?
+          datastream_options.merge!({checksum: checksum}) if ENV['SEND_CHECKSUMS_TO_FEDORA'].present?
           fedora_client.repository.add_datastream(datastream_options)
         end
       end

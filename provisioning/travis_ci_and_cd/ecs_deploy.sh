@@ -10,18 +10,24 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
         CLUSTER_NAME=$CLUSTER_NAME_PRODUCTION
         SERVICE_NAME=$SERVICE_NAME_PRODUCTION
+        WEB_APP_SERVICE_NAME="fedora-ingest-rails-web-application-qa"
+        WORKER_SERVICE_NAME="fedora-ingest-rails-worker-production"
         ;;
       qa)
         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
         CLUSTER_NAME=$CLUSTER_NAME_QA
         SERVICE_NAME=$SERVICE_NAME_QA
+        WEB_APP_SERVICE_NAME="fedora-ingest-rails-web-application-qa"
+        WORKER_SERVICE_NAME="fedora-ingest-rails-worker-qa"
         ;;
       *)
         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEVELOPMENT
         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEVELOPMENT
         CLUSTER_NAME=$CLUSTER_NAME_DEVELOPMENT
         SERVICE_NAME=$SERVICE_NAME_DEVELOPMENT
+        WEB_APP_SERVICE_NAME="fedora-ingest-rails-web-application"
+        WORKER_SERVICE_NAME="fedora-ingest-rails-worker"
         ;;
     esac
 
