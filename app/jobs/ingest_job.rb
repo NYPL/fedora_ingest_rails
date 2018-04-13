@@ -54,7 +54,7 @@ IngestJob = Struct.new(:ingest_request_id) do
         mime_type   = f.get_mimetype(extension)
         permalinks  = []
         if file_label == "MASTER_IMAGE" && release_master
-          permalink = PermalinkClient.new.fetch_or_mint_permalink("http://repo.nypl.org/fedora/objects/uuid:"+uuid+"/datastreams/MASTER_IMAGE/content")
+          permalink = PermalinkClient.new.fetch_or_mint_permalink("#{ENV['FEDORA_URL']}/objects/#{pid}/datastreams/MASTER_IMAGE/content")
           permalinks << permalink if permalink.present?
         end
         if file_label != 'Unknown'
