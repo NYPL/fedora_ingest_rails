@@ -26,6 +26,12 @@ IngestJob = Struct.new(:ingest_request_id) do
       image_id = capture[:image_id]
 
       pid = "uuid:#{uuid}"
+      
+      # Figure out if it is ok to release high res file. Handled by string in rights statement right now.
+      # necessary for determining if we need to get master image permalinks.
+      high_res_ok = "Release Source File for Free (i.e., high-res or master can be released to the public)"
+      release_master = rights.to_s.scan(high_res_ok).present? if rights
+      
       digital_object = fedora_client.repository.find_or_initialize(pid)
       digital_object.label = extract_title_from_dublin_core(dublin_core)
       digital_object.save
@@ -46,17 +52,14 @@ IngestJob = Struct.new(:ingest_request_id) do
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
         permalinks  = []
-        # KK TODO: add permalink to master image to permalinks / altIds
-        # Legacy related java code
-        # if(label.equals("MASTER_IMAGE") && releaseMaster){
-        #   String permalink = getPermalink("http://repo.nypl.org/fedora/objects/uuid:"+id[1]+"/datastreams/MASTER_IMAGE/content");
-        #   permalinks.add(permalink);
-        # }
+        if file_label == "MASTER_IMAGE" && release_master
+          permalink = PermalinkClient.new.fetch_or_mint_permalink("#{ENV['FEDORA_URL']}/objects/#{pid}/datastreams/MASTER_IMAGE/content")
+          permalinks << permalink if permalink.present?
+        end
         if file_label != 'Unknown'
           datastream_options = {pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'DISABLED', dsLocation: "http://local.fedora.server/resolver/#{file_uuid}" , dsLabel: file_label + ' for this object', altIds: permalinks}
           fedora_client.repository.add_datastream(datastream_options)
         end
-
       end
 
       rels_ext = mms_client.rels_ext_for(uuid)
