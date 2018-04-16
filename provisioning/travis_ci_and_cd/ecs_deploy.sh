@@ -10,7 +10,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
         CLUSTER_NAME=$CLUSTER_NAME_PRODUCTION
         SERVICE_NAME=$SERVICE_NAME_PRODUCTION
-        WEB_APP_SERVICE_NAME="fedora-ingest-rails-web-application-qa"
+        WEB_APP_SERVICE_NAME="fedora-ingest-rails-web-application-production"
         WORKER_SERVICE_NAME="fedora-ingest-rails-worker-production"
         ;;
       qa)
