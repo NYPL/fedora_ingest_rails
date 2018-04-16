@@ -94,16 +94,6 @@ For insight into how CD works look at [.travis.yml](./.travis.yml) and the
 [provisioning/travis_ci_and_cd](./provisioning/travis_ci_and_cd) directory.
 The approach is inspired by [this blog post](https://dev.mikamai.com/2016/05/17/continuous-delivery-with-travis-and-ecs/) ([google cached version](https://webcache.googleusercontent.com/search?q=cache:NodZ-GZnk6YJ:https://dev.mikamai.com/2016/05/17/continuous-delivery-with-travis-and-ecs/+&cd=1&hl=en&ct=clnk&gl=us&client=firefox-b-1-ab)).
 
-## ECS Configuration
+## Amazon & ECS Deployment Configuration
 
-_this is mostly a stub until we actually deploy and can fill in more details_
-
-This app is meant to be deployed on ECS.
-
-We should create 2 task definitions.
-One for the web app, the second will be for a worker.
-The worker nodes' entry points should be overwritten to `["/home/app/fedora_ingest_rails/bin/delayed_job", "run"]`.
-
-The cluster should have 2 services.
-One for running the web application with a desired count of 1.
-The second "worker" service with a multiple "desired count" for  "worker" nodes.
+See [Amazon And ECS](./documentation/amazon-and-ecs.md).
