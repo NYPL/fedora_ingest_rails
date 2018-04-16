@@ -1,6 +1,6 @@
 # Amazon & ECS Deployment Configuration
 
-_This documentation is could be a rough guide for people looking to deploy web applications, with workers, on ECS.
+_This documentation is a rough guide for people looking to deploy web applications, with workers, on ECS.
 It's not an exhaustive document of AWS resource settings & names, that would get out of date fast._
 
 This application has 2 parts.
@@ -36,7 +36,7 @@ the same EC2 instance.
 * It should be on a private subnet.
 * It should be in a security group named `fedora-ingest-rails-ecs-cluster-[tier]`.
   * That VPC can allow SSH from our internal network.
-  * It should allow TCP on ports (0-65535) from the security group of the load balancer. (this is for dynamic port binding see above)
+  * It should allow TCP on all ports (0-65535) from the security group of the load balancer. (this is for dynamic port binding see above)
 
 ## Web Application
 
