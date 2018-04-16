@@ -48,7 +48,6 @@ IngestJob = Struct.new(:ingest_request_id) do
       image_filestore_entries.each do |f|
         file_uuid   = f.uuid
         file_label  = f.get_type(f.type)
-        checksum    = f.checksum
         file_name   = f.file_name
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
@@ -58,8 +57,7 @@ IngestJob = Struct.new(:ingest_request_id) do
           permalinks << permalink if permalink.present?
         end
         if file_label != 'Unknown'
-          datastream_options = {pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'MD5', dsLocation: 'http://local.fedora.server/resolver/' + file_uuid, dsLabel: file_label + ' for this object', altIds: permalinks}
-          datastream_options.merge!({checksum: checksum}) if ENV['SEND_CHECKSUMS_TO_FEDORA'].present?
+          datastream_options = {pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'DISABLED', dsLocation: "http://local.fedora.server/resolver/#{file_uuid}" , dsLabel: file_label + ' for this object', altIds: permalinks}
           fedora_client.repository.add_datastream(datastream_options)
         end
       end
