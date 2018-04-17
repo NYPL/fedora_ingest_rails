@@ -87,8 +87,11 @@ We use Travis for continuous deployment.
 Merging to certain branches automatically deploys to the environment associated to
 that branch.
 
-Merging `master` => `development` automatically deploys to the development environment. (after tests pass).  
-Merging `development` => `production` automatically deploys to the production environment. (after tests pass).
+| Merge from    | Into          | Deploys to (after tests pass) |
+|:--------------|:--------------|:------------------------------|
+| `master`      | `development` | development env               |
+| `development` | `qa`          | qa env                        |
+| `qa`          | `production`  | production env                |
 
 For insight into how CD works look at [.travis.yml](./.travis.yml) and the
 [provisioning/travis_ci_and_cd](./provisioning/travis_ci_and_cd) directory.
