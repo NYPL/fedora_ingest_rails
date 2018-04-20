@@ -4,11 +4,11 @@ require 'net/http/digest_auth'
 
 class PermalinkClient
   def initialize(options = {})
-    @base_links_url = ENV['LINK_BASE_URL']
-    @lookup_url = ENV['LINK_LOOKUP_URL']
-    @minter_url = ENV['LINK_MINTER_URL']
-    @basic_username = ENV['LINK_USERNAME']
-    @basic_password = ENV['LINK_PASSWORD']
+    @base_links_url = options[:base_url]
+    @lookup_url = options[:lookup_url]
+    @minter_url = options[:minter_url]
+    @basic_username = options[:username]
+    @basic_password = options[:password]
   end
   
   def fetch_or_mint_permalink(not_permalink_string)
