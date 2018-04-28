@@ -1,4 +1,5 @@
 require 'nokogiri'
+Rubydora.logger = NyplLogFormatter.new(STDOUT)
 
 IngestJob = Struct.new(:ingest_request_id) do
   def perform
