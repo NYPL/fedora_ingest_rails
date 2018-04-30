@@ -68,13 +68,9 @@ IngestJob = Struct.new(:ingest_request_id) do
       end
 
       rels_ext = mms_client.rels_ext_for(uuid)
-      rels_indexed = rels_ext_index_client.post_solr_doc(uuid, rels_ext)
-      if rels_indexed == true
-        Delayed::Worker.logger.debug('Updated rels ext index', uuid: @ingest_request.uuid)
-      else
-        Delayed::Worker.logger.debug('Rels ext indexing failed', uuid: @ingest_request.uuid)
-      end
-
+      rels_for_indexing = mms_client.full_rels_ext_solr_docs_for(uuid)
+      rels_indexer_response = rels_ext_index_client.post_solr_doc(uuid, rels_for_indexing)
+      
       # Datastreams with info from the `Capture` Level
       fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
       digital_object.save
