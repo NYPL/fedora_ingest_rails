@@ -13,12 +13,12 @@ IngestJob = Struct.new(:ingest_request_id) do
     fedora_client = FedoraClient.new
     mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url,
                                user_name: Rails.application.secrets.mms_http_basic_username,
-                               password: Rails.application.secrets.mms_http_basic_password)                          
+                               password: Rails.application.secrets.mms_http_basic_password)
     rels_ext_index_client = RelsExtIndexClient.new(
                               rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url,
                               rels_ext_user_name: Rails.application.secrets.rels_ext_username,
                               rels_ext_password: Rails.application.secrets.rels_ext_password)
-    )
+
     # Fetch stuff from MMS
     mods              = mms_client.mods_for(@ingest_request.uuid)
     rights            = mms_client.rights_for(@ingest_request.uuid)
@@ -30,12 +30,12 @@ IngestJob = Struct.new(:ingest_request_id) do
       image_id = capture[:image_id]
 
       pid = "uuid:#{uuid}"
-      
+
       # Figure out if it is ok to release high res file. Handled by string in rights statement right now.
       # necessary for determining if we need to get master image permalinks.
       high_res_ok = "Release Source File for Free (i.e., high-res or master can be released to the public)"
       release_master = rights.to_s.scan(high_res_ok).present? if rights
-      
+
       digital_object = fedora_client.repository.find_or_initialize(pid)
       digital_object.label = extract_title_from_dublin_core(dublin_core)
       digital_object.save
@@ -70,7 +70,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       rels_indexed = rels_ext_index_client.post_solr_doc(uuid, rels_ext)
       if rels_indexed == true
         Delayed::Worker.logger.debug('Updated rels ext index', uuid: @ingest_request.uuid)
-      else 
+      else
         Delayed::Worker.logger.debug('Rels ext indexing failed', uuid: @ingest_request.uuid)
       end
 
