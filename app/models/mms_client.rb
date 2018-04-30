@@ -20,6 +20,10 @@ class MMSClient
     make_request_for('rels_ext', uuid)
   end
 
+  def full_rels_ext_solr_docs_for(uuid)
+    make_request_for('full_rels_ext_solr_docs', uuid)
+  end
+
   def dublin_core_for(uuid)
     make_request_for('dc', uuid)
   end
