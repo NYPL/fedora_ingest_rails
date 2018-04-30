@@ -13,8 +13,12 @@ IngestJob = Struct.new(:ingest_request_id) do
     fedora_client = FedoraClient.new
     mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url,
                                user_name: Rails.application.secrets.mms_http_basic_username,
-                               password: Rails.application.secrets.mms_http_basic_password)
-
+                               password: Rails.application.secrets.mms_http_basic_password)                          
+    rels_ext_index_client = RelsExtIndexClient.new(
+                              rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url,
+                              rels_ext_user_name: Rails.application.secrets.rels_ext_username,
+                              rels_ext_password: Rails.application.secrets.rels_ext_password)
+    )
     # Fetch stuff from MMS
     mods              = mms_client.mods_for(@ingest_request.uuid)
     rights            = mms_client.rights_for(@ingest_request.uuid)
@@ -63,6 +67,12 @@ IngestJob = Struct.new(:ingest_request_id) do
       end
 
       rels_ext = mms_client.rels_ext_for(uuid)
+      rels_indexed = rels_ext_index_client.post_solr_doc(uuid, rels_ext)
+      if rels_indexed == true
+        Delayed::Worker.logger.debug('Updated rels ext index', uuid: @ingest_request.uuid)
+      else 
+        Delayed::Worker.logger.debug('Rels ext indexing failed', uuid: @ingest_request.uuid)
+      end
 
       # Datastreams with info from the `Capture` Level
       fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
