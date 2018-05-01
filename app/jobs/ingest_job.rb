@@ -16,9 +16,7 @@ IngestJob = Struct.new(:ingest_request_id) do
                                user_name: Rails.application.secrets.mms_http_basic_username,
                                password: Rails.application.secrets.mms_http_basic_password)
     rels_ext_index_client = RelsExtIndexClient.new(
-                              rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url,
-                              rels_ext_user_name: Rails.application.secrets.rels_ext_username,
-                              rels_ext_password: Rails.application.secrets.rels_ext_password)
+                              rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url)
 
     # Fetch stuff from MMS
     mods              = mms_client.mods_for(@ingest_request.uuid)
