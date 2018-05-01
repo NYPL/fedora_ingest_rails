@@ -15,6 +15,7 @@ image_filestore:
   database: <%= ENV.fetch("IMAGE_FILESTORE_DATABASE_NAME") %>
   username: <%= ENV.fetch("IMAGE_FILESTORE_DATABASE_USER") %>
   password: <%= ENV.fetch("IMAGE_FILESTORE_DATABASE_PASSWORD") {nil} %>
+  reconnect: true
 
 ami_filestore:
   adapter: mysql2
@@ -22,7 +23,8 @@ ami_filestore:
   database: <%= ENV.fetch("AMI_FILESTORE_DATABASE_NAME") %>
   username: <%= ENV.fetch("AMI_FILESTORE_DATABASE_USER") %>
   password: <%= ENV.fetch("AMI_FILESTORE_DATABASE_PASSWORD") {nil} %>
-
+  reconnect: true
+  
 test:
   <<: *default
   database: fedora_ingest_rails_test
