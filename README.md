@@ -100,3 +100,7 @@ The approach is inspired by [this blog post](https://dev.mikamai.com/2016/05/17/
 ## Amazon & ECS Deployment Configuration
 
 See [Amazon And ECS](./documentation/amazon-and-ecs.md).
+
+## Debugging
+
+See [Debugging](./documentation/debugging.md).
