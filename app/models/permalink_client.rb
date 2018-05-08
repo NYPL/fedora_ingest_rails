@@ -31,7 +31,7 @@ class PermalinkClient
         return a["linkRecord"][0]["linkID"].to_s
       end
     else
-      throw RuntimeError.new("Error fetching link from link minter")
+      throw RuntimeError.new("Error fetching link from link minter. #{res.code}: #{res.body}")
     end
   end
 
@@ -41,7 +41,7 @@ class PermalinkClient
     if res.code.eql? "201"
       return res.body.to_s
     else
-      throw RuntimeError.new("Error minting link from link minter")
+      throw RuntimeError.new("Error minting link from link minter. #{res.code}: #{res.body}")
     end
   end
   
