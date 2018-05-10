@@ -5,7 +5,8 @@ require 'net/http/digest_auth'
 class PermalinkClient
   def initialize(options = {})
     @uuid = options[:uuid]
-    @base_links_url = ENV['LINK_BASE_URL']
+    @base_links_url = ENV['LINK_CREATE_BASE_URL']
+    @public_base_url = ENV['LINK_PUBLIC_BASE_URL']
     @basic_username = ENV['LINK_USERNAME']
     @basic_password = ENV['LINK_PASSWORD']
     @logger = NyplLogFormatter.new(STDOUT)
@@ -19,7 +20,7 @@ class PermalinkClient
     res = authed_request(uri,'POST')
     if res.code.eql? "201"
       @logger.info("Found or created permalink", url: not_permalink_string, mintedCode: res.body.to_s)
-      return "#{@base_links_url}/#{res.body.to_s}"
+      return "#{@public_base_url}/#{res.body.to_s}"
     else
       throw RuntimeError.new("Error minting link from link minter. #{res.code}: #{res.body}")
     end
