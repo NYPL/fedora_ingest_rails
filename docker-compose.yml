@@ -1,0 +1,12 @@
+version: '3'
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env.docker
+    volumes:
+      - '.:/home/app/fedora_ingest_rails'
+  postgres:
+    image:  postgres:9.4.14

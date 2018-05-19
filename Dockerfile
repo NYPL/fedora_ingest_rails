@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby25:0.9.32
+FROM phusion/passenger-ruby25:0.9.32 AS production
 
 # Set correct environment variables.
 ENV HOME /root
@@ -31,3 +31,7 @@ RUN rm -f /etc/service/nginx/down
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+FROM production AS development
+
+run cd /home/app/fedora_ingest_rails && bundle --with test development
