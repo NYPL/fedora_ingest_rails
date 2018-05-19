@@ -35,3 +35,5 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 FROM production AS development
 
 run cd /home/app/fedora_ingest_rails && bundle --with test development
+# It will be linked from localhost
+run rm -rf /home/app/fedora_ingest_rails/*
