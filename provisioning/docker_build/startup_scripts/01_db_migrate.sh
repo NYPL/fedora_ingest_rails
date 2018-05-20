@@ -1,2 +1,2 @@
 #!/bin/bash
-cd /home/app/fedora_ingest_rails && RAILS_ENV=production bundle exec rake db:create db:migrate
+cd /home/app/fedora_ingest_rails && RAILS_ENV=$RAILS_ENV bundle exec rake db:create db:migrate
