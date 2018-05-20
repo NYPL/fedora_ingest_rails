@@ -9,11 +9,11 @@
 
 /node_modules
 /yarn-error.log
-
+/database-data/postgres
 .byebug_history
 
 # Let's not bake secrets into our Docker images
-.env
+.env.docker
 
 # This messes with how phusion/passenger-ruby wants to install gems
 .ruby-version
