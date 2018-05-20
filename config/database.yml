@@ -7,7 +7,9 @@ default: &default
 
 development:
   <<: *default
+  host: postgres
   database: fedora_ingest_rails_development
+  username: postgres
 
 image_filestore:
   adapter: mysql2
@@ -24,9 +26,13 @@ ami_filestore:
   username: <%= ENV.fetch("AMI_FILESTORE_DATABASE_USER") %>
   password: <%= ENV.fetch("AMI_FILESTORE_DATABASE_PASSWORD") {nil} %>
   reconnect: true
-  
+
 test:
   <<: *default
+  host: postgres
+  database: fedora_ingest_rails_test
+  username: postgres
+
   database: fedora_ingest_rails_test
 
 production:

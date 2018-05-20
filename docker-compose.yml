@@ -8,5 +8,13 @@ services:
       - ./.env.docker
     volumes:
       - '.:/home/app/fedora_ingest_rails'
+    depends_on:
+      - postgres
+    ports:
+      - '3000:80'
   postgres:
     image:  postgres:9.4.14
+    volumes:
+      - ./database-data/postgres:/var/lib/postgresql/data
+    ports:
+      - '5432'
