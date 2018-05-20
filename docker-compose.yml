@@ -1,15 +1,17 @@
-version: '3'
+version: '3.4'
 services:
   webapp:
     build:
       context: .
       dockerfile: Dockerfile
+      target: development
     env_file:
       - ./.env.docker
     volumes:
       - '.:/home/app/fedora_ingest_rails'
     depends_on:
       - postgres
+      - fedora
     ports:
       - '3000:80'
   postgres:
@@ -18,3 +20,9 @@ services:
       - ./database-data/postgres:/var/lib/postgresql/data
     ports:
       - '5432'
+  fedora:
+    build:
+      context: ../fedoracommons-3.4.2-dockerized
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
