@@ -32,7 +32,7 @@ test:
   <<: *default
   host: <%= ENV.fetch('INGESTOR_TEST_DATABASE_HOST') { '127.0.0.1' } %>
   database: fedora_ingest_rails_test
-  username: <%= ENV.fetch('INGESTOR_TEST_DATABASE_USER') {'root'} %>
+  username: postgres
 
 production:
   <<: *default
