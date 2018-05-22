@@ -10,7 +10,7 @@ services:
     volumes:
       - '.:/home/app/fedora_ingest_rails'
     ports:
-      - '3000:80'  
+      - '3001:80'  
     depends_on:
       - postgres
       - fedora
