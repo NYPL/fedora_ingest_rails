@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
       target: development
     env_file:
-      - ./.env.docker
+      - ./.env
     volumes:
       - '.:/home/app/fedora_ingest_rails'
     ports:
@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
       target: development
     env_file:
-      - ./.env.docker
+      - ./.env
     volumes:
       - '.:/home/app/fedora_ingest_rails'
     entrypoint: /home/app/fedora_ingest_rails/bin/delayed_job run
