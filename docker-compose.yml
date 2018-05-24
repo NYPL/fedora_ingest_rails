@@ -14,6 +14,13 @@ services:
     depends_on:
       - postgres
       - fedora
+      - filestore-db
+  filestore-db:
+    build:
+      context: ../filestore_databases_docker
+      dockerfile: Dockerfile
+    ports:
+      - '3306:3306'
   worker:
     build:
       context: .
@@ -27,6 +34,7 @@ services:
     depends_on:
       - postgres
       - fedora
+      - filestore-db
   postgres:
     image:  postgres:9.4.14
     volumes:

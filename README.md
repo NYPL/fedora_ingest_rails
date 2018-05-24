@@ -50,51 +50,14 @@ The app's database persists in `./database-data/postgres` of _your_ machine.
 
 Our [dockerized Fedora instance](https://github.com/NYPL/fedoracommons-3.4.2-dockerized) reachable at http://localhost:8080.
 
+#### Filestore Databases
+
+It brings up the moving & still image MySQL filestore databases.
+If you want to connect to the real thing, than change your .env file.
+
 ## Testing
 
-`docker run --workdir /home/app/fedora_ingest_rails --env-file .env fedora_ingest_rails_webapp /usr/bin/bundle exec rspec`
-
-### Creating and Bootstrapping Databases
-
-In addition to its own database, this application communicates to
-
-* A MySQL database that stores the images that are in isilon.
-* A MySQL database that stores audio/videos that are in isilon.
-
-They are in different databases for historic reasons and one
-day, they should be combined.
-
-#### Bootstrapping the image filestore database
-
-1. Create MySQL Database
-  - `create database ami_filestore_development;`
-  - `create database ami_filestore_test;`
-  - `create database image_filestore_development;`
-  - `create database image_filestore_test;`
-
-2. Load its contents with a command like `mysql -uroot DBNAME < ./db/resources/image_filestore_schema.sql`
-
-#### Bootstrapping the AMI filestore database
-
-1. Create a MySQL database
-2. Load its contents with a command like `mysql -uroot DBNAME < ./db/resources/ami_filestore_schema.sql`
-
-### Setting Environment Variables
-
-Copy `./.env.example` to `./.env`.
-
-Fill it out with:
-
-* Credentials to the two databases mentioned above.
-* Host and credentials for making requests to MMS's API.
-* Host and credentials for connecting to Fedora.
-
-## Running Delayed Job
-
-The rails application accepts work by being hit by HTTP requests but
-does all its hard work in DelayedJob workers. This allows it to answer
-requests quickly while being horizontally scalable by spinning up
-additional workers.
+`docker run --workdir /home/app/fedora_ingest_rails --env-file .env fedora_ingest_rails_webapp bundle exec rspec`
 
 ## Git Workflow & Deployment
 
