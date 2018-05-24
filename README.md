@@ -28,7 +28,8 @@ As time goes on, we're trying to Dockerize more dependencies and have `docker-co
 one-stop shopping for running locally. **You can edit code as on your machine and expect it to hot-reload like you usually would.
 Forget Docker is there.**
 
-1. Clone [NYPL/fedoracommons-3.4.2-dockerized](https://github.com/NYPL/fedoracommons-3.4.2-dockerized) in the directory above this.
+1. Clone this repo.
+1. Clone [NYPL/fedoracommons-3.4.2-dockerized](https://github.com/NYPL/fedoracommons-3.4.2-dockerized) & [NYPL/filestore_databases_docker](https://github.com/NYPL/filestore_databases_docker) in the directory above this. (make them siblings of this app)
 1. In this app's root directory `./.env.example` to `./.env` and fill it out.
 1. Ensure MMS is running on port 3000
 1. `docker-compose up --scale worker=2`
