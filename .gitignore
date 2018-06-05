@@ -12,8 +12,10 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
-/database-data/postgres
-/database-data/mysql
+/database-data/postgres/*
+!/database-data/postgres/.keep
+/database-data/mysql/*
+!/database-data/mysql/.keep
 /node_modules
 /yarn-error.log
 
