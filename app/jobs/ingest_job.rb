@@ -47,7 +47,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       fedora_client.repository.add_datastream(pid: pid, dsid: 'DC',      content: dublin_core, formatURI: 'http://www.openarchives.org/OAI/2.0/oai_dc/', mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'DC XML record for this object')
 
       # Datastreams with info from the filestore database of image derivatives
-      image_filestore_entries = ImageFilestoreEntry.where(file_id: capture[:image_id])
+      image_filestore_entries = ImageFilestoreEntry.where(file_id: capture[:image_id], status: 4)
       image_filestore_entries.each do |f|
         file_uuid   = f.uuid
         file_label  = f.get_type(f.type)
@@ -68,7 +68,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       rels_ext = mms_client.rels_ext_for(uuid)
       rels_for_indexing = mms_client.full_rels_ext_solr_docs_for(uuid)
       rels_indexer_response = rels_ext_index_client.post_solr_doc(uuid, rels_for_indexing)
-      
+
       # Datastreams with info from the `Capture` Level
       fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
       digital_object.save
