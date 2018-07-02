@@ -72,10 +72,10 @@ IngestJob = Struct.new(:ingest_request_id) do
       # Datastreams with info from the `Capture` Level
       fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
       digital_object.save
-      Delayed::Worker.logger.debug("ingested capture #{uuid}", uuid: @ingest_request.uuid)
+      Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: @ingest_request.uuid)
     end
 
-    Delayed::Worker.logger.debug('Done ingesting all captures of Item', uuid: @ingest_request.uuid)
+    Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: @ingest_request.uuid)
   end
 
   private
