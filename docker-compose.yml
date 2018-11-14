@@ -1,0 +1,51 @@
+version: '3.4'
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - ./.env
+    volumes:
+      - '.:/home/app/fedora_ingest_rails'
+    ports:
+      - '3001:80'
+    depends_on:
+      - postgres
+      - fedora
+      - filestore-db
+  filestore-db:
+    build:
+      context: ../filestore_databases_docker
+      dockerfile: Dockerfile
+    volumes:
+      - ./database-data/mysql:/var/lib/mysql
+    ports:
+      - '3306:3306'
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - ./.env
+    volumes:
+      - '.:/home/app/fedora_ingest_rails'
+    entrypoint: /home/app/fedora_ingest_rails/bin/delayed_job run
+    depends_on:
+      - postgres
+      - fedora
+      - filestore-db
+  postgres:
+    image:  postgres:9.4.14
+    volumes:
+      - ./database-data/postgres:/var/lib/postgresql/data
+    ports:
+      - '5432'
+  fedora:
+    build:
+      context: ../fedoracommons-3.4.2-dockerized
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'

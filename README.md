@@ -9,7 +9,7 @@
 
 This is a Rails port of the Java application [FedoraIngest](https://github.com/NYPL/FedoraIngest/blob/master/README.md).
 
-It an endpoint that [MMS](https://bitbucket.org/NYPL/mms/) hits (with
+It has an endpoint that [MMS](https://bitbucket.org/NYPL/mms/) hits (with
 an items' UUIDs as a parameter). It records the UUID in an internal database.
 
 Then (via DelayedJob):
@@ -17,53 +17,70 @@ Then (via DelayedJob):
 * Iterates through those UUIDS and asks MMS for the latest information.
   - Asks other services (like Filestore DB) for more information about the item.
 
-* Turns around and posts that information to Fedora.
+* Turns around and posts that information to Fedora & RELS-EXT Solr
 
 This decouples MMS from direct communication with Fedora in the event of Fedora API changes or downtime.
 
-## Installing
+## Installing & Running
 
-### Creating and boostrapping Databases
+This application uses [docker-compose.yml](./docker-compose.yml) to for _most_ of what it needs.
+As time goes on, we'll Dockerize more dependencies and have `docker-compose` be
+one-stop shopping for running locally. **You can edit code as on your machine and expect it to hot-reload like you usually would.
+Forget Docker is there.**
 
-In addition to its own database, this application communicates to
+### Setup
 
-* A MySQL database that stores the images that are in isilon.
-* A MySQL database that stores audio/videos that are in isilon.
+1. Clone this repo.
+1. Clone [NYPL/fedoracommons-3.4.2-dockerized](https://github.com/NYPL/fedoracommons-3.4.2-dockerized) & [NYPL/filestore_databases_docker](https://github.com/NYPL/filestore_databases_docker) in the directory above this. (make them siblings of this app)
+1. In this app's root directory `cp ./.env.example ./.env` and fill it out. (See directions in `.env.example`)
 
-They are in different databases for historic reasons and one
-day, they should be combined.
+#### Setting Up Databases (first run)
 
-#### Bootstrapping the image filestore database
+1.  Run `docker-compose up filestore-db postgres`, wait, let the databases be created, and synched/mounted to ./database-data.
+The output will slow down after ~30 seconds.
+1.  Now, in another terminal run `docker-compose run webapp`, this will create the database and run the migrations.
+1.  Once the migrations end you can `crtl-z` and stop the services
 
-1. Create MySQL Database
-  - `create database ami_filestore_development;`
-  - `create database ami_filestore_test;`
-  - `create database image_filestore_development;`
-  - `create database image_filestore_test;`
+### Running
 
-2. Load its contents with a command like `mysql -uroot DBNAME < ./db/resources/image_filestore_schema.sql`
+`docker-compose up --scale worker=2`
 
-#### Bootstrapping the AMI filestore database
+### What Does Compose Spin Up?
 
-1. Create a MySQL database
-2. Load its contents with a command like `mysql -uroot DBNAME < ./db/resources/ami_filestore_schema.sql`
+It brings up the following services:
 
-### Setting Environment Variables
+#### The App Itself
 
-Copy `./.env.example` to `./.env`.
+The app reachable at http://localhost:3000.
+It also spins up 2 workers.
 
-Fill it out with:
+#### PostgreSQL
 
-* Credentials to the two databases mentioned above.
-* Host and credentials for making requests to MMS's API.
-* Host and credentials for connecting to Fedora.
+The app's database persists in `./database-data/postgres` of _your_ machine.
 
-## Running Delayed Job
+#### Fedora
 
-The rails application accepts work by being hit by HTTP requests but
-does all its hard work in DelayedJob workers. This allows it to answer
-requests quickly while being horizontally scalable by spinning up
-additional workers.
+Our [dockerized Fedora instance](https://github.com/NYPL/fedoracommons-3.4.2-dockerized) reachable at http://localhost:8080.
+
+#### Filestore Databases
+
+The app's database persists in `./database-data/postgres` of _your_ machine.
+
+It brings up the moving & still image MySQL filestore databases.
+Change your `.env` file if you want to connect to a remote filestore.
+
+## Testing
+
+Running tests is a little tedious, we should look into a way to run this
+in one shot from the host OS.
+
+With the whole stack running...
+
+1. Get the CONTAINER ID of fedora_ingest_rails_webapp with `docker ps`
+1. `docker exec -it container_id /bin/bash`
+1. (inside container)`su app`
+1. `cd /home/app/fedora_ingest_rails/`
+1.  `RAILS_ENV=test bundle exec rspec`
 
 ## Git Workflow & Deployment
 
@@ -104,4 +121,5 @@ See [Amazon And ECS](./documentation/amazon-and-ecs.md).
 
 ## Debugging
 
-See [Debugging](./documentation/debugging.md).
+You may want to start a rails console or hit an endpoint for debugging purposes.  
+See the [debugging documentation](./documentation/debugging.md).
