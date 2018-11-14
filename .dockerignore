@@ -9,7 +9,8 @@
 
 /node_modules
 /yarn-error.log
-
+/database-data/postgres
+/database-data/mysql
 .byebug_history
 
 # Let's not bake secrets into our Docker images
