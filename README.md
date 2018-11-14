@@ -28,11 +28,22 @@ As time goes on, we'll Dockerize more dependencies and have `docker-compose` be
 one-stop shopping for running locally. **You can edit code as on your machine and expect it to hot-reload like you usually would.
 Forget Docker is there.**
 
+### Setup
+
 1. Clone this repo.
 1. Clone [NYPL/fedoracommons-3.4.2-dockerized](https://github.com/NYPL/fedoracommons-3.4.2-dockerized) & [NYPL/filestore_databases_docker](https://github.com/NYPL/filestore_databases_docker) in the directory above this. (make them siblings of this app)
 1. In this app's root directory `cp ./.env.example ./.env` and fill it out. (See directions in `.env.example`)
-1. Ensure MMS is running on port 3000
-1. `docker-compose up --scale worker=2`
+
+#### Setting Up Databases (first run)
+
+1.  Run `docker-compose up filestore-db postgres`, wait, let the databases be created, and synched/mounted to ./database-data.
+The output will slow down after ~30 seconds.
+1.  Now, in another terminal run `docker-compose run webapp`, this will create the database and run the migrations.
+1.  Once the migrations end you can `crtl-z` and stop the services
+
+### Running
+
+`docker-compose up --scale worker=2`
 
 ### What Does Compose Spin Up?
 
@@ -110,4 +121,5 @@ See [Amazon And ECS](./documentation/amazon-and-ecs.md).
 
 ## Debugging
 
-See [Debugging](./documentation/debugging.md).
+You may want to start a rails console or hit an endpoint for debugging purposes.  
+See the [debugging documentation](./documentation/debugging.md).
