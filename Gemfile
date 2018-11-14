@@ -29,7 +29,6 @@ group :test do
 end
 
 group :development, :test do
-  gem 'dotenv-rails', '~> 2.2', '>= 2.2.1'
   gem 'puma', '~> 3.7'
   gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
   gem 'rspec-rails', '~> 3.7', '>= 3.7.2'
