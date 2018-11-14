@@ -24,10 +24,7 @@ services:
     ports:
       - '3306:3306'
   worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: development
+    image: 'fedora_ingest_rails_webapp:latest'
     env_file:
       - ./.env
     volumes:
