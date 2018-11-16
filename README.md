@@ -80,7 +80,7 @@ With the whole stack running...
 1. `docker exec -it container_id /bin/bash`
 1. (inside container)`su app`
 1. `cd /home/app/fedora_ingest_rails/`
-1.  `RAILS_ENV=test bundle exec rspec`
+1.  `bundle exec rspec`
 
 ## Git Workflow & Deployment
 
