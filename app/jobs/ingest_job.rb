@@ -87,7 +87,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       request_tilecutting_for(uuids_for_tilecutting) if uuids_for_tilecutting.present?
       Delayed::Worker.logger.info("Sent uuids for tilecutting. #{uuids}", uuids: uuids_for_tilecutting)
     rescue Exception => e
-      Delayed::Worker.logger.error("Failed to send tilecutting request for #{uuids}", uuids: uuids_for_tilecutting)
+      Delayed::Worker.logger.error("Failed to send tilecutting request for #{uuids}, exception: #{e}", uuids: uuids_for_tilecutting)
     end
 
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: @ingest_request.uuid)
