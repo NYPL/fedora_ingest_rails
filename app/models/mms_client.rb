@@ -44,7 +44,7 @@ class MMSClient
 
   private
 
-  # This DRYs up the pattern of making a request and throwing an exception for bad trsponses
+  # This DRYs up the pattern of making a request and throwing an exception for bad responses
   def make_request_for(export_type, uuid, params = {})
     response = authed_request.get(export_url_for(export_type, uuid), params: params)
     if response.code >= 400

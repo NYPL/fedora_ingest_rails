@@ -22,6 +22,9 @@ IngestJob = Struct.new(:ingest_request_id) do
     mods              = mms_client.mods_for(@ingest_request.uuid)
     dublin_core       = mms_client.dublin_core_for(@ingest_request.uuid)
     type_of_resource  = Nokogiri::XML(mods).css('typeOfResource:first').text
+    
+    # Create an array of uuids to batch send to tilecutter
+    uuids_for_tilecutting = []
 
     mms_client.captures_for_item(@ingest_request.uuid).each do |capture|
       uuid = capture[:uuid]
@@ -29,6 +32,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       
       # Pull rights for each capture. Needed because now we manage captures on an atomic level. 
       rights = mms_client.rights_for(uuid)
+      uuids_for_tilecutting << uuid if approved_for_tilecutting?(rights_export, uuid)
 
       pid = "uuid:#{uuid}"
 
@@ -78,6 +82,13 @@ IngestJob = Struct.new(:ingest_request_id) do
       digital_object.save
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: @ingest_request.uuid)
     end
+    
+    begin
+      request_tilecutting_for(uuids_for_tilecutting) if uuids_for_tilecutting.present?
+      Delayed::Worker.logger.info("Sent uuids for tilecutting. #{uuids}", uuids: uuids_for_tilecutting)
+    rescue Exception => e
+      Delayed::Worker.logger.error("Failed to send tilecutting request for #{uuids}", uuids: uuids_for_tilecutting)
+    end
 
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: @ingest_request.uuid)
   end
@@ -87,5 +98,36 @@ IngestJob = Struct.new(:ingest_request_id) do
   def extract_title_from_dublin_core(dublin_core)
     Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip
   end
+  
+  # read the xml given as the rights export; if it matches the public domain profile, return true
+  def approved_for_tilecutting?(rights_export, uuid)
+    public_domain_codes = ['PPD100','PPD','PDUSG','PDREN','PDNCN','PDCDPP','PDADD','ICNYPL']
+    copyright_status = Nokogiri::XML(rights_export).remove_namespaces!.xpath('//use[@type="copyright_status"]').text.strip
+    public_domain_codes.include?(copyright_status)
+  end
+  
+  # Send an array of uuids to the tilecutting service
+  # The uuids here can be representative of captures, items, containers, or collections. ('inputCaptures' can be misleading, don't let it fool you.)
+  # The service provides no useful feedback at present, so the best we can do is send them.
+  def request_tilecutting_for(uuids)
+    require 'net/http'
+    require 'uri'
+    require 'json'
 
+    uri = URI.parse(IMAGE_TILECUTTING_SERVICE_URL)
+    request = Net::HTTP::Post.new(uri)
+    request.content_type = "application/json"
+    request["Accept"] = "application/json"
+    request.body = JSON.dump({
+      "inputCaptures" => uuids
+    })
+
+    req_options = {
+      use_ssl: uri.scheme == "https",
+    }
+
+    response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      http.request(request)
+    end
+  end
 end
