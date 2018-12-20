@@ -1,9 +1,8 @@
-| Branch        | Status                                                                                                                                   |
-|:--------------|:-----------------------------------------------------------------------------------------------------------------------------------------|
-| `master`      | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=master)](https://travis-ci.org/NYPL/fedora_ingest_rails)      |
-| `development` | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=development)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
-| `qa`          | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)          |
-| `production`  | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=production)](https://travis-ci.org/NYPL/fedora_ingest_rails)  |
+| Branch       | Status                                                                                                                                  |
+|:-------------|:----------------------------------------------------------------------------------------------------------------------------------------|
+| `master`     | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=master)](https://travis-ci.org/NYPL/fedora_ingest_rails)     |
+| `qa`         | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)         |
+| `production` | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=production)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
 
 ## Fedora Ingest Rails
 
@@ -80,7 +79,7 @@ With the whole stack running...
 1. `docker exec -it container_id /bin/bash`
 1. (inside container)`su app`
 1. `cd /home/app/fedora_ingest_rails/`
-1.  `RAILS_ENV=test bundle exec rspec`
+1.  `bundle exec rspec`
 
 ## Git Workflow & Deployment
 
@@ -97,7 +96,7 @@ Our branches (in order or stability are):
 
 1. Feature branches are cut from `master`.
 2. Once the feature branch is ready to be merged, file a pull request of the branch _into_ master.
-3. We 'promote' branches by merging from the less mature branch to the more mature branch. (master => development => qa => production) 
+3. We 'promote' branches by merging from the less mature branch to the more mature branch. (master => development => qa => production)
 
 ### Deploying
 
