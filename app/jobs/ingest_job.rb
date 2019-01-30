@@ -96,11 +96,11 @@ IngestJob = Struct.new(:ingest_request_id) do
   private
 
   def extract_title_from_dublin_core(dublin_core)
-    Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip
+    Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip.truncate(250, separator: " ...")
   end
   
   # read the xml given as the rights export; if it matches the public domain profile, return true
-  def approved_for_tilecutting?(rights_export, uuid)
+  def permits_tilecutting?(rights_export, uuid)
     public_domain_codes = ['PPD100','PPD','PDUSG','PDREN','PDNCN','PDCDPP','PDADD','ICNYPL']
     copyright_status = Nokogiri::XML(rights_export).remove_namespaces!.xpath('//use[@type="copyright_status"]').text.strip
     public_domain_codes.include?(copyright_status)
