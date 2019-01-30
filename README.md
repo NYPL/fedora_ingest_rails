@@ -1,8 +1,9 @@
-| Branch        | Status                                                                                                                                   |
-|:--------------|:-----------------------------------------------------------------------------------------------------------------------------------------|
-| `master`      | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=master)](https://travis-ci.org/NYPL/fedora_ingest_rails)      |
-| `qa`          | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)          |
-| `production`  | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=production)](https://travis-ci.org/NYPL/fedora_ingest_rails)  |
+| Branch       | Status                                                                                                                                  |
+|:-------------|:----------------------------------------------------------------------------------------------------------------------------------------|
+| `master`     | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=master)](https://travis-ci.org/NYPL/fedora_ingest_rails)     |
+| `qa`         | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)         |
+| `production` | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=production)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
+
 
 ## Fedora Ingest Rails
 
@@ -79,7 +80,7 @@ With the whole stack running...
 1. `docker exec -it container_id /bin/bash`
 1. (inside container)`su app`
 1. `cd /home/app/fedora_ingest_rails/`
-1.  `RAILS_ENV=test bundle exec rspec`
+1.  `bundle exec rspec`
 
 ## Git Workflow & Deployment
 
