@@ -85,7 +85,7 @@ IngestJob = Struct.new(:ingest_request_id) do
   private
 
   def extract_title_from_dublin_core(dublin_core)
-    Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip
+    Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip.truncate(250, separator: " ...")
   end
 
 end
