@@ -4,6 +4,7 @@
 | `qa`         | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)         |
 | `production` | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=production)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
 
+
 ## Fedora Ingest Rails
 
 This is a Rails port of the Java application [FedoraIngest](https://github.com/NYPL/FedoraIngest/blob/master/README.md).
@@ -88,7 +89,6 @@ Our branches (in order or stability are):
 | Branch      | Environment | AWS Account     |
 |:------------|:------------|:----------------|
 | master      | none        | none            |
-| development | development | aws-sandbox     |
 | qa          | qa          | aws-digital-dev |
 | production  | production  | aws-digital-dev |
 
@@ -96,7 +96,7 @@ Our branches (in order or stability are):
 
 1. Feature branches are cut from `master`.
 2. Once the feature branch is ready to be merged, file a pull request of the branch _into_ master.
-3. We 'promote' branches by merging from the less mature branch to the more mature branch. (master => development => qa => production)
+3. We 'promote' branches by merging from the less mature branch to the more mature branch. (master => qa => production) 
 
 ### Deploying
 
@@ -106,8 +106,7 @@ that branch.
 
 | Merge from    | Into          | Deploys to (after tests pass) |
 |:--------------|:--------------|:------------------------------|
-| `master`      | `development` | development env               |
-| `development` | `qa`          | qa env                        |
+| `master`      | `qa`          | qa env                        |
 | `qa`          | `production`  | production env                |
 
 For insight into how CD works look at [.travis.yml](./.travis.yml) and the
