@@ -6,7 +6,6 @@ class MMSClient
     @url = options[:mms_url]
     @basic_username = options[:user_name]
     @basic_password = options[:password]
-    @logger = NyplLogFormatter.new(STDOUT)
   end
 
   def mods_for(uuid)
@@ -51,7 +50,6 @@ class MMSClient
     
     # If record has been deleted in MMS remove it from RELS_EXT index because no one else will.
     if response.code == 410
-      @logger.warn("Deleted record found. Deleting rels ext solr for #{uuid}")
       rels_ext_index_client = RelsExtIndexClient.new(rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url)
       rels_ext_index_client.remove_doc_for(uuid)
     if response.code >= 400
