@@ -21,9 +21,8 @@ class RelsExtIndexClient
     resp["response"] if resp["response"]
   end
 
-  def remove_childless_parents(old_doc, new_doc)
-    query = 'uuid:12345'
-    @solr.delete_by_query query
+  def remove_doc_for(uuid)
+    @solr.delete_by_query "uuid:#{uuid}"
     @solr.commit
   end
 end
