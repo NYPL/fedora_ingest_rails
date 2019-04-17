@@ -52,7 +52,7 @@ class MMSClient
     if response.code == 410
       rels_ext_index_client = RelsExtIndexClient.new(rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url)
       rels_ext_index_client.remove_doc_for(uuid)
-    if response.code >= 400
+    elsif response.code >= 400
       throw RuntimeError.new("Error getting #{export_type} for UUID #{uuid}: #{response.code} #{response}")
     else
       response.to_s
