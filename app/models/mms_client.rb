@@ -44,14 +44,18 @@ class MMSClient
 
   private
 
-  # This DRYs up the pattern of making a request and throwing an exception for bad trsponses
+  # This DRYs up the pattern of making a request and throwing an exception for bad responses
   def make_request_for(export_type, uuid, params = {})
     response = authed_request.get(export_url_for(export_type, uuid), params: params)
     
-    # If record has been deleted in MMS remove it from RELS_EXT index because no one else will.
-    if response.code == 410
+    # If record has been deleted in MMS remove it from RELS_EXT index because no one else will. But ONLY do this for rels_ext. (I.e., do it once.)
+    if response.code == 410 && export_type == 'rels_ext'
       rels_ext_index_client = RelsExtIndexClient.new(rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url)
       rels_ext_index_client.remove_doc_for(uuid)
+      response.code.to_s
+    elsif response.code == 410
+      # return empty for other exports to let the update go through.
+      ""
     elsif response.code >= 400
       throw RuntimeError.new("Error getting #{export_type} for UUID #{uuid}: #{response.code} #{response}")
     else
