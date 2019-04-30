@@ -83,7 +83,9 @@ IngestJob = Struct.new(:ingest_request_id) do
       digital_object.save
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: @ingest_request.uuid)
     end
-
+    
+    rels_ext_index_client.commit_index_changes
+    
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: @ingest_request.uuid)
   end
 
