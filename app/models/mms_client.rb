@@ -50,12 +50,13 @@ class MMSClient
     
     # If record has been deleted in MMS remove it from RELS_EXT index because no one else will. But ONLY do this for rels_ext. (I.e., do it once.)
     if response.code == 410 && export_type == 'rels_ext'
-      rels_ext_index_client = RelsExtIndexClient.new(rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url)
-      rels_ext_index_client.remove_doc_for(uuid)
       response.code.to_s
+      
+    # when finding 410 for other exports, return blank response to let the update go through.  
     elsif response.code == 410
-      # return empty for other exports to let the update go through.
       ""
+    
+    # otherwise, throw an error
     elsif response.code >= 400
       throw RuntimeError.new("Error getting #{export_type} for UUID #{uuid}: #{response.code} #{response}")
     else
