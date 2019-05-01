@@ -68,17 +68,25 @@ IngestJob = Struct.new(:ingest_request_id) do
           fedora_client.repository.add_datastream(datastream_options)
         end
       end
-
+      
       rels_ext = mms_client.rels_ext_for(uuid)
-      rels_for_indexing = mms_client.full_rels_ext_solr_docs_for(uuid)
-      rels_indexer_response = rels_ext_index_client.post_solr_doc(uuid, rels_for_indexing)
-
+      if rels_ext == "410"
+        rels_ext = ""
+        rels_ext_index_client.remove_doc_for(uuid)
+      else
+        rels_for_indexing = mms_client.full_rels_ext_solr_docs_for(uuid)
+        rels_indexer_response = rels_ext_index_client.post_solr_doc(uuid, rels_for_indexing)
+      end
+      
       # Datastreams with info from the `Capture` Level
       fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
+      
       digital_object.save
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: @ingest_request.uuid)
     end
-
+    
+    rels_ext_index_client.commit_index_changes
+    
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: @ingest_request.uuid)
   end
 

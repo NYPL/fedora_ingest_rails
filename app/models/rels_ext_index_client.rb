@@ -12,7 +12,6 @@ class RelsExtIndexClient
     json_docs = JSON.parse(solr_docs_array)
     json_docs.each { |doc| doc['lastUpdate_dt'] = Time.now.utc.iso8601 }
     @solr.add json_docs
-    @solr.commit
   end
 
   def get_doc(uuid)
@@ -21,9 +20,11 @@ class RelsExtIndexClient
     resp["response"] if resp["response"]
   end
 
-  def remove_childless_parents(old_doc, new_doc)
-    query = 'uuid:12345'
-    @solr.delete_by_query query
+  def remove_doc_for(uuid)
+    @solr.delete_by_query "uuid:#{uuid}"
+  end
+  
+  def commit_index_changes
     @solr.commit
   end
 end
