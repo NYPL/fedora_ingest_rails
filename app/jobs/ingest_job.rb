@@ -70,8 +70,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       end
       
       rels_ext = mms_client.rels_ext_for(uuid)
-      if rels_ext == "410"
-        rels_ext = nil
+      if rels_ext.blank?
         rels_ext_index_client.remove_doc_for(uuid)
       else
         rels_for_indexing = mms_client.full_rels_ext_solr_docs_for(uuid)

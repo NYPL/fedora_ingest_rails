@@ -48,13 +48,9 @@ class MMSClient
   #   - A 410 response means the capture is part of a deleted Item.
   def make_request_for(export_type, uuid, params = {})
     response = authed_request.get(export_url_for(export_type, uuid), params: params)
-
-    # If record has been deleted in MMS remove it from RELS_EXT index because no one else will. But ONLY do this for rels_ext. (I.e., do it once.)
-    if response.code == 410 && export_type == 'rels_ext'
-      response.code.to_s
-
-    # when finding 410 for other exports, return blank response to let the update go through.
-    elsif response.code == 410
+    
+    # Return nil for things that have moved permanently. This will allow the update to go through in a limited fashion.
+    if response.code == 410
       nil
 
     # otherwise, throw an error
