@@ -55,7 +55,7 @@ class MMSClient
 
     # when finding 410 for other exports, return blank response to let the update go through.
     elsif response.code == 410
-      ""
+      nil
 
     # otherwise, throw an error
     elsif response.code >= 400

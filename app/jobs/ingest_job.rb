@@ -44,11 +44,11 @@ IngestJob = Struct.new(:ingest_request_id) do
       digital_object.models << 'info:fedora/nypl-model:image' # KK TODO: Ask JV why we do this and if it should apply to AMI.
 
       # Datastreams with info from the `Item` Level
-      fedora_client.repository.add_datastream(pid: pid, dsid: 'MODSXML', content: mods, mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'MODS XML record for this object')
-      fedora_client.repository.add_datastream(pid: pid, dsid: 'DC',      content: dublin_core, formatURI: 'http://www.openarchives.org/OAI/2.0/oai_dc/', mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'DC XML record for this object')
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'MODSXML', content: mods, mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'MODS XML record for this object') if mods.present?
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'DC',      content: dublin_core, formatURI: 'http://www.openarchives.org/OAI/2.0/oai_dc/', mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'DC XML record for this object') if dublin_core.present?
       
       # Datastreams with info from the `Capture` level 
-      fedora_client.repository.add_datastream(pid: pid, dsid: 'RIGHTS',  content: rights, mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'Rights XML record for this object')
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'RIGHTS',  content: rights, mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'Rights XML record for this object') if rights.present?
 
       # Datastreams with info from the filestore database of image derivatives
       image_filestore_entries = ImageFilestoreEntry.where(file_id: capture[:image_id], status: 4)
@@ -71,7 +71,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       
       rels_ext = mms_client.rels_ext_for(uuid)
       if rels_ext == "410"
-        rels_ext = ""
+        rels_ext = nil
         rels_ext_index_client.remove_doc_for(uuid)
       else
         rels_for_indexing = mms_client.full_rels_ext_solr_docs_for(uuid)
@@ -79,7 +79,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       end
       
       # Datastreams with info from the `Capture` Level
-      fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
+      fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object') if rels_ext.present?
       
       digital_object.save
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: @ingest_request.uuid)
