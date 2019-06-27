@@ -104,10 +104,10 @@ We use Travis for continuous deployment.
 Merging to certain branches automatically deploys to the environment associated to
 that branch.
 
-| Merge from    | Into          | Deploys to (after tests pass) |
-|:--------------|:--------------|:------------------------------|
-| `master`      | `qa`          | qa env                        |
-| `qa`          | `production`  | production env                |
+| Merge from | Into         | Deploys to (after tests pass) |
+|:-----------|:-------------|:------------------------------|
+| `master`   | `qa`         | qa env                        |
+| `qa`       | `production` | production env                |
 
 For insight into how CD works look at [.travis.yml](./.travis.yml) and the
 [provisioning/travis_ci_and_cd](./provisioning/travis_ci_and_cd) directory.
