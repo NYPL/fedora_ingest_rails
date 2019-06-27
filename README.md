@@ -86,11 +86,11 @@ With the whole stack running...
 
 Our branches (in order or stability are):
 
-| Branch      | Environment | AWS Account     |
-|:------------|:------------|:----------------|
-| master      | none        | none            |
-| qa          | qa          | aws-digital-dev |
-| production  | production  | aws-digital-dev |
+| Branch     | Environment | AWS Account      |
+|:-----------|:------------|:-----------------|
+| master     | none        | none             |
+| qa         | qa          | nypl-digital-dev |
+| production | production  | nypl-digital-dev |
 
 ### Cutting A Feature Branch
 
