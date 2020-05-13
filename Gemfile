@@ -7,7 +7,7 @@ end
 
 gem 'rails', '~> 5.1.5'
 gem 'pg', '>= 0.18', '< 2.0'
-gem 'sass-rails', '~> 5.0'
+# gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'delayed_job_active_record', '~> 4.1', '>= 4.1.2'
 gem 'daemons', '~> 1.2', '>= 1.2.6'
