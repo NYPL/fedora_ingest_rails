@@ -38,7 +38,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       release_master = rights.to_s.scan(high_res_ok).present? if rights
 
       digital_object = fedora_client.repository.find_or_initialize(pid)
-      digital_object.label = extract_title_from_dublin_core(dublin_core)
+      digital_object.label = extract_title_from_dublin_core(dublin_core)[0..249]
       digital_object.save
       ##  For some reason this can only be done on saved objects
       digital_object.models << 'info:fedora/nypl-model:image' # KK TODO: Ask JV why we do this and if it should apply to AMI.
