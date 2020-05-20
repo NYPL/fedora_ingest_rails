@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe MMSClient, type: :model do
@@ -36,11 +38,11 @@ RSpec.describe MMSClient, type: :model do
     end
 
     it "makes a request to get an Item's Captures" do
-      expect(HTTP).to receive(:get).with('http://example.com/exports/get_captures/abc-123', params: {showAll: 'true'}) { double(code: 200) }
+      expect(HTTP).to receive(:get).with('http://example.com/exports/get_captures/abc-123', params: { showAll: 'true' }) { double(code: 200) }
       @mms_client.captures_for_item('abc-123')
     end
 
-    it "Throws exceptions on bad requests" do
+    it 'Throws exceptions on bad requests' do
       expect(HTTP).to receive(:get).with('http://example.com/exports/dc/abc-123', params: {}) { double(code: 500) }
       expect { @mms_client.dublin_core_for('abc-123') }.to raise_error(Exception)
     end

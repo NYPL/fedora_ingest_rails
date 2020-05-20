@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'http'
 require 'nokogiri'
 
@@ -32,7 +34,7 @@ class MMSClient
   # [{image_uuid: '123-456', image_id: '1234'}]
   def captures_for_item(uuid)
     response = []
-    api_response = make_request_for('get_captures', uuid, {showAll: 'true'})
+    api_response = make_request_for('get_captures', uuid, { showAll: 'true' })
     capture_nodes = Nokogiri::XML(api_response).css('capture')
 
     capture_nodes.each do |capture_node|
@@ -48,7 +50,7 @@ class MMSClient
   #   - A 410 response means the capture is part of a deleted Item.
   def make_request_for(export_type, uuid, params = {})
     response = authed_request.get(export_url_for(export_type, uuid), params: params)
-    
+
     # Return nil for things that have moved permanently. This will allow the update to go through in a limited fashion.
     if response.code == 410
       nil
