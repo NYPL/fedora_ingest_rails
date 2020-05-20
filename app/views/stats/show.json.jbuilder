@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.delayedJobs do
   json.totalJobsCount @total_jobs_count
   json.workableJobsCount @workable_jobs_count
