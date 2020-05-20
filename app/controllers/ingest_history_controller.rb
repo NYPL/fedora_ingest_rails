@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IngestHistoryController < ApplicationController
   # An API endpoint of any UUID's (paginated) histroy
   def show

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateIngestRequests < ActiveRecord::Migration[5.0]
   def change
     create_table :ingest_requests do |t|
