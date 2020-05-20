@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby25:0.9.32 AS production
+FROM phusion/passenger-ruby25:1.0.9 AS production
 
 # Set correct environment variables.
 ENV HOME /root
@@ -23,7 +23,8 @@ COPY --chown=app:app . /home/app/fedora_ingest_rails
 
 ## Bundle Gems
 # https://stackoverflow.com/questions/47972479/after-ruby-update-to-2-5-0-require-bundler-setup-raise-exception
-RUN cd /home/app/fedora_ingest_rails && gem update --system 2.7.8
+RUN cd /home/app/fedora_ingest_rails && gem update --system
+RUN cd /home/app/fedora_ingest_rails && gem install bundler
 RUN cd /home/app/fedora_ingest_rails && bundle install --without test development
 
 # Enables ngnix+passenger
