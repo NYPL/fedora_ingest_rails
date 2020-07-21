@@ -39,6 +39,7 @@ end
 
 group :development do
   gem 'rubocop', '~> 0.54.0'
+  gem 'rubocop-rspec'
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console'
   # Commenting these out because of the build issues it created with Docker.

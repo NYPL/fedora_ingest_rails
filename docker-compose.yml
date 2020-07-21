@@ -22,7 +22,7 @@ services:
     volumes:
       - ./database-data/mysql:/var/lib/mysql
     ports:
-      - '3306:3306'
+      - '3306'
   worker:
     image: 'fedora_ingest_rails_webapp:latest'
     env_file:
