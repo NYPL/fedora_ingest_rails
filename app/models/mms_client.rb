@@ -31,7 +31,8 @@ class MMSClient
   end
   
   def repo_doc_for(uuid)
-    make_request_for('repo_solr_doc', uuid)
+    string_response = make_request_for('repo_solr_doc', uuid)
+    JSON.parse(string_response) if string_response
   end
 
   # Takes the UUID of an Item & returns an Array of hashes that looks like:

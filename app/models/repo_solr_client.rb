@@ -16,7 +16,7 @@ class RepoSolrClient
 
   def add_docs_to_solr(solr_docs_array)
     if @repo_solr_client
-      @repo_solr_client.add json_docs
+      @repo_solr_client.add solr_docs_array
     end
   end
 
