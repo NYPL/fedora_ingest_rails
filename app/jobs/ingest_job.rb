@@ -14,7 +14,7 @@ IngestJob = Struct.new(:ingest_request_id) do
 
   def ingest!
     fedora_client = FedoraClient.new
-    mms_client = MMSClient.new(mms_url: 'http://localhost:3000',
+    mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url,
                                user_name: Rails.application.secrets.mms_http_basic_username,
                                password: Rails.application.secrets.mms_http_basic_password)
     rels_ext_index_client = RelsExtIndexClient.new(
