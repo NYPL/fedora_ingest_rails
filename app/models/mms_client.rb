@@ -74,6 +74,6 @@ class MMSClient
   end
 
   def authed_request
-    HTTP.basic_auth(user: 'admin', pass: 'password')
+    HTTP.basic_auth(user: @basic_username, pass: @basic_password)
   end
 end
