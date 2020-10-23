@@ -7,11 +7,9 @@ default: &default
 
 development:
   <<: *default
-  # host: postgres
-  database: fedora_ingest_rails_production
-  username: fedora_ingest_rails
-  host:  fedora-ingest-rails-production.cvy7z512hcjg.us-east-1.rds.amazonaws.com
-  password: loh46sHLmnjY
+  host: postgres
+  database: fedora_ingest_rails_development
+  username: postgres
 
 image_filestore:
   adapter: mysql2
