@@ -29,6 +29,10 @@ class MMSClient
   def dublin_core_for(uuid)
     make_request_for('dc', uuid)
   end
+  
+  def repo_doc_for(uuid)
+    make_request_for('repo_solr_doc', uuid)
+  end
 
   # Takes the UUID of an Item & returns an Array of hashes that looks like:
   # [{image_uuid: '123-456', image_id: '1234'}]
@@ -69,6 +73,6 @@ class MMSClient
   end
 
   def authed_request
-    HTTP.basic_auth(user: @basic_username, pass: @basic_password)
+    HTTP.basic_auth(user: 'admin', pass: 'password')
   end
 end
