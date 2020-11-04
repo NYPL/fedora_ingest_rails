@@ -25,13 +25,10 @@ IngestJob = Struct.new(:ingest_request_id) do
     mods              = mms_client.mods_for(@ingest_request.uuid)
     dublin_core       = mms_client.dublin_core_for(@ingest_request.uuid)
     type_of_resource  = Nokogiri::XML(mods).css('typeOfResource:first').text
-    repo_doc          = mms_client.repo_doc_for(@ingest_request.uuid)
-    
-    solr_docs = repo_doc["parentUUID"].collect { |u| mms_client.repo_doc_for(u) }
-    solr_docs << repo_doc
-    
+    repo_docs         = mms_client.repo_docs_for(@ingest_request.uuid)
+
     repo_solr = RepoSolrClient.new
-    repo_solr.add_docs_to_solr(solr_docs)
+    repo_solr.add_docs_to_solr(repo_docs)
 
     mms_client.captures_for_item(@ingest_request.uuid).each do |capture|
       uuid = capture[:uuid]
