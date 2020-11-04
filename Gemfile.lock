@@ -161,7 +161,7 @@ GEM
       rsolr (>= 1.0.2)
     rspec-core (3.9.3)
       rspec-support (~> 3.9.3)
-    rspec-expectations (3.9.3)
+    rspec-expectations (3.9.4)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
     rspec-mocks (3.9.1)
@@ -227,7 +227,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionview (>= 5.2.4.4)
   daemons (~> 1.2, >= 1.2.6)
   delayed_job_active_record (~> 4.1, >= 4.1.2)
   factory_bot_rails (~> 4.8, >= 4.8.2)

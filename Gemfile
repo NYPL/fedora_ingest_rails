@@ -22,7 +22,6 @@ gem 'rsolr-ext', '~> 1.0.3'
 gem 'rubydora', '~> 2.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'will_paginate', '~> 3.1', '>= 3.1.6'
-gem 'actionview', '>= 5.2.4.4'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
