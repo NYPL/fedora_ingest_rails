@@ -71,16 +71,9 @@ Change your `.env` file if you want to connect to a remote filestore.
 
 ## Testing
 
-Running tests is a little tedious, we should look into a way to run this
-in one shot from the host OS.
+Run tests through docker-compose:
 
-With the whole stack running...
-
-1. Get the CONTAINER ID of fedora_ingest_rails_webapp with `docker ps`
-1. `docker exec -it container_id /bin/bash`
-1. (inside container)`su app`
-1. `cd /home/app/fedora_ingest_rails/`
-1.  `bundle exec rspec`
+`docker-compose run webapp /bin/bash -c "cd /home/app/fedora_ingest_rails && bundle exec rspec"`
 
 ## Git Workflow & Deployment
 
