@@ -9,9 +9,11 @@ ADD ./provisioning/docker_build/startup_scripts/01_db_migrate.sh /etc/my_init.d/
 CMD ["/sbin/my_init"]
 
 EXPOSE 80
-RUN apt-get update
-# https://github.com/phusion/passenger-docker/issues/195
-RUN apt-get install -y tzdata
+
+RUN apt-get update -qq \
+    && apt-get install -y \
+    tzdata \
+    shared-mime-info
 
 # So nginx won't clear the environment variables (see notes in environment-variables.conf)
 ADD ./provisioning/docker_build/environment-variables.conf /etc/nginx/main.d/environment-variables.conf
