@@ -114,3 +114,4 @@ See [Amazon And ECS](./documentation/amazon-and-ecs.md).
 
 You may want to start a rails console or hit an endpoint for debugging purposes.  
 See the [debugging documentation](./documentation/debugging.md).
+ 
