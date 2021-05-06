@@ -86,7 +86,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       rels_ext = mms_client.rels_ext_for(uuid)
       
       # Repo API solr for capture.
-      capture_solr_doc = mms_client.repo_docs_for(uuid)
+      capture_solr_doc = mms_client.repo_doc_for(uuid)
       repo_solr.add_docs_to_solr(capture_solr_doc)
 
       if rels_ext.blank?
