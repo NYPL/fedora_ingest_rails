@@ -22,13 +22,13 @@ IngestJob = Struct.new(:ingest_request_id) do
     )
 
     # Fetch stuff from MMS
-    mods              = mms_client.mods_for(@ingest_request.uuid)
-    dublin_core       = mms_client.dublin_core_for(@ingest_request.uuid)
-    type_of_resource  = Nokogiri::XML(mods).css('typeOfResource:first').text
-    repo_docs         = mms_client.repo_docs_for(@ingest_request.uuid)
+    mods                        = mms_client.mods_for(@ingest_request.uuid)
+    dublin_core                 = mms_client.dublin_core_for(@ingest_request.uuid)
+    type_of_resource            = Nokogiri::XML(mods).css('typeOfResource:first').text
+    parent_and_item_repo_docs   = mms_client.repo_docs_for(@ingest_request.uuid)
 
     repo_solr = RepoSolrClient.new
-    repo_solr.add_docs_to_solr(repo_docs)
+    repo_solr.add_docs_to_solr(parent_and_item_repo_docs)
 
     mms_client.captures_for_item(@ingest_request.uuid).each do |capture|
       uuid = capture[:uuid]
@@ -84,6 +84,11 @@ IngestJob = Struct.new(:ingest_request_id) do
 
       # Datastreams with info from the `Capture` Level
       rels_ext = mms_client.rels_ext_for(uuid)
+      
+      # Repo API solr for capture.
+      capture_solr_doc = mms_client.repo_docs_for(uuid)
+      repo_solr.add_docs_to_solr(capture_solr_doc)
+
       if rels_ext.blank?
         # Remove it from solr as there is a good chance it is there and should not be.
         rels_ext_index_client.remove_doc_for(uuid)
