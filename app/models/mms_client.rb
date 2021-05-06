@@ -29,6 +29,30 @@ class MMSClient
   def dublin_core_for(uuid)
     make_request_for('dc', uuid)
   end
+  
+  # Returns on this level solr doc
+  def repo_doc_for(uuid)
+    string_response = make_request_for('repo_solr_doc', uuid)
+    if string_response
+      json_response = JSON.parse(string_response)
+      json_response["yearBegin_dt"] = Time.parse(json_response["yearBegin_dt"]).utc.iso8601 if json_response["yearBegin_dt"]
+      json_response["yearEnd_dt"] = Time.parse(json_response["yearEnd_dt"]).utc.iso8601 if json_response["yearEnd_dt"]
+      json_response
+    end
+  end
+
+  # Returns repoapi solr docs for this level and all ancestors. 
+  def repo_docs_for(uuid)
+    string_response = make_request_for('repo_solr_docs', uuid)
+    if string_response
+      json_docs = JSON.parse(string_response)
+      json_docs.map { |json_response| 
+        json_response["yearBegin_dt"] = Time.parse(json_response["yearBegin_dt"]).utc.iso8601 if json_response["yearBegin_dt"]
+        json_response["yearEnd_dt"] = Time.parse(json_response["yearEnd_dt"]).utc.iso8601 if json_response["yearEnd_dt"]
+      }
+      json_docs
+    end
+  end
 
   # Takes the UUID of an Item & returns an Array of hashes that looks like:
   # [{image_uuid: '123-456', image_id: '1234'}]

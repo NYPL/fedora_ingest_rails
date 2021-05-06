@@ -35,7 +35,7 @@ services:
       - fedora
       - filestore-db
   postgres:
-    image:  postgres:9.4.14
+    image:  postgres:11
     volumes:
       - ./database-data/postgres:/var/lib/postgresql/data
     ports:

@@ -25,6 +25,10 @@ IngestJob = Struct.new(:ingest_request_id) do
     mods              = mms_client.mods_for(@ingest_request.uuid)
     dublin_core       = mms_client.dublin_core_for(@ingest_request.uuid)
     type_of_resource  = Nokogiri::XML(mods).css('typeOfResource:first').text
+    repo_docs         = mms_client.repo_docs_for(@ingest_request.uuid)
+
+    repo_solr = RepoSolrClient.new
+    repo_solr.add_docs_to_solr(repo_docs)
 
     mms_client.captures_for_item(@ingest_request.uuid).each do |capture|
       uuid = capture[:uuid]
@@ -97,6 +101,7 @@ IngestJob = Struct.new(:ingest_request_id) do
     end
 
     rels_ext_index_client.commit_index_changes
+    repo_solr.commit_index_changes
 
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: @ingest_request.uuid)
   end
