@@ -26,6 +26,9 @@ IngestJob = Struct.new(:ingest_request_id) do
     dublin_core                 = mms_client.dublin_core_for(@ingest_request.uuid)
     type_of_resource            = Nokogiri::XML(mods).css('typeOfResource:first').text
     parent_and_item_repo_docs   = mms_client.repo_docs_for(@ingest_request.uuid)
+    
+    parent_uuids = parent_and_item_repo_docs.collect { |d| d["uuid"] }
+    in_oral_history_collection = parent_uuids.include?('da4687f0-cc71-0130-fb40-58d385a7b928') # magic uuid for our one and only oral history collection. TODO: Make this more universal. KAK - Sept 20 2021
 
     repo_solr = RepoSolrClient.new
     repo_solr.add_docs_to_solr(parent_and_item_repo_docs)
@@ -87,6 +90,8 @@ IngestJob = Struct.new(:ingest_request_id) do
       
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
+      capture_solr_doc["mets_alto"] = fedora_client.mets_alto_for(uuid) if in_oral_history_collection
+      
       repo_solr.add_docs_to_solr(capture_solr_doc)
 
       if rels_ext.blank?
