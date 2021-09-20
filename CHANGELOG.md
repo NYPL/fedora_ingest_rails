@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- New method to get mets_alto during ingest for indexing. (DR-1459)
+
+### Changed
+- Changed parsing of solr docs to ensure single values. (DR-1459)
+
+### Updated
+- Updated gemfile with security fixes. (NA)
 
 ## [1.0.0] - 2021-04-21
 ### Added

@@ -47,4 +47,11 @@ RSpec.describe MMSClient, type: :model do
       expect { @mms_client.dublin_core_for('abc-123') }.to raise_error(Exception)
     end
   end
+  
+  describe 'json parsing' do
+    it 'removes fields we do not want from solr docs, keeps those we do, and makes erroneous arrays single-value' do
+      test_string = "[{\"uuid\":\"8fcbf960-fed9-0130-73f0-58d385a7bbd0\",\"firstInSequence\":[\"8fcbf960-fed9-0130-73f0-58d385a7bbd0\"],\"immediateParent_s\":\"81fffac0-cc75-0130-40e2-58d385a7b928\",\"mainTitle_sort\":\"get rid of this title\"}]"
+      expect(@mms_client.convert_to_json_docs(test_string)).to eq([{"uuid"=>"8fcbf960-fed9-0130-73f0-58d385a7bbd0", "firstInSequence"=>"8fcbf960-fed9-0130-73f0-58d385a7bbd0", "immediateParent_s"=>"81fffac0-cc75-0130-40e2-58d385a7b928"}])
+    end
+  end
 end
