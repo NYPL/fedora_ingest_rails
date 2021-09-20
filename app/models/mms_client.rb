@@ -61,6 +61,7 @@ class MMSClient
   def convert_to_json_docs(string_response)
     if string_response 
       json_docs = JSON.parse(string_response)
+      new_docs = []
       json_docs.each do |json_response|
         json_response = json_response.except('sortString_sort','mainTitle_sort','shelfLocator_mtxt_str','title_mtxt_str','genre_mtxt_str','placeTerm_mtxt_str','mods_st_str','use_rtxt_str','publisher_mtxt_str','rights_st_str','rightsNotes_rtxt_str','parentUUID_str','sortString_str','original_filename_str','roleTerm_mtxt_str','note_mtxt_str','namePart_mtxt_str','extent_mtxt_str','mainTitle_st_str','useStatementText_rtxt_str','firstInSequence_str','typeOfResource_mtxt_str','useStatementURI_rtxt_str','physicalLocation_mtxt_str','geographic_mtxt_str','topic_mtxt_str','subtitle_mtxt_str','languageTerm_mtxt_str','form_mtxt_str','temporal_mtxt_str','name_mtxt_str','accessCondition_mtxt_str','partnumber_mtxt_str','scriptTerm_mtxt_str','tableOfContents_mtxt_str','titleinfo_mtxt_str','partname_mtxt_str','issuance_mtxt_str','edition_mtxt_str','occupation_mtxt_str','affiliation_mtxt_str','dateother_mtxt_str','classification_mtxt_str','useRestriction_rtxt_str','identifier_idx_local_brightcove_pid_str','identifier_local_brightcove_pid_str','identifier_idx_local_brightcove_key_str','identifier_local_brightcove_key_str','identifier_idx_local_video_id_str','identifier_local_video_id_str','recordContentSource_mtxt_str','recordOrigin_mtxt_str','geograp,hiccode_mtxt_str')
         singles = ['uuid','mods_st', 'rights_st','yearBegin_dt','rootCollection_rootCollectionUUID_s','immediateParent_s','rootCollectionUUID_s','rootCollection_s','numItems_s','dateIndexed_s','yearEnd_dt','parentUUIDSort_s','numSubCollections_s','numItems_s','firstInSequence','isPartOfSequence','orderInSequence','totalInSequence','sortString','sortString_sort','imageID','dateDigitized_dt','type_s','highResLink','mainTitle_st','immediateParentUUID_s','numSubCollections_s','numItems_s','mainTitle_s','keyDate_st','mainTitle_lit_idx','mainTitle_sort','mainTitle_st','mets_alto','mods_st','rights_st']
@@ -81,8 +82,9 @@ class MMSClient
           json_response["yearBegin_dt"] = nil
           json_response["yearEnd_dt"] = nil
         end
+        new_docs << json_response
       end
-      json_docs
+      new_docs
     end
   end
 
