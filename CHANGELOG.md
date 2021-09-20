@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Changed parsing of solr docs to ensure single values. (DR-1459)
 
+### Updated
+- Updated gemfile with security fixes. (NA)
+
 ## [1.0.0] - 2021-04-21
 ### Added
 - Added CHANGELOG.md. 
