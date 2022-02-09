@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Updated
+- Updated travis keys. (DR-1708)
+
 ## [1.0.1] - 2021-09-20
+
 ### Added
 - New method to get mets_alto during ingest for indexing. (DR-1459)
 
@@ -17,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated gemfile with security fixes. (NA)
 
 ## [1.0.0] - 2021-04-21
+
 ### Added
 - Added CHANGELOG.md. 
 - Added new Repo Solr Client model to update repo api solr core when updates come through ingest. (DR-1059)
