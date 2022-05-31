@@ -90,7 +90,10 @@ IngestJob = Struct.new(:ingest_request_id) do
       
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
-      capture_solr_doc["mets_alto"] = fedora_client.mets_alto_for(uuid) if in_oral_history_collection
+      if in_oral_history_collection
+        capture_solr_doc["mets_alto"] = fedora_client.mets_alto_for(uuid)
+        capture_solr_doc["hasOCR"] = capture_solr_doc["mets_alto"].present?
+      end
       
       repo_solr.add_docs_to_solr(capture_solr_doc)
 
