@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated travis keys. (DR-1708)
 - Updated gems based on dependabot. (NA)
 - Updated ingest to add value for hasOCR. (DR-1897)
+- Updated ingest to add value for captureText_ocrtext. (DR-1895)
 
 ## [1.0.1] - 2021-09-20
 
