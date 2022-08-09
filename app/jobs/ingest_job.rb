@@ -63,15 +63,15 @@ IngestJob = Struct.new(:ingest_request_id) do
 
       # Datastreams with info from the filestore database of image derivatives
       image_filestore_entries = ImageFilestoreEntry.where(file_id: capture[:image_id], status: 4)
+      highres_permalink = nil
       image_filestore_entries.each do |f|
         file_uuid   = f.uuid
         file_label  = f.get_type(f.type)
         file_name   = f.file_name
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
-        permalink   = nil
         if file_label == 'MASTER_IMAGE'
-          permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink("#{ENV['FEDORA_URL']}/objects/#{pid}/datastreams/MASTER_IMAGE/content")
+          highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink("#{ENV['FEDORA_URL']}/objects/#{pid}/datastreams/MASTER_IMAGE/content")
         end
         if file_label != 'Unknown'
           datastream_options = { pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'DISABLED', dsLocation: "http://local.fedora.server/resolver/#{file_uuid}", dsLabel: file_label + ' for this object', altIds: permalinks }
@@ -84,7 +84,7 @@ IngestJob = Struct.new(:ingest_request_id) do
       
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
-      capture_solr_doc["highResLink"] = permalink if permalink.present?
+      capture_solr_doc["highResLink"] = highres_permalink if highres_permalink.present?
       if in_oral_history_collection
         mets_alto = fedora_client.mets_alto_for(uuid)
         capture_solr_doc["mets_alto"] = mets_alto
