@@ -42,11 +42,6 @@ IngestJob = Struct.new(:ingest_request_id) do
 
       pid = "uuid:#{uuid}"
 
-      # Figure out if it is ok to release high res file. Handled by string in rights statement right now.
-      # necessary for determining if we need to get master image permalinks.
-      high_res_ok = 'Release Source File for Free (i.e., high-res or master can be released to the public)'
-      release_master = rights.to_s.scan(high_res_ok).present? if rights
-
       digital_object = fedora_client.repository.find_or_initialize(pid)
       digital_object.label = extract_title_from_dublin_core(dublin_core)[0..249]
       digital_object.save
