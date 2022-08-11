@@ -8,7 +8,7 @@ class PermalinkClient
   def initialize(options = {})
     @uuid = options[:uuid]
     @base_links_url = ENV['LINK_CREATE_BASE_URL']
-    @public_base_url = ENV['LINK_PUBLIC_BASE_URL']
+    @public_base_url = "https://link.nypl.org"
     @basic_username = ENV['LINK_USERNAME']
     @basic_password = ENV['LINK_PASSWORD']
     @logger = NyplLogFormatter.new(STDOUT)
