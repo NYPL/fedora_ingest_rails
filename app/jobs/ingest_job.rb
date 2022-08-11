@@ -41,6 +41,11 @@ IngestJob = Struct.new(:ingest_request_id) do
       rights = mms_client.rights_for(uuid)
 
       pid = "uuid:#{uuid}"
+      
+      # Figure out if it is ok to release high res file. Handled by string in rights statement right now.
+      # necessary for determining if we need to get master image permalinks.
+      high_res_ok = 'Release Source File for Free (i.e., high-res or master can be released to the public)'
+      release_master = rights.to_s.scan(high_res_ok).present? if rights
 
       digital_object = fedora_client.repository.find_or_initialize(pid)
       digital_object.label = extract_title_from_dublin_core(dublin_core)[0..249]
@@ -70,7 +75,7 @@ IngestJob = Struct.new(:ingest_request_id) do
         file_name   = f.file_name
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
-        if file_label == 'MASTER_IMAGE'
+        if file_label == 'MASTER_IMAGE' && release_master
           full_res_path = "#{FEDORA_LINK_URL}/objects/#{pid}/datastreams/MASTER_IMAGE/content"
           highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
         end
@@ -85,7 +90,13 @@ IngestJob = Struct.new(:ingest_request_id) do
       
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
-      capture_solr_doc["highResLink"] = highres_permalink if highres_permalink.present?
+      
+      if highres_permalink.present? && release_master
+        capture_solr_doc["highResLink"] = highres_permalink 
+      else
+        capture_solr_doc["highResLink"] = nil # unpublishes the link if it exists. 
+      end
+      
       if in_oral_history_collection
         mets_alto = fedora_client.mets_alto_for(uuid)
         capture_solr_doc["mets_alto"] = mets_alto
