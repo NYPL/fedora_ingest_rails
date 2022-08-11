@@ -71,10 +71,11 @@ IngestJob = Struct.new(:ingest_request_id) do
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
         if file_label == 'MASTER_IMAGE'
-          highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink("#{ENV['FEDORA_URL']}/objects/#{pid}/datastreams/MASTER_IMAGE/content")
+          full_res_path = "#{FEDORA_LINK_URL}/objects/#{pid}/datastreams/MASTER_IMAGE/content"
+          highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
         end
         if file_label != 'Unknown'
-          datastream_options = { pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'DISABLED', dsLocation: "http://local.fedora.server/resolver/#{file_uuid}", dsLabel: file_label + ' for this object', altIds: permalinks }
+          datastream_options = { pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'DISABLED', dsLocation: "http://local.fedora.server/resolver/#{file_uuid}", dsLabel: file_label + ' for this object', altIds: [highres_permalink] }
           fedora_client.repository.add_datastream(datastream_options)
         end
       end
