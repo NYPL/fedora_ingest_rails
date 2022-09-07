@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Updated
+- Updated list of fields that should be forced into single values. (DR-1963)
+
 ## [1.0.3] - 2022-08-11
 
 ### Updated
