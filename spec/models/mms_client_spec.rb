@@ -50,8 +50,8 @@ RSpec.describe MMSClient, type: :model do
   
   describe 'json parsing' do
     it 'removes fields we do not want from solr docs, keeps those we do, and makes erroneous arrays single-value' do
-      test_string = "[{\"uuid\":\"8fcbf960-fed9-0130-73f0-58d385a7bbd0\",\"firstInSequence\":[\"8fcbf960-fed9-0130-73f0-58d385a7bbd0\"],\"immediateParent_s\":\"81fffac0-cc75-0130-40e2-58d385a7b928\",\"mainTitle_sort\":\"get rid of this title\"}]"
-      expect(@mms_client.convert_to_json_docs(test_string)).to eq([{"uuid"=>"8fcbf960-fed9-0130-73f0-58d385a7bbd0", "firstInSequence"=>"8fcbf960-fed9-0130-73f0-58d385a7bbd0", "immediateParent_s"=>"81fffac0-cc75-0130-40e2-58d385a7b928"}])
+      test_string = "[{\"uuid\":\"8fcbf960-fed9-0130-73f0-58d385a7bbd0\",\"firstInSequence\":[\"8fcbf960-fed9-0130-73f0-58d385a7bbd0\"],\"imageID\":[\"onlyKeepFirst_imageID\",\"getRidOfSecond_imageID\"],\"immediateParent_s\":\"81fffac0-cc75-0130-40e2-58d385a7b928\",\"mainTitle_sort\":\"get rid of this title\"}]"
+      expect(@mms_client.convert_to_json_docs(test_string)).to eq([{"uuid"=>"8fcbf960-fed9-0130-73f0-58d385a7bbd0", "firstInSequence"=>"8fcbf960-fed9-0130-73f0-58d385a7bbd0", "imageID"=>"onlyKeepFirst_imageID","immediateParent_s"=>"81fffac0-cc75-0130-40e2-58d385a7b928"}])
     end
   end
 end
