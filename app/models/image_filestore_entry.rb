@@ -48,6 +48,6 @@ class ImageFilestoreEntry < ActiveRecord::Base
   end
 
   def self.has_file?(file_id)
-    where(file_id: file_id).present?
+    where(file_id: file_id).any?
   end
 end
