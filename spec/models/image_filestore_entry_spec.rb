@@ -36,4 +36,13 @@ RSpec.describe ImageFilestoreEntry, type: :model do
   it 'Should return value for unknown mimetype key for garbage mimetypes' do
     expect(ImageFilestoreEntry.new.get_mimetype('Larry!')).to eq(ImageFilestoreEntry.new.mimetypes_dictionary['unknown'])
   end
+    
+  # No idea how to get this to work yet in a readonly database. 
+  # it 'Should respond in the affirmative if it has a filestore entry matching a given file_id' do
+  #   expect(ImageFilestoreEntry.has_file?('foo')).to eq(true)
+  # end
+  
+  it 'Should respond in the negative if it is given a nonexistant file_id' do
+    expect(ImageFilestoreEntry.has_file?('nonexistant')).to eq(false)
+  end
 end

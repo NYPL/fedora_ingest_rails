@@ -46,4 +46,8 @@ class ImageFilestoreEntry < ActiveRecord::Base
   def get_mimetype(string)
     mimetypes_dictionary[string] || mimetypes_dictionary['unknown']
   end
+
+  def self.has_file?(file_id)
+    where(file_id: file_id).present?
+  end
 end
