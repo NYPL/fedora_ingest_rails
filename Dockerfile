@@ -9,6 +9,8 @@ ADD ./provisioning/docker_build/startup_scripts/01_db_migrate.sh /etc/my_init.d/
 CMD ["/sbin/my_init"]
 
 EXPOSE 80
+# remove passenger apt repository from list, passenger now seems to be missing from this repository and cannot update
+RUN cat /dev/null > /etc/apt/sources.list.d/passenger.list
 RUN apt-get update
 # https://github.com/phusion/passenger-docker/issues/195
 RUN apt-get install -y tzdata
