@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] - 2022-10-26
+
 ### Added
 - Added new endpoint to respond with capture status. (DR-2075)
 
