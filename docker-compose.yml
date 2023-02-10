@@ -24,7 +24,7 @@ services:
     ports:
       - '3306:3306'
   worker:
-    image: 'fedora_ingest_rails_webapp:latest'
+    image: 'fedora_ingest_rails-webapp:latest'
     env_file:
       - ./.env
     volumes:
@@ -36,6 +36,8 @@ services:
       - filestore-db
   postgres:
     image:  postgres:11
+    environment:
+      POSTGRES_PASSWORD: mypassword
     volumes:
       - ./database-data/postgres:/var/lib/postgresql/data
     ports:

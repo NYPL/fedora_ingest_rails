@@ -10,6 +10,7 @@ development:
   host: postgres
   database: fedora_ingest_rails_development
   username: postgres
+  password: mypassword
 
 image_filestore:
   adapter: mysql2
@@ -33,6 +34,7 @@ test:
   host: <%= ENV.fetch('INGESTOR_TEST_DATABASE_HOST') { '127.0.0.1' } %>
   database: fedora_ingest_rails_test
   username: postgres
+  password: mypassword
 
 production:
   <<: *default
