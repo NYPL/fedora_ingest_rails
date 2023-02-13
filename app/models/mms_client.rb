@@ -21,7 +21,7 @@ class MMSClient
     'form_mtxt_str',
     'geographic_mtxt_str',
     'geographiccode_mtxt_str',
-    #'hierarchicalgeographic_mtxt_str',
+    'hierarchicalgeographic_mtxt',
     'identifier_idx_local_brightcove_key_str',
     'identifier_idx_local_brightcove_pid_str',
     'identifier_idx_local_video_id_str',
@@ -219,7 +219,6 @@ class MMSClient
     'keyDate_st',
     'mainTitle_lit_idx',
     'mainTitle_s',
-    'mainTitle_sort',
     'mainTitle_st',
     'mainTitle_st',
     'mets_alto',
@@ -238,7 +237,6 @@ class MMSClient
     'rootCollection_rootCollectionUUID_s',
     'rootCollection_s',
     'sortString',
-    'sortString_sort',
     'totalInSequence',
     'type_s',
     'uuid',
@@ -316,6 +314,7 @@ class MMSClient
           year_end = json_response['yearEnd_dt']
           json_response['yearEnd_dt'] = Time.parse(year_end).utc.iso8601 if year_end
         rescue Exception => e
+          puts e
           # if anything goes wrong, set to nil so we can still post.
           json_response['yearBegin_dt'] = nil
           json_response['yearEnd_dt'] = nil
