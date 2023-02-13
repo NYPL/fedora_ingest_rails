@@ -84,7 +84,14 @@ RSpec.describe MMSClient, type: :model do
           'immediateParent_s' => '81fffac0-cc75-0130-40e2-58d385a7b928'
         }
       }
-      let(:expected_result) { [test_hash.dup] }
+      let(:expected_result) {
+        [
+          {
+            'uuid' => '8fcbf960-fed9-0130-73f0-58d385a7bbd0',
+            'immediateParent_s' => '81fffac0-cc75-0130-40e2-58d385a7b928'
+          }
+        ]
+      }
 
       let(:test_string) do
         MMSClient::REMOVABLE_FIELDS.each { |f| test_hash[f] = 'some value to remove' }
