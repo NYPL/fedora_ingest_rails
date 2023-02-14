@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Removed hierarchicalgeographic_mtxt from repoapi docs. (DR-2206)
+
 ## [1.0.5] - 2022-10-26
 
 ### Added
