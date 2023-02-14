@@ -47,11 +47,60 @@ RSpec.describe MMSClient, type: :model do
       expect { @mms_client.dublin_core_for('abc-123') }.to raise_error(Exception)
     end
   end
-  
+
   describe 'json parsing' do
-    it 'removes fields we do not want from solr docs, keeps those we do, and makes erroneous arrays single-value' do
-      test_string = "[{\"uuid\":\"8fcbf960-fed9-0130-73f0-58d385a7bbd0\",\"firstInSequence\":[\"8fcbf960-fed9-0130-73f0-58d385a7bbd0\"],\"imageID\":[\"onlyKeepFirst_imageID\",\"getRidOfSecond_imageID\"],\"immediateParent_s\":\"81fffac0-cc75-0130-40e2-58d385a7b928\",\"mainTitle_sort\":\"get rid of this title\"}]"
-      expect(@mms_client.convert_to_json_docs(test_string)).to eq([{"uuid"=>"8fcbf960-fed9-0130-73f0-58d385a7bbd0", "firstInSequence"=>"8fcbf960-fed9-0130-73f0-58d385a7bbd0", "imageID"=>"onlyKeepFirst_imageID","immediateParent_s"=>"81fffac0-cc75-0130-40e2-58d385a7b928"}])
+    subject { @mms_client.convert_to_json_docs(test_string) }
+
+    context 'with erroneous arrays' do
+      let(:test_hash) {
+        {
+          'uuid' => '8fcbf960-fed9-0130-73f0-58d385a7bbd0',
+          'immediateParent_s' => '81fffac0-cc75-0130-40e2-58d385a7b928'
+        }
+      }
+      let(:expected_hash) { test_hash.dup }
+
+      let(:test_string) do
+        MMSClient::SINGLES.each { |s| test_hash[s] = ['first_value', 'second_value'] }
+        [test_hash].to_json
+      end
+
+      let(:expected_result) do
+        MMSClient::SINGLES.each { |s| expected_hash[s] = 'first_value' }
+        expected_hash['yearBegin_dt'] = nil # these won't be parse-able datetimes
+        expected_hash['yearEnd_dt'] = nil
+        [expected_hash]
+      end
+
+      it 'converts them to single values' do
+        expect(subject).to eq(expected_result)
+      end
+    end
+
+    context 'with unwanted fields' do
+      let(:test_hash) {
+        {
+          'uuid' => '8fcbf960-fed9-0130-73f0-58d385a7bbd0',
+          'immediateParent_s' => '81fffac0-cc75-0130-40e2-58d385a7b928'
+        }
+      }
+      let(:expected_result) {
+        [
+          {
+            'uuid' => '8fcbf960-fed9-0130-73f0-58d385a7bbd0',
+            'immediateParent_s' => '81fffac0-cc75-0130-40e2-58d385a7b928'
+          }
+        ]
+      }
+
+      let(:test_string) do
+        MMSClient::REMOVABLE_FIELDS.each { |f| test_hash[f] = 'some value to remove' }
+        [test_hash].to_json
+      end
+
+      it 'removes them and leave the others' do
+        expect(subject).to eq(expected_result)
+      end
     end
   end
 end
