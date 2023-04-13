@@ -35,7 +35,7 @@ class RepoSolrClient
   def commit_index_changes
     @repo_solr_client.commit if @repo_solr_client
   end
-  
+
   def get_solr_doc_for(uuid)
     mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url)
     mms_client.repoapi_solr_doc_for(uuid)
