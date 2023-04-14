@@ -5,7 +5,8 @@ class IngestRequestsController < ApplicationController
 
   def create
     uuids = params[:uuids].compact.uniq.map(&:strip)
-    uuids.each { |uuid| IngestRequest.create(uuid: uuid) }
+    test_mode = params[:test_mode] || false
+    uuids.each { |uuid| IngestRequest.create(uuid: uuid, test_mode: test_mode) }
     head :created
   end
 end
