@@ -78,32 +78,31 @@ RSpec.describe 'IngestHelper', type: :helper do
       before { allow(Time).to receive(:now).and_return(known_datetime) }
 
       let(:known_datetime) { DateTime.parse('2023-04-13 15:07:25 +0000') }
-      let(:expected_datetime) { known_datetime.utc.iso8601 }
 
       let(:expected_parent_and_item_repo_solr_docs) { [parent_or_item_repo_solr_doc_1, parent_or_item_repo_solr_doc_2] }
       let(:parent_or_item_repo_solr_doc_1) {
         {
-          'firstIndexed_s' => expected_datetime,
+          'firstIndexed_s' => known_datetime,
           'uuid' => repo_doc_1['uuid']
         }
       }
       let(:parent_or_item_repo_solr_doc_2) {
         {
-          'firstIndexed_s' => expected_datetime,
+          'firstIndexed_s' => known_datetime,
           'uuid' => repo_doc_2['uuid']
         }
       }
 
       let(:expected_capture_solr_doc_1) {
         {
-          'firstIndexed_s' => expected_datetime,
+          'firstIndexed_s' => known_datetime,
           'highResLink' => nil,
           :uuid => capture_1[:uuid]
         }
       }
       let(:expected_capture_solr_doc_2) {
         {
-          'firstIndexed_s' => expected_datetime,
+          'firstIndexed_s' => known_datetime,
           'highResLink' => nil,
           :uuid => capture_2[:uuid]
         }
