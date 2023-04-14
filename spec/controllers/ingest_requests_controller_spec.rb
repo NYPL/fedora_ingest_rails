@@ -6,7 +6,7 @@ RSpec.describe IngestRequestsController, type: :controller do
   it 'will call create on UUID sent to it' do
     uuids = %w[1 2 3 4 5]
     uuids.each do |uuid|
-      expect(IngestRequest).to receive(:create).with({ uuid: uuid })
+      expect(IngestRequest).to receive(:create).with({ uuid: uuid, test_mode: false })
     end
     post :create, params: { uuids: uuids }, format: :json
   end
@@ -14,8 +14,8 @@ RSpec.describe IngestRequestsController, type: :controller do
   it "won't try to create duplicate UUIDs" do
     IngestRequest.destroy_all
     uuids = %w[1 1 2]
-    expect(IngestRequest).to receive(:create).with({ uuid: '2' }).exactly(1).times
-    expect(IngestRequest).to receive(:create).with({ uuid: '1' }).exactly(1).times
+    expect(IngestRequest).to receive(:create).with({ uuid: '2', test_mode: false }).exactly(1).times
+    expect(IngestRequest).to receive(:create).with({ uuid: '1', test_mode: false }).exactly(1).times
     post :create, params: { uuids: uuids }, format: :json
   end
 
