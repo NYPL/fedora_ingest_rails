@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Accurately record first index date in repo api. (DR-2269)
+
 ### Fixed
 - Removed hierarchicalgeographic_mtxt from repoapi docs. (DR-2206)
 

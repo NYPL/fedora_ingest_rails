@@ -69,6 +69,7 @@ class MMSClient
     'dateDigitized_dt',
     'dateIndexed_s',
     'firstInSequence',
+    'firstIndexed_s',
     'highResLink',
     'identifier_idx_local_brightcove_id',
     'identifier_idx_local_brightcove_key',

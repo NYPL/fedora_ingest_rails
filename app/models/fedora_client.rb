@@ -11,7 +11,7 @@ class FedoraClient
       password: Rails.application.secrets.fedora_password
     )
   end
-  
+
   def mets_alto_for(uuid)
     require 'open-uri'
     this_url = "fedora/objects/uuid:#{uuid}/datastreams/METS_ALTO/content"
