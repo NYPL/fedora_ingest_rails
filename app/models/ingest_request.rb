@@ -6,12 +6,14 @@ class IngestRequest < ApplicationRecord
 
   validates_presence_of :uuid
   validate :not_already_pending_validation, on: :create
+
+  attr_accessor :test_mode
   after_create :send_to_fedora, on: :create
 
   private
 
   def send_to_fedora
-    Delayed::Job.enqueue(IngestJob.new(id))
+    Delayed::Job.enqueue(IngestJob.new(id, test_mode))
   end
 
   def not_already_pending_validation
