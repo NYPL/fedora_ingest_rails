@@ -131,7 +131,6 @@ module IngestJobHelper
       capture_solr_doc['firstIndexed_s'] = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601 || index_time
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
-      puts capture_solr_doc.inspect
       repo_solr.add_docs_to_solr(capture_solr_doc)
 
       # Rels ext index and fedora are not available in qa
