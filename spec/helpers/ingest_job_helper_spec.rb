@@ -74,6 +74,61 @@ RSpec.describe 'IngestHelper', type: :helper do
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_2[:uuid]).and_return(capture_2).once
     end
 
+    context 'one repo doc uuid is in the oral history collection' do
+      let(:repo_doc_1) { { 'uuid' => 'da4687f0-cc71-0130-fb40-58d385a7b928' } }
+      let(:mock_s3_client) { double('s3_client', :mets_alto_for => mets_alto) }
+      let(:mets_alto) { "<?xml version=\"1.0\"?><alto><String CONTENT=\"ADrLPH\" ID=\"St_1.1.1.3\" HPOS=\"2536\" VPOS=\"1400\" HEIGHT=\"140\" WIDTH=\"700\" STYLEREFS=\"Style_1\" WC=\"7.3\" CC=\"007000\"/></alto>" }
+
+      let(:expected_parent_and_item_repo_solr_docs) { [parent_or_item_repo_solr_doc_1, parent_or_item_repo_solr_doc_2] }
+      let(:parent_or_item_repo_solr_doc_1) {
+        {
+          'firstIndexed_s' => known_datetime,
+          'uuid' => repo_doc_1['uuid']
+        }
+      }
+      let(:parent_or_item_repo_solr_doc_2) {
+        {
+          'firstIndexed_s' => known_datetime,
+          'uuid' => repo_doc_2['uuid']
+        }
+      }
+      let(:expected_capture_solr_doc_1) {
+        {
+          'captureText_ocrtext' => 'ADrLPH',
+          'hasOCR' => true,
+          'mets_alt' => mets_alto,
+          'firstIndexed_s' => known_datetime,
+          'highResLink' => nil,
+          :uuid => capture_1[:uuid]
+        }
+      }
+      let(:expected_capture_solr_doc_2) {
+        {
+          'captureText_ocrtext' => 'ADrLPH',
+          'hasOCR' => true,
+          'mets_alto' => mets_alto,
+          'firstIndexed_s' => known_datetime,
+          'highResLink' => nil,
+          :uuid => capture_2[:uuid]
+        }
+      }
+
+      let(:known_datetime) { DateTime.parse('2023-04-13 15:07:25 +0000') }
+
+      before do
+        allow(Time).to receive(:now).and_return(known_datetime)
+        allow(S3Client).to receive(:new).and_return(mock_s3_client)
+        allow(mock_s3_client).to receive(:mets_alto_for).with(capture_1[:uuid]).and_return(mets_alto).once
+      end
+
+      it 'does' do
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_parent_and_item_repo_solr_docs).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_capture_solr_doc_1).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_capture_solr_doc_2).once
+        subject
+      end
+    end
+
     context 'the indexing time is known' do
       before { allow(Time).to receive(:now).and_return(known_datetime) }
 
