@@ -10,7 +10,7 @@ class S3Client
       response = @s3.get_object(bucket: ENV['S3_BUCKET_NAME'], key: "mets_altos/#{uuid}.xml")
       raw_xml = response&.body&.read
     rescue Exception => e
-      logger.warn "mets alto could not be retrieved for uuid: #{uuid} because #{e}"
+      puts "mets alto could not be retrieved for uuid: #{uuid} because #{e}"
     end
 
     return nil unless raw_xml
