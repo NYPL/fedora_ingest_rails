@@ -14,7 +14,7 @@ RSpec.describe S3Client, type: :model do
       let(:mock_aws_s3_response) { double('aws_s3_response', :body => mock_aws_s3_response_body) }
       let(:mock_aws_s3_response_body) { double('aws_s3_response_body', :read => mets_alto) }
       let(:mets_alto) { "<?xml version=\"1.0\"?><alto><String CONTENT=\"ADrLPH\" ID=\"St_1.1.1.3\" HPOS=\"2536\" VPOS=\"1400\" HEIGHT=\"140\" WIDTH=\"700\" STYLEREFS=\"Style_1\" WC=\"7.3\" CC=\"007000\"/></alto>" }
-      let(:expected_return_value) { '<?xml version="1.0"?><alto>  <String CONTENT="ADrLPH" ID="St_1.1.1.3" HPOS="2536" VPOS="1400" HEIGHT="140" WIDTH="700" STYLEREFS="Style_1" WC="7.3" CC="007000"/></alto>' }
+      let(:expected_return_value) { '<?xml version="1.0"?><alto><String CONTENT="ADrLPH" ID="St_1.1.1.3" HPOS="2536" VPOS="1400" HEIGHT="140" WIDTH="700" STYLEREFS="Style_1" WC="7.3" CC="007000"/></alto>' }
 
       it 'returns the expected unescaped mets alto string' do
         expect(subject).to eq(expected_return_value)
