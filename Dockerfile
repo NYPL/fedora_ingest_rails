@@ -27,7 +27,7 @@ COPY --chown=app:app . /home/app/fedora_ingest_rails
 # https://stackoverflow.com/questions/47972479/after-ruby-update-to-2-5-0-require-bundler-setup-raise-exception
 RUN cd /home/app/fedora_ingest_rails && gem update --system
 RUN cd /home/app/fedora_ingest_rails && gem install bundler
-RUN cd /home/app/fedora_ingest_rails && BUNDLER_WITHOUT="development test" bundle install
+RUN cd /home/app/fedora_ingest_rails && bundle install -V --without test development
 
 # Enables ngnix+passenger
 RUN rm -f /etc/service/nginx/down
