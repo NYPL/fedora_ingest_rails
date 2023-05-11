@@ -74,6 +74,40 @@ RSpec.describe 'IngestHelper', type: :helper do
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_2[:uuid]).and_return(capture_2).once
     end
 
+    context 'a repo doc uuid is in the oral history collection' do
+      let(:repo_doc_1) { { 'uuid' => 'da4687f0-cc71-0130-fb40-58d385a7b928' } }
+      let(:mock_s3_client) { double('s3_client', :mets_alto_for => mets_alto) }
+      let(:mets_alto) { "<?xml version=\"1.0\"?><alto><String CONTENT=\"ADrLPH\" ID=\"St_1.1.1.3\" HPOS=\"2536\" VPOS=\"1400\" HEIGHT=\"140\" WIDTH=\"700\" STYLEREFS=\"Style_1\" WC=\"7.3\" CC=\"007000\"/></alto>" }
+
+      let(:parent_or_item_repo_solr_doc_1_partial) { { 'uuid' => repo_doc_1['uuid'] } }
+      let(:parent_or_item_repo_solr_doc_2_partial) { { 'uuid' => repo_doc_2['uuid'] } }
+      let(:expected_capture_solr_doc_1_partial) {
+        {
+          'captureText_ocrtext' => 'ADrLPH',
+          'hasOCR' => true,
+          'mets_alto' => mets_alto,
+          :uuid => capture_1[:uuid]
+        }
+      }
+      let(:expected_capture_solr_doc_2_partial) {
+        {
+          'captureText_ocrtext' => 'ADrLPH',
+          'hasOCR' => true,
+          'mets_alto' => mets_alto,
+          :uuid => capture_2[:uuid]
+        }
+      }
+
+      before { allow(S3Client).to receive(:new).and_return(mock_s3_client) }
+
+      it 'adds ocr text, has ocr, and mets alto to the docs' do
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(array_including(hash_including(parent_or_item_repo_solr_doc_1_partial), hash_including(parent_or_item_repo_solr_doc_2_partial))).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(expected_capture_solr_doc_1_partial)).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(expected_capture_solr_doc_2_partial)).once
+        subject
+      end
+    end
+
     context 'the indexing time is known' do
       before { allow(Time).to receive(:now).and_return(known_datetime) }
 

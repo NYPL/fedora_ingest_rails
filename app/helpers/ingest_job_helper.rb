@@ -117,7 +117,7 @@ module IngestJobHelper
       end
 
       if in_oral_history_collection
-        mets_alto = fedora_client.mets_alto_for(uuid)
+        mets_alto = S3Client.new.mets_alto_for(uuid)
         capture_solr_doc['mets_alto'] = mets_alto
         capture_solr_doc['hasOCR'] = capture_solr_doc['mets_alto'].present?
 

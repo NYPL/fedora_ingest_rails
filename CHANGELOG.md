@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Removed hierarchicalgeographic_mtxt from repoapi docs. (DR-2206)
 
+### Updated
+- Moved OCR data from the Fedora server to S3. (DR-2302)
+
 ## [1.0.5] - 2022-10-26
 
 ### Added

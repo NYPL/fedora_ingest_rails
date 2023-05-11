@@ -20,6 +20,7 @@ gem 'nypl_log_formatter', '~> 0.1.2'
 gem 'rsolr', '~> 1.0.10'
 gem 'rsolr-ext', '~> 1.0.3'
 gem 'rubydora', '~> 2.0'
+gem 'aws-sdk-s3', '~> 1.93.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'will_paginate', '~> 3.1', '>= 3.1.6'
 
