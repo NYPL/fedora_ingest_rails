@@ -2,11 +2,7 @@
 
 class S3Client
   def initialize
-    Aws::S3::Client.new(
-      region: (ENV['AWS_REGION'] || 'us-east-1'),
-      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
-    )
+    Aws::S3::Client.new(region: (ENV['AWS_REGION'] || 'us-east-1'), access_key_id: ENV['AWS_ACCESS_KEY_ID'], secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'])
   end
 
   def mets_alto_for(uuid)
