@@ -15,8 +15,6 @@ class S3Client
 
     return nil unless raw_xml
 
-    puts "raw xml: #{raw_xml}"
-
     mets_alto_doc = Nokogiri::XML(raw_xml)
     mets_alto_doc.remove_namespaces!
     mets_alto = mets_alto_doc.to_xml
