@@ -2,7 +2,7 @@
 
 class S3Client
   def initialize
-    Aws::S3::Client.new(region: (ENV['AWS_REGION'] || 'us-east-1'), access_key_id: ENV['AWS_ACCESS_KEY_ID'], secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'])
+    @s3 ||= Aws::S3::Client.new(region: (ENV['AWS_REGION'] || 'us-east-1'), access_key_id: ENV['AWS_ACCESS_KEY_ID'], secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'])
   end
 
   def mets_alto_for(uuid)
@@ -14,6 +14,8 @@ class S3Client
     end
 
     return nil unless raw_xml
+
+    puts "raw xml: #{raw_xml}"
 
     mets_alto_doc = Nokogiri::XML(raw_xml)
     mets_alto_doc.remove_namespaces!
