@@ -22,7 +22,7 @@ module IngestJobHelper
 
     parent_uuids = []
     local_parent_and_item_repo_solr_docs_to_update = []
-    index_time = Time.now.iso8601 #make this match dateIndexed OR replace dateIndexed
+    index_time = Time.now.iso8601
 
     parent_and_item_repo_docs.each do |doc|
       doc_uuid = doc['uuid']
