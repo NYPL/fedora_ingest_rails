@@ -117,12 +117,14 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:parent_or_item_repo_solr_doc_1) {
         {
           'firstIndexed_s' => known_datetime,
+          'dateIndexed_s' => known_datetime,
           'uuid' => repo_doc_1['uuid']
         }
       }
       let(:parent_or_item_repo_solr_doc_2) {
         {
           'firstIndexed_s' => known_datetime,
+          'dateIndexed_s' => known_datetime,
           'uuid' => repo_doc_2['uuid']
         }
       }
@@ -130,6 +132,7 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:expected_capture_solr_doc_1) {
         {
           'firstIndexed_s' => known_datetime,
+          'dateIndexed_s' => known_datetime,
           'highResLink' => nil,
           :uuid => capture_1[:uuid]
         }
@@ -137,12 +140,13 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:expected_capture_solr_doc_2) {
         {
           'firstIndexed_s' => known_datetime,
+          'dateIndexed_s' => known_datetime,
           'highResLink' => nil,
           :uuid => capture_2[:uuid]
         }
       }
 
-      it 'adds firstIndexed_s to all the repo solr docs' do
+      it 'adds firstIndexed_s and dateIndexed_s to all the repo solr docs' do
         expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_parent_and_item_repo_solr_docs).once
         expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_capture_solr_doc_1).once
         expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_capture_solr_doc_2).once
