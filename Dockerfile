@@ -24,7 +24,6 @@ ADD ./provisioning/docker_build/fedora_ingest_rails.conf /etc/nginx/sites-enable
 COPY --chown=app:app . /home/app/fedora_ingest_rails
 
 ## Bundle Gems
-# https://stackoverflow.com/questions/47972479/after-ruby-update-to-2-5-0-require-bundler-setup-raise-exception
 RUN cd /home/app/fedora_ingest_rails && gem update --system
 RUN cd /home/app/fedora_ingest_rails && gem install bundler
 RUN cd /home/app/fedora_ingest_rails && bundle install -V --without test development
@@ -38,6 +37,6 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 FROM production AS development
 
 RUN cd /home/app/fedora_ingest_rails && rm -rfv .bundle
-RUN cd /home/app/fedora_ingest_rails && BUNDLER_WITH="development test" bundle
+RUN cd /home/app/fedora_ingest_rails && bundle -V --with test development
 # It will be linked from localhost
 RUN rm -rf /home/app/fedora_ingest_rails/*
