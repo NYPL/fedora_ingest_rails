@@ -35,7 +35,7 @@ module IngestJobHelper
         doc['firstIndexed_s'] = index_time
         local_parent_and_item_repo_solr_docs_to_update << local_parent_or_item_repo_solr_doc
       else
-        doc['firstIndexed_s'] = local_parent_or_item_repo_solr_doc.first_indexed.to_time.iso8601
+        doc['firstIndexed_s'] = local_parent_or_item_repo_solr_doc.first_indexed.to_time.strftime('%Y-%m-%d %H:%M:%S.%3N')
       end
     end
 
@@ -131,7 +131,7 @@ module IngestJobHelper
 
       local_repo_capture_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: uuid)
       capture_solr_doc['dateIndexed_s'] = index_time
-      capture_solr_doc['firstIndexed_s'] = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601 || index_time
+      capture_solr_doc['firstIndexed_s'] = local_repo_capture_solr_doc&.first_indexed&.to_time&.strftime('%Y-%m-%d %H:%M:%S.%3N') || index_time
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
       repo_solr.add_docs_to_solr(capture_solr_doc)
