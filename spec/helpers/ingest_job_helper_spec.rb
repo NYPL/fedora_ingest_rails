@@ -111,7 +111,7 @@ RSpec.describe 'IngestHelper', type: :helper do
     context 'the indexing time is known' do
       before { allow(Time).to receive(:now).and_return(known_datetime) }
 
-      let(:known_datetime) { DateTime.parse('2023-04-13 15:07:25 +0000') }
+      let(:known_datetime) { DateTime.parse('2023-05-22T20:22:29.472+00:00') }
 
       let(:expected_parent_and_item_repo_solr_docs) { [parent_or_item_repo_solr_doc_1, parent_or_item_repo_solr_doc_2] }
       let(:parent_or_item_repo_solr_doc_1) {
