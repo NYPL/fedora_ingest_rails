@@ -22,18 +22,20 @@ module IngestJobHelper
 
     parent_uuids = []
     local_parent_and_item_repo_solr_docs_to_update = []
-    index_time = Time.now.iso8601
+    index_time = Time.now.iso8601(3)
 
     parent_and_item_repo_docs.each do |doc|
       doc_uuid = doc['uuid']
       parent_uuids << doc_uuid
       local_parent_or_item_repo_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: doc_uuid)
 
+      doc['dateIndexed_s'] = index_time
+
       if local_parent_or_item_repo_solr_doc.first_indexed.nil?
         doc['firstIndexed_s'] = index_time
         local_parent_and_item_repo_solr_docs_to_update << local_parent_or_item_repo_solr_doc
       else
-        doc['firstIndexed_s'] = local_parent_or_item_repo_solr_doc.first_indexed.to_time.iso8601
+        doc['firstIndexed_s'] = local_parent_or_item_repo_solr_doc.first_indexed.to_time.iso8601(3)
       end
     end
 
@@ -128,7 +130,8 @@ module IngestJobHelper
       end
 
       local_repo_capture_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: uuid)
-      capture_solr_doc['firstIndexed_s'] = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601 || index_time
+      capture_solr_doc['dateIndexed_s'] = index_time
+      capture_solr_doc['firstIndexed_s'] = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601(3) || index_time
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
       repo_solr.add_docs_to_solr(capture_solr_doc)

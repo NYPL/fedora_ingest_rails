@@ -18,16 +18,18 @@ RUN apt-get install -y tzdata
 # So nginx won't clear the environment variables (see notes in environment-variables.conf)
 ADD ./provisioning/docker_build/environment-variables.conf /etc/nginx/main.d/environment-variables.conf
 
+## Bundle Gems
+COPY Gemfile /home/app/fedora_ingest_rails/
+COPY Gemfile.lock /home/app/fedora_ingest_rails/
+WORKDIR /home/app/fedora_ingest_rails
+RUN gem update --system
+RUN gem install bundler
+
 # Passenger Configuration & App
 RUN rm /etc/nginx/sites-enabled/default
 ADD ./provisioning/docker_build/fedora_ingest_rails.conf /etc/nginx/sites-enabled/fedora_ingest_rails.conf
 COPY --chown=app:app . /home/app/fedora_ingest_rails
-
-## Bundle Gems
-# https://stackoverflow.com/questions/47972479/after-ruby-update-to-2-5-0-require-bundler-setup-raise-exception
-RUN cd /home/app/fedora_ingest_rails && gem update --system
-RUN cd /home/app/fedora_ingest_rails && gem install bundler
-RUN cd /home/app/fedora_ingest_rails && bundle install -V --without test development
+RUN bundle install -V --without test development
 
 # Enables ngnix+passenger
 RUN rm -f /etc/service/nginx/down
@@ -38,6 +40,6 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 FROM production AS development
 
 RUN cd /home/app/fedora_ingest_rails && rm -rfv .bundle
-RUN cd /home/app/fedora_ingest_rails && BUNDLER_WITH="development test" bundle
+RUN cd /home/app/fedora_ingest_rails && bundle -V --with test development
 # It will be linked from localhost
 RUN rm -rf /home/app/fedora_ingest_rails/*
