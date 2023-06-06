@@ -17,16 +17,6 @@ RSpec.describe MMSClient, type: :model do
       @mms_client.mods_for('abc-123')
     end
 
-    it 'makes a request to get RELS-EXT' do
-      expect(HTTP).to receive(:get).with('http://example.com/exports/rels_ext/abc-123', params: {}) { double(code: 200) }
-      @mms_client.rels_ext_for('abc-123')
-    end
-
-    it "makes a request to get the all ancestors' rels_exts" do
-      expect(HTTP).to receive(:get).with('http://example.com/exports/full_rels_ext_solr_docs/abc-123', params: {}) { double(code: 200) }
-      @mms_client.full_rels_ext_solr_docs_for('abc-123')
-    end
-
     it 'makes a request to get Rights' do
       expect(HTTP).to receive(:get).with('http://example.com/exports/rights/abc-123', params: {}) { double(code: 200) }
       @mms_client.rights_for('abc-123')

@@ -31,9 +31,7 @@ RSpec.describe 'IngestHelper', type: :helper do
         :repo_docs_for => repo_docs,
         :captures_for_item => captures,
         :rights_for => rights,
-        :rels_ext_for => rels_ext,
-        :repo_doc_for => true,
-        :full_rels_ext_solr_docs_for => rels_ext_solr_docs
+        :repo_doc_for => true
       )
     }
 
@@ -47,15 +45,6 @@ RSpec.describe 'IngestHelper', type: :helper do
     let(:capture_2) { { :uuid => 'capture_2_uuid' } }
     let(:indexed_uuids) { [repo_doc_1['uuid'], repo_doc_2['uuid'], capture_1[:uuid], capture_2[:uuid]] }
     let(:rights) { 'some_rights' }
-    let(:rels_ext) { 'some_rels_ext' }
-    let(:rels_ext_solr_docs) { 'some_rels_ext_solr_docs' }
-
-    let(:mock_rels_ext_index_client) {
-      double('rels_client',
-        :post_solr_doc => true,
-        :commit_index_changes => true
-      )
-    }
 
     let(:mock_repo_solr_client) {
       double('repo_solr_client',
@@ -68,7 +57,6 @@ RSpec.describe 'IngestHelper', type: :helper do
       allow(Delayed::Worker).to receive(:logger).and_return(mock_logger)
       allow(FedoraClient).to receive(:new).and_return(mock_fedora_client)
       allow(MMSClient).to receive(:new).and_return(mock_mms_client)
-      allow(RelsExtIndexClient).to receive(:new).and_return(mock_rels_ext_index_client)
       allow(RepoSolrClient).to receive(:new).and_return(mock_repo_solr_client)
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_1[:uuid]).and_return(capture_1).once
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_2[:uuid]).and_return(capture_2).once

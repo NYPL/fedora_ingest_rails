@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# Eventually, we need to make the switch to retire the RelsExtIndexClient class. -TODO: KAK, 4/2020
-# This handles all logic related to building and saving index documents. 
 require 'uri'
 require 'http'
 require 'rsolr'
