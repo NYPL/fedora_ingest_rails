@@ -4,10 +4,8 @@ require 'nokogiri'
 module IngestJobHelper
   def ingest!(ingest_request, test_mode = false)
 
-    # Fedora and Rels Ext Index are not available in QA
-    unless test_mode
-      fedora_client = FedoraClient.new
-    end
+    # Fedora is not available in QA
+    fedora_client = FedoraClient.new unless test_mode
 
     mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url,
                                user_name: Rails.application.secrets.mms_http_basic_username,
