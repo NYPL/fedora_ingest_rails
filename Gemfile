@@ -17,6 +17,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'mysql2', '~> 0.4.5' # used to connect to Filestore Databases
 gem 'net-http-digest_auth', '~> 1.4.1'
 gem 'nypl_log_formatter', '~> 0.1.2'
+gem 'redcarpet'
 gem 'rsolr', '~> 1.0.10'
 gem 'rsolr-ext', '~> 1.0.3'
 gem 'rubydora', '~> 2.0'
