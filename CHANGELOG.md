@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Updated
 - Moved OCR data from the Fedora server to S3. (DR-2302)
 
+### Removed
+- Removed references to solr 3.5. (DR-2309)
+
 ## [1.0.5] - 2022-10-26
 
 ### Added
