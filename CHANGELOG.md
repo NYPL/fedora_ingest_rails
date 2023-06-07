@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 2022-06-07
+
 ### Added
 - Accurately record first index date in repo api. (DR-2269)
 - Create changelog endpoint. (DR-2370)
