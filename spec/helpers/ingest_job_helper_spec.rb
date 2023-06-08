@@ -31,7 +31,9 @@ RSpec.describe 'IngestHelper', type: :helper do
         :repo_docs_for => repo_docs,
         :captures_for_item => captures,
         :rights_for => rights,
-        :repo_doc_for => true
+        :rels_ext_for => rels_ext,
+        :repo_doc_for => true,
+        :full_rels_ext_solr_docs_for => rels_ext_solr_docs
       )
     }
 
@@ -45,6 +47,8 @@ RSpec.describe 'IngestHelper', type: :helper do
     let(:capture_2) { { :uuid => 'capture_2_uuid' } }
     let(:indexed_uuids) { [repo_doc_1['uuid'], repo_doc_2['uuid'], capture_1[:uuid], capture_2[:uuid]] }
     let(:rights) { 'some_rights' }
+    let(:rels_ext) { 'some_rels_ext' }
+    let(:rels_ext_solr_docs) { 'some_rels_ext_solr_docs' }
 
     let(:mock_repo_solr_client) {
       double('repo_solr_client',
