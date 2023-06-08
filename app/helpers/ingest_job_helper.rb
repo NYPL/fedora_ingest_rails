@@ -103,6 +103,9 @@ module IngestJobHelper
         end
       end
 
+      # Datastreams with info from the `Capture` Level
+      rels_ext = mms_client.rels_ext_for(uuid)
+
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
 
@@ -129,6 +132,19 @@ module IngestJobHelper
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
       repo_solr.add_docs_to_solr(capture_solr_doc)
+
+      # Fedora is not available in qa
+      unless test_mode || rels_ext.blank?
+        # Post the datastream to the repository
+        fedora_client.repository.add_datastream(
+          pid: pid,
+          dsid: 'RELS-EXT',
+          content: rels_ext,
+          mimeType: 'application/rdf+xml',
+          checksumType: 'MD5',
+          dsLabel: 'RELS-EXT XML record for this object'
+        )
+      end
 
       digital_object.save unless test_mode
 
