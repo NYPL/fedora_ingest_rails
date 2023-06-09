@@ -4,11 +4,8 @@ require 'nokogiri'
 module IngestJobHelper
   def ingest!(ingest_request, test_mode = false)
 
-    # Fedora and Rels Ext Index are not available in QA
-    unless test_mode
-      fedora_client = FedoraClient.new
-      rels_ext_index_client = RelsExtIndexClient.new(rels_ext_solr_url: Rails.application.secrets.rels_ext_solr_url)
-    end
+    # Fedora is not available in QA
+    fedora_client = FedoraClient.new unless test_mode
 
     mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url,
                                user_name: Rails.application.secrets.mms_http_basic_username,
@@ -136,27 +133,23 @@ module IngestJobHelper
 
       repo_solr.add_docs_to_solr(capture_solr_doc)
 
-      # Rels ext index and fedora are not available in qa
-      unless test_mode
-        if rels_ext.blank?
-          # Remove it from solr as there is a good chance it is there and should not be.
-          rels_ext_index_client.remove_doc_for(uuid)
-        else
-          # Write the doc to solr
-          rels_for_indexing = mms_client.full_rels_ext_solr_docs_for(uuid)
-          rels_indexer_response = rels_ext_index_client.post_solr_doc(uuid, rels_for_indexing)
-
-          # Post the datastream to the repository
-          fedora_client.repository.add_datastream(pid: pid, dsid: 'RELS-EXT', content: rels_ext, mimeType: 'application/rdf+xml', checksumType: 'MD5', dsLabel: 'RELS-EXT XML record for this object')
-        end
-
-        digital_object.save
+      # Fedora is not available in qa
+      unless test_mode || rels_ext.blank?
+        # Post the datastream to the repository
+        fedora_client.repository.add_datastream(
+          pid: pid,
+          dsid: 'RELS-EXT',
+          content: rels_ext,
+          mimeType: 'application/rdf+xml',
+          checksumType: 'MD5',
+          dsLabel: 'RELS-EXT XML record for this object'
+        )
       end
+
+      digital_object.save unless test_mode
 
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
-
-    rels_ext_index_client.commit_index_changes unless test_mode
 
     repo_solr.commit_index_changes
 
