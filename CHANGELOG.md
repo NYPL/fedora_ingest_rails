@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.6] - 2022-06-07
+## [1.0.7] - 2023-07-05
+
+### Removed
+- Removed references to solr 3.5. (DR-2309)
+
+## [1.0.6] - 2023-06-07
 
 ### Added
 - Accurately record first index date in repo api. (DR-2269)
@@ -17,9 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 - Moved OCR data from the Fedora server to S3. (DR-2302)
-
-### Removed
-- Removed references to solr 3.5. (DR-2309)
 
 ## [1.0.5] - 2022-10-26
 
