@@ -295,10 +295,11 @@ class MMSClient
 
   def convert_to_json_docs(string_response)
     if string_response
-      json_docs = JSON.parse(string_response)
-      new_docs = []
-
-      json_docs.each do |json_response|
+      json_docs   = JSON.parse(string_response)
+      docs_array  = json_docs.class == Array ? json_docs : [ json_docs ]
+      new_docs    = []
+      
+      docs_array.each do |json_response|
         json_response.except!( *REMOVABLE_FIELDS )
 
         SINGLES.each do |s|

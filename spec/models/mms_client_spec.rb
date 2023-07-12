@@ -50,6 +50,15 @@ RSpec.describe MMSClient, type: :model do
 
   describe 'json parsing' do
     subject { @mms_client.convert_to_json_docs(test_string) }
+    
+    context 'with a valid single JSON document' do
+      let(:test_string) { "{\"uuid\":\"69ba7b30-fe6e-013b-a248-0242ac110002\"}" }
+      let(:expected_result) { [{"uuid"=>"69ba7b30-fe6e-013b-a248-0242ac110002"}] }
+
+      it 'parses the JSON document correctly' do
+        expect(subject).to eq(expected_result)
+      end
+    end
 
     context 'with erroneous arrays' do
       let(:test_hash) {
