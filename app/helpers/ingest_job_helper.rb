@@ -2,6 +2,11 @@
 require 'nokogiri'
 
 module IngestJobHelper
+  RELEASE_MASTER_OK = 'Release Source File for Free (i.e., high-res or master can be released to the public)'
+  PUBLIC_DOMAIN_RIGHTS_CODES = %w(
+    PDCDPP PDNCN PDREN PDEXP PDADD PDUSG PPD PPD100 CC_0
+  )
+
   def ingest!(ingest_request, test_mode = false)
 
     # Fedora is not available in QA
@@ -47,16 +52,15 @@ module IngestJobHelper
     mms_client.captures_for_item(ingest_request.uuid).each do |capture|
       uuid = capture[:uuid]
       image_id = capture[:image_id]
-
-      # Pull rights for each capture. Needed because now we manage captures on an atomic level.
-      rights = mms_client.rights_for(uuid)
-
       pid = "uuid:#{uuid}"
 
-      # Figure out if it is ok to release high res file. Handled by string in rights statement right now.
-      # necessary for determining if we need to get master image permalinks.
-      high_res_ok = 'Release Source File for Free (i.e., high-res or master can be released to the public)'
-      release_master = rights.to_s.scan(high_res_ok).present? if rights
+      #rights_response = mms_client.rights_for(uuid)
+      rights = mms_client.rights_for(uuid)
+      uses = Nokogiri::XML(rights).xpath('./nyplRights/useStatement/use').map{|u| u.text}
+      release_master = uses.any?{ |use|
+        (use == RELEASE_MASTER_OK) \
+        || (PUBLIC_DOMAIN_RIGHTS_CODES.include?(use))
+      }
 
       # Fedora is not available in QA
       unless test_mode
