@@ -54,7 +54,6 @@ module IngestJobHelper
       image_id = capture[:image_id]
       pid = "uuid:#{uuid}"
 
-      #rights_response = mms_client.rights_for(uuid)
       rights = mms_client.rights_for(uuid)
       uses = Nokogiri::XML(rights).xpath('./nyplRights/useStatement/use').map{|u| u.text}
       release_master = uses.any?{ |use|
