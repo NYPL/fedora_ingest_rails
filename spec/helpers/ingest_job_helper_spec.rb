@@ -46,10 +46,15 @@ RSpec.describe 'IngestHelper', type: :helper do
     let(:capture_1) { { :uuid => 'capture_1_uuid' } }
     let(:capture_2) { { :uuid => 'capture_2_uuid' } }
     let(:indexed_uuids) { [repo_doc_1['uuid'], repo_doc_2['uuid'], capture_1[:uuid], capture_2[:uuid]] }
-    let(:rights) { 'some_rights' }
+    let(:rights) { "<nyplRights></nyplRights>" }
     let(:rels_ext) { 'some_rels_ext' }
     let(:rels_ext_solr_docs) { 'some_rels_ext_solr_docs' }
-
+    let(:image_filestore_entry) { ImageFilestoreEntry.new(
+      file_name: 'filename.tif',
+      uuid: 'uuid',
+      type: 'u'
+    )}
+    let(:mock_permalink) { 'http://example.com/master.tif' }
     let(:mock_repo_solr_client) {
       double('repo_solr_client',
         :add_docs_to_solr => true,
@@ -64,6 +69,62 @@ RSpec.describe 'IngestHelper', type: :helper do
       allow(RepoSolrClient).to receive(:new).and_return(mock_repo_solr_client)
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_1[:uuid]).and_return(capture_1).once
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_2[:uuid]).and_return(capture_2).once
+      allow(ImageFilestoreEntry).to receive(:where).and_return([image_filestore_entry])
+      allow_any_instance_of(PermalinkClient).to receive(:fetch_or_mint_permalink).and_return(mock_permalink)
+    end
+
+    context 'high res links' do
+      context 'when the rights statement has no uses specified' do
+        let(:rights) { "<nyplRights></nyplRights>" }
+
+        it 'should have no highResLink value' do
+          expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including({
+            :uuid => capture_1[:uuid],
+            'highResLink' => nil
+          })).once
+          subject
+        end
+      end
+
+      context 'when the rights statement specifies releasing the high res master' do
+        let(:rights) {
+          <<-XML
+          <nyplRights>
+            <useStatement>
+              <use>#{IngestJobHelper::RELEASE_MASTER_OK}</use>
+            </useStatement>
+          </nyplRights>
+          XML
+        }
+
+        it 'should have a highResLink value' do
+          expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including({
+            :uuid => capture_1[:uuid],
+            'highResLink' => mock_permalink
+          })).once
+          subject
+        end
+      end
+
+      context 'when the rights statement specifies a public domain code' do
+        let(:rights) {
+          <<-XML
+          <nyplRights>
+            <useStatement>
+              <use>#{IngestJobHelper::PUBLIC_DOMAIN_RIGHTS_CODES.first}</use>
+            </useStatement>
+          </nyplRights>
+          XML
+        }
+
+        it 'should have a highResLink value' do
+          expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including({
+            :uuid => capture_1[:uuid],
+            'highResLink' => mock_permalink
+          })).once
+          subject
+        end
+      end
     end
 
     context 'a repo doc uuid is in the oral history collection' do
