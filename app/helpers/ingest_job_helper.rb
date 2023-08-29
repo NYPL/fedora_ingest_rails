@@ -47,7 +47,7 @@ module IngestJobHelper
     # add docs to solr, setting the flag to check the old parents for existence.
     repo_solr = RepoSolrClient.new
     repo_solr.add_docs_to_solr(parent_and_item_repo_docs, true)
-    
+
     local_repo_capture_solr_docs_to_update = []
 
     mms_client.captures_for_item(ingest_request.uuid).each do |capture|
