@@ -29,7 +29,11 @@ class RepoSolrClient
     if @repo_solr_client
       @solr_params = { q: "uuid:#{uuid}" }
       resp = @repo_solr_client.get 'select', params: @solr_params
-      resp['response']
+      if resp['response']
+        resp['response']
+      else
+        raise "Bad response from solr for uuid:#{uuid}."
+      end
     end
   end
   
