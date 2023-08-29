@@ -10,14 +10,17 @@ class RepoSolrClient
     if Rails.env != 'test' || ( Rails.env == 'test' && Rails.application.secrets.repo_solr_url == 'http://fake.com/solr' )
       @repo_solr_client = RSolr.connect url: Rails.application.secrets.repo_solr_url
       @repo_solr_params = { wt: :ruby, q: '*:*' }
+    else
+      @repo_solr_client = RSolr.connect url: 'http://fake.com/solr/repoapi'
+      @repo_solr_params = { wt: :ruby, q: '*:*' }
     end
   end
 
-  def add_docs_to_solr(solr_docs_array, check_parents=false)
+  def add_docs_to_solr(solr_docs_array, check_parents=false) 
     if @repo_solr_client
       if check_parents == true
         solr_docs_array.each do |doc|
-          @repo_solr_client.update_index_and_delete_missing_parents(doc)
+          update_index_and_delete_empty_parents(doc)
         end
       else
         @repo_solr_client.add solr_docs_array
