@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- Fixed issue where parent records where not getting deleted from solr if empty. (DR-2342)
+- Fixed issue where parent records were not getting deleted from solr if empty. (DR-2342)
 
 ### Updated
 - Added additional rights statements that release high resolution permalinks (DR-2396)
