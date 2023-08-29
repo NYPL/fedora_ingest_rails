@@ -38,7 +38,11 @@ class RepoSolrClient
       # Find out how many actual items are beneath this parent.
       @solr_params = { q: "parentUUID:\"#{uuid}\" AND type_s:Item" }
       resp = @repo_solr_client.get 'select', params: @solr_params
-      resp['response']['numFound']
+      if resp['response']
+        resp['response']['numFound']
+      else
+        raise "Bad response from solr for parentUUID:#{uuid}."
+      end
     end
   end
 
