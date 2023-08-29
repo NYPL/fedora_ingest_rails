@@ -25,13 +25,13 @@ RSpec.describe RepoSolrClient, type: :model do
         allow(RSolr).to receive(:connect).and_return(solr_mock)
 
         # Create a new document with updated parentUUIDs
-        new_document = { uuid: 'uuid1', parentUUID: ['new_parent_uuid1'] }
+        new_document = { 'uuid' => 'uuid1', 'parentUUID' => ['new_parent_uuid1'] }
         subject.update_index_and_delete_empty_parents(new_document)
 
         # Verify mock interactions
         expect(solr_mock).to have_received(:get).with('select', params: { q: "parentUUID:\"old_uuid1\" AND type_s:Item" } )
         expect(solr_mock).to have_received(:delete_by_query).with('uuid:old_uuid1')
-        expect(solr_mock).to have_received(:add).with([new_document])
+        expect(solr_mock).to have_received(:add).with(new_document)
         expect(solr_mock).to have_received(:commit)
       end
       
@@ -46,13 +46,13 @@ RSpec.describe RepoSolrClient, type: :model do
         allow(RSolr).to receive(:connect).and_return(solr_mock)
         
         # Create a new document with updated parentUUIDs
-        second_new_document = { uuid: 'uuid10', parentUUID: ['new_parent_uuid1'] }
+        second_new_document = { 'uuid' => 'uuid10', 'parentUUID' => ['new_parent_uuid1'] }
         subject.update_index_and_delete_empty_parents(second_new_document)
 
         # Verify mock interactions
         expect(solr_mock).to have_received(:get).with('select', params: { q: "parentUUID:\"old_populated_uuid1\" AND type_s:Item" } )
         expect(solr_mock).to_not have_received(:delete_by_query).with('uuid:old_populated_uuid1')
-        expect(solr_mock).to have_received(:add).with([second_new_document])
+        expect(solr_mock).to have_received(:add).with(second_new_document)
         expect(solr_mock).to have_received(:commit)
       end
     end
