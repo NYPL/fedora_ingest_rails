@@ -10,9 +10,6 @@ class RepoSolrClient
     if Rails.env != 'test' || ( Rails.env == 'test' && Rails.application.secrets.repo_solr_url == 'http://fake.com/solr' )
       @repo_solr_client = RSolr.connect url: Rails.application.secrets.repo_solr_url
       @repo_solr_params = { wt: :ruby, q: '*:*' }
-    else
-      @repo_solr_client = RSolr.connect url: 'http://fake.com/solr/repoapi'
-      @repo_solr_params = { wt: :ruby, q: '*:*' }
     end
   end
 
