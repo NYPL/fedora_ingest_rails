@@ -10,6 +10,9 @@ class RepoSolrClient
     if Rails.env != 'test' || ( Rails.env == 'test' && Rails.application.secrets.repo_solr_url == 'http://fake.com/solr' )
       @rsolr = RSolr.connect url: Rails.application.secrets.repo_solr_url
       @rsolr_params = { wt: :ruby, q: '*:*' }
+    else
+      @rsolr = RSolr.connect url: 'http://10.225.133.217:8983/solr/repoapi'
+      @rsolr_params = { wt: :ruby, q: '*:*' }
     end
   end
 
@@ -65,9 +68,10 @@ class RepoSolrClient
   
   def update_index_and_delete_empty_parents(new_document)
     return unless @rsolr
+    
     old_document = get_doc(new_document['uuid'])['docs'].first
 
-    if old_document
+    if old_document && old_document['parentUUID'].present?
       # Delete old non-matching parentUUIDs
       old_uuids_to_delete = old_document['parentUUID'] - new_document['parentUUID']
       old_uuids_to_delete.each do |uuid|
