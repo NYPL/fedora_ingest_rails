@@ -15,7 +15,7 @@ class RepoSolrClient
 
   def add_docs_to_solr(solr_docs_array, check_parents=false)
     if @repo_solr_client
-      if check_parents?
+      if check_parents == true
         solr_docs_array.each do |doc|
           @repo_solr_client.update_index_and_delete_missing_parents(doc)
         end

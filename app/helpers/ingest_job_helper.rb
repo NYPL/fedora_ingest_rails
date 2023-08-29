@@ -44,10 +44,8 @@ module IngestJobHelper
     # magic uuid for our one and only oral history collection. TODO:     Make this more universal. KAK - Sept 20 2021
     in_oral_history_collection = parent_uuids.include?('da4687f0-cc71-0130-fb40-58d385a7b928')
 
-    repo_solr = RepoSolrClient.new
-    
-    
     # add docs to solr, setting the flag to check the old parents for existence.
+    repo_solr = RepoSolrClient.new
     repo_solr.add_docs_to_solr(parent_and_item_repo_docs, true)
     
     local_repo_capture_solr_docs_to_update = []
