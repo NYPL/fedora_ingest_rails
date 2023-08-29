@@ -154,7 +154,7 @@ RSpec.describe 'IngestHelper', type: :helper do
       before { allow(S3Client).to receive(:new).and_return(mock_s3_client) }
 
       it 'adds ocr text, has ocr, and mets alto to the docs' do
-        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(array_including(hash_including(parent_or_item_repo_solr_doc_1_partial), hash_including(parent_or_item_repo_solr_doc_2_partial))).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(array_including(hash_including(parent_or_item_repo_solr_doc_1_partial), hash_including(parent_or_item_repo_solr_doc_2_partial)), true).once
         expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(expected_capture_solr_doc_1_partial)).once
         expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(expected_capture_solr_doc_2_partial)).once
         subject
@@ -162,45 +162,46 @@ RSpec.describe 'IngestHelper', type: :helper do
     end
 
     context 'the indexing time is known' do
-      before { allow(Time).to receive(:now).and_return(known_datetime) }
+      before { allow(Time).to receive(:now).and_return(Time.parse(known_datetime)) }
 
-      let(:known_datetime) { DateTime.parse('2023-05-22T20:22:29.472+00:00') }
+      let(:known_datetime) { "2023-08-28 18:41:34 -0400" }
+      let(:expected_utc_timestamp) { Time.parse(known_datetime).utc.strftime('%Y-%m-%dT%H:%M:%S.%LZ') }
 
       let(:expected_parent_and_item_repo_solr_docs) { [parent_or_item_repo_solr_doc_1, parent_or_item_repo_solr_doc_2] }
       let(:parent_or_item_repo_solr_doc_1) {
         {
-          'firstIndexed_s' => known_datetime,
-          'dateIndexed_s' => known_datetime,
+          'firstIndexed_s' => expected_utc_timestamp,
+          'dateIndexed_s' => expected_utc_timestamp,
           'uuid' => repo_doc_1['uuid']
         }
       }
       let(:parent_or_item_repo_solr_doc_2) {
         {
-          'firstIndexed_s' => known_datetime,
-          'dateIndexed_s' => known_datetime,
+          'firstIndexed_s' => expected_utc_timestamp,
+          'dateIndexed_s' => expected_utc_timestamp,
           'uuid' => repo_doc_2['uuid']
         }
       }
 
       let(:expected_capture_solr_doc_1) {
         {
-          'firstIndexed_s' => known_datetime,
-          'dateIndexed_s' => known_datetime,
+          'firstIndexed_s' => expected_utc_timestamp,
+          'dateIndexed_s' => expected_utc_timestamp,
           'highResLink' => nil,
           :uuid => capture_1[:uuid]
         }
       }
       let(:expected_capture_solr_doc_2) {
         {
-          'firstIndexed_s' => known_datetime,
-          'dateIndexed_s' => known_datetime,
+          'firstIndexed_s' => expected_utc_timestamp,
+          'dateIndexed_s' => expected_utc_timestamp,
           'highResLink' => nil,
           :uuid => capture_2[:uuid]
         }
       }
 
       it 'adds firstIndexed_s and dateIndexed_s to all the repo solr docs' do
-        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_parent_and_item_repo_solr_docs).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_parent_and_item_repo_solr_docs, true).once
         expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_capture_solr_doc_1).once
         expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_capture_solr_doc_2).once
         subject
