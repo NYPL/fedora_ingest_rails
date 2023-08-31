@@ -44,8 +44,9 @@ module IngestJobHelper
     # magic uuid for our one and only oral history collection. TODO:     Make this more universal. KAK - Sept 20 2021
     in_oral_history_collection = parent_uuids.include?('da4687f0-cc71-0130-fb40-58d385a7b928')
 
+    # add docs to solr, setting the flag to check the old parents for existence.
     repo_solr = RepoSolrClient.new
-    repo_solr.add_docs_to_solr(parent_and_item_repo_docs)
+    repo_solr.add_docs_to_solr(parent_and_item_repo_docs, true)
 
     local_repo_capture_solr_docs_to_update = []
 
@@ -134,6 +135,7 @@ module IngestJobHelper
       capture_solr_doc['firstIndexed_s'] = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601(3) || index_time
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
+      # add docs to solr without checking parents this time
       repo_solr.add_docs_to_solr(capture_solr_doc)
 
       # Fedora is not available in qa
