@@ -83,7 +83,7 @@ RSpec.describe RepoSolrClient, type: :model do
   
         subject.delete_unseen_captures_below('fake-item-with-suppressed-capture',['good-capture'])
   
-        # Expect that 'delete_by_query' was called with the specific argument
+        # Expect that 'delete_by_id' was called with the specific argument
         expect(solr_mock).to_not have_received(:delete_by_id).with('good-capture')
         expect(solr_mock).to have_received(:delete_by_id).with('suppressed-capture')
       end
