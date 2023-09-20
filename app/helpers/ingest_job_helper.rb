@@ -49,9 +49,12 @@ module IngestJobHelper
     repo_solr.add_docs_to_solr(parent_and_item_repo_docs, true)
 
     local_repo_capture_solr_docs_to_update = []
+    
+    seen_capture_uuids = []
 
     mms_client.captures_for_item(ingest_request.uuid).each do |capture|
-      uuid = capture[:uuid]
+      seen_capture_uuids << capture[:uuid]
+      uuid = capture[:uuid] 
       image_id = capture[:image_id]
       pid = "uuid:#{uuid}"
 
@@ -155,6 +158,9 @@ module IngestJobHelper
 
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
+    
+    # sometimes captures are deleted or suppressed, and we need to pull them back
+    repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
 
     repo_solr.commit_index_changes
 
