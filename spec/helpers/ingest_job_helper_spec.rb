@@ -67,6 +67,7 @@ RSpec.describe 'IngestHelper', type: :helper do
       allow(FedoraClient).to receive(:new).and_return(mock_fedora_client)
       allow(MMSClient).to receive(:new).and_return(mock_mms_client)
       allow(RepoSolrClient).to receive(:new).and_return(mock_repo_solr_client)
+      allow(mock_repo_solr_client).to receive(:delete_unseen_captures_below).with("MyString", ["capture_1_uuid", "capture_2_uuid"])
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_1[:uuid]).and_return(capture_1).once
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_2[:uuid]).and_return(capture_2).once
       allow(ImageFilestoreEntry).to receive(:where).and_return([image_filestore_entry])
