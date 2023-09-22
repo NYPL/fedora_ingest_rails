@@ -107,6 +107,7 @@ class RepoSolrClient
     page = 0
 
     while page <= total_pages do
+      break if total_results == 0
       # Set the start parameter for pagination
       start = page * 250
   
@@ -114,14 +115,13 @@ class RepoSolrClient
       response = @rsolr.get('select', params: { q: query, start: start, rows: 250 })
       
       unless response['response']
-        puts "Bad response from Solr for page #{page}. Skipping."
-        next
+        raise "Bad response from Solr for immediateParent_s:#{item_uuid}, page #{page}."
       end
 
       # Loop through the Solr response and delete if UUID not in seen_uuids
       response['response']['docs'].each do |doc|
         unless seen_uuids.include?(doc['uuid'])
-          puts "Deleting capture with UUID: #{doc['uuid']}"
+          Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuids)
           @rsolr.delete_by_id(doc['uuid'])
           deletes = true
         end
