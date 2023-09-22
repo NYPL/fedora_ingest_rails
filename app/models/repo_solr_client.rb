@@ -121,7 +121,7 @@ class RepoSolrClient
       # Loop through the Solr response and delete if UUID not in seen_uuids
       response['response']['docs'].each do |doc|
         unless seen_uuids.include?(doc['uuid'])
-          Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuids)
+          Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuid)
           @rsolr.delete_by_id(doc['uuid'])
           deletes = true
         end
