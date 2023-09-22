@@ -159,10 +159,11 @@ module IngestJobHelper
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
     
+    # commit changes
+    repo_solr.commit_index_changes
+    
     # sometimes captures are deleted or suppressed, and we need to pull them back
     repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
-
-    repo_solr.commit_index_changes
 
     # do not update first indexed until we successfully return from commit
     local_repo_capture_solr_docs_to_update.each { |d| d.update_attributes(first_indexed: index_time) }
