@@ -83,4 +83,54 @@ class RepoSolrClient
     @rsolr.add new_document
     @rsolr.commit
   end
+  
+  # remove all captures not updated in current run to ensure bad captures are deleted -- use wisely!
+  def delete_unseen_captures_below(item_uuid, seen_uuids)
+    return unless @rsolr
+    
+    query = 'type_s:Capture AND immediateParent_s:"' + item_uuid + '"'
+
+    # Fetch the initial response to determine the total number of results
+    resp = @rsolr.get('select', params: { q: query, rows: 0 })
+    
+    unless resp['response']
+      raise "Bad response from Solr for immediateParent_s:#{item_uuid}."
+    end
+    
+    total_results = resp['response']['numFound']
+    deletes = false
+
+    # Calculate the total pages to loop through
+    total_pages = (total_results + 249) / 250
+
+    # Initialize variables for pagination
+    page = 0
+
+    while page <= total_pages do
+      break if total_results == 0
+      # Set the start parameter for pagination
+      start = page * 250
+  
+      # Fetch documents from Solr with pagination
+      response = @rsolr.get('select', params: { q: query, start: start, rows: 250 })
+      
+      unless response['response']
+        raise "Bad response from Solr for immediateParent_s:#{item_uuid}, page #{page}."
+      end
+
+      # Loop through the Solr response and delete if UUID not in seen_uuids
+      response['response']['docs'].each do |doc|
+        unless seen_uuids.include?(doc['uuid'])
+          Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuid)
+          @rsolr.delete_by_id(doc['uuid'])
+          deletes = true
+        end
+      end
+      
+      # commit deletes for this loop ; depending on performance we may want to adjust this to commit after x number of deletions.
+      @rsolr.commit if deletes
+      
+      page += 1
+    end
+  end
 end
