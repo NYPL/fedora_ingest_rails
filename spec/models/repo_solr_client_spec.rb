@@ -18,7 +18,7 @@ RSpec.describe RepoSolrClient, type: :model do
         allow(solr_mock).to receive(:get).with('select', params: { q: 'uuid:uuid1' } )
           .and_return('response' => {'docs' => [{'uuid' => 'uuid1', 'parentUUID' => ['old_uuid1']}]})
         allow(solr_mock).to receive(:get).with('select', params: { q: "parentUUID:\"old_uuid1\" AND type_s:Item" } )
-          .and_return('response' => {'docs' => [{'uuid' => 'uuid1', 'parentUUID' => ['old_uuid1']}], 'numFound' => 1 })
+          .and_return('response' => {'docs' => [], 'numFound' => 0 })
         allow(solr_mock).to receive(:delete_by_query)
         allow(solr_mock).to receive(:add)
         allow(solr_mock).to receive(:commit)
