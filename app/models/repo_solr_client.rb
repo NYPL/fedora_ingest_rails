@@ -16,9 +16,16 @@ class RepoSolrClient
   def add_docs_to_solr(solr_docs_array, check_parents=false) 
     if @rsolr
       if check_parents == true
-        item_doc = solr_docs_array.first # the item will always be the first in order
-        update_index_and_delete_empty_parents(item_doc)
+        
+        # grab the item document, it will always be first.
+        new_item_document = solr_docs_array.first
+        
+        # commit the parents now, they will be any documents not in first position.
         @rsolr.add solr_docs_array[1..-1]
+        @rsolr.commit 
+        
+        # now process the item with the special method.
+        update_index_and_delete_empty_parents(new_item_document)
       else
         @rsolr.add solr_docs_array
       end
@@ -66,22 +73,25 @@ class RepoSolrClient
   def update_index_and_delete_empty_parents(new_document)
     return unless @rsolr
     
+    # before we commit the current doc, grab the old document for the item    
     old_document = get_doc(new_document['uuid'])['docs'].first
     
+    # Add/update the new documents
+    @rsolr.add new_document
+    @rsolr.commit
+    
+    # Cleanup old documents if they no longer have children.
     if old_document && old_document['parentUUID'].present?
       # Delete old non-matching parentUUIDs
       old_uuids_to_delete = old_document['parentUUID'] - new_document['parentUUID']
+      
       old_uuids_to_delete.each do |uuid|
-        # Only delete the doc if this item is the last to move out beneath the object, or if it's empty already.
-        if get_number_of_children_for_parent_uuid(uuid) <= 1
+        # Only delete the doc if it's empty.
+        if get_number_of_children_for_parent_uuid(uuid) == 0
           remove_doc_for(uuid)
         end
       end
     end
-
-    # Add/update the new document
-    @rsolr.add new_document
-    @rsolr.commit
   end
   
   # remove all captures not updated in current run to ensure bad captures are deleted -- use wisely!
