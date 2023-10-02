@@ -16,9 +16,9 @@ class RepoSolrClient
   def add_docs_to_solr(solr_docs_array, check_parents=false) 
     if @rsolr
       if check_parents == true
-        solr_docs_array.each do |doc|
-          update_index_and_delete_empty_parents(doc)
-        end
+        item_doc = solr_docs_array.first # the item will always be the first in order
+        update_index_and_delete_empty_parents(item_doc)
+        @rsolr.add solr_docs_array[1..-1]
       else
         @rsolr.add solr_docs_array
       end
@@ -67,7 +67,7 @@ class RepoSolrClient
     return unless @rsolr
     
     old_document = get_doc(new_document['uuid'])['docs'].first
-
+    
     if old_document && old_document['parentUUID'].present?
       # Delete old non-matching parentUUIDs
       old_uuids_to_delete = old_document['parentUUID'] - new_document['parentUUID']
