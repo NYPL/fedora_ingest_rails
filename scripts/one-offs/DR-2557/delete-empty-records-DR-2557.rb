@@ -28,9 +28,9 @@ batch_size = 500
 offset = 0
 CSV.open(csv_file, 'w') do |csv|
   loop do
-    # Query for all records with type_s:Collection in the current batch
+    # Query for all collection or container records. 
     query = 'type_s:"http://uri.nypl.org/vocabulary/repository_terms#Collection" OR type_s:"http://uri.nypl.org/vocabulary/repository_terms#Container"'
-    # Limit fields to only 'uuid' and change 'parentUUID_s' to 'parentUUID'
+   
     params = {
       q: "#{query}",
       fl: 'uuid',
