@@ -7,12 +7,16 @@
 
 # How to run: bundle exec ruby ./scripts/one-offs/DR-2557/delete-empty-records-DR-2557.rb SOLR_URL
 # E.g., for dev: bundle exec ruby ./scripts/one-offs/DR-2557/delete-empty-records-DR-2557.rb http://10.225.133.217:8983/solr/repoapi
+
+# Optionally, you can test locally what it will do by adding a second argument, 'test', that prevents updates to solr but still generates files listing what would be deleted if not run in test mode.
+# E.g., for dev: bundle exec ruby ./scripts/one-offs/DR-2557/delete-empty-records-DR-2557.rb http://10.225.133.217:8983/solr/repoapi test
 # It should run for two hours or less. 
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'config', 'environment'))
 
 # Set up the Solr connection
 solr_url = ARGV[0]
+test_mode = ARGV[1]
 solr = RSolr.connect(url: solr_url)
 
 csv_file = 'records_deleted_from_solr.csv'
@@ -56,14 +60,14 @@ CSV.open(csv_file, 'w') do |csv|
       if parent_response['response']['numFound'] == 0
         puts "Deleting parent with UUID: #{uuid}"
         csv << [uuid]
-        solr.delete_by_id(uuid)
+        solr.delete_by_id(uuid) if ARGV[1] != 'test'
       else 
         puts "Did not delete #{uuid}"
       end
     end
 
     # Commit the changes to Solr after processing each batch
-    solr.commit
+    solr.commit if ARGV[1] != 'test'
 
     # Increment the offset to retrieve the next batch
     offset += batch_size
