@@ -17,7 +17,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'co
 # Set up the Solr connection
 solr_url = ARGV[0]
 test_mode = ARGV[1]
-solr = RSolr.connect(url: solr_url)
+solr = RSolr.connect(timeout: 120, open_timeout: 120, url: solr_url)
 
 csv_file = 'records_deleted_from_solr.csv'
 
