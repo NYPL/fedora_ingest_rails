@@ -1,7 +1,6 @@
 #! /bin/bash
 # Deploy only if it's not a pull request
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "$TRAVIS_BRANCH" == "$HOT_DEPLOY_BRANCH" ]; then
-  # Deploy only if we're testing the master branch
   if [ "$TRAVIS_BRANCH" == "DR-2597-deploy-to-both-qa-environments" ]; then
     export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
     export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
