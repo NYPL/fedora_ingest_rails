@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Updated
+- Merges to qa branch deploy to migrated and unmigrated environments. (DR-2597)
+
 ## [1.0.10] - 2023-10-12
 
 ### Fixed
