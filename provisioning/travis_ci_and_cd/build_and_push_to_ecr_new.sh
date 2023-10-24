@@ -2,10 +2,10 @@
 # Push only if it's not a pull request
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "$TRAVIS_BRANCH" == "$HOT_DEPLOY_BRANCH" ]; then
   # Push only if we're testing a deployable branch
-  if [ "$TRAVIS_BRANCH" == "DR-2597-deploy-to-both-qa-environments" ]; then #change back after testing
+  if [ "$TRAVIS_BRANCH" == "qa" ]; then #change back after testing
     export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
     export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
-    DOCKER_REPO_URL='685731035297.dkr.ecr.us-east-1.amazonaws.com/fedora-ingest'
+    DOCKER_REPO_URL=$REMOTE_IMAGE_URL_QA_NEW
 
     # This is needed to login on AWS and push the image on ECR
     # Change it accordingly to your docker repo
@@ -14,10 +14,8 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
     eval $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
 
     # Build and push
-    #LOCAL_TAG_NAME=$IMAGE_NAME:$TRAVIS_BRANCH-latest # change back after testing
-    #REMOTE_FULL_URL=$DOCKER_REPO_URL:$TRAVIS_BRANCH-latest #change back after testing
-    LOCAL_TAG_NAME=$IMAGE_NAME:qa-latest # change back after testing
-    REMOTE_FULL_URL=$DOCKER_REPO_URL:qa-latest #change back after testing
+    LOCAL_TAG_NAME=$IMAGE_NAME:$TRAVIS_BRANCH-latest
+    REMOTE_FULL_URL=$DOCKER_REPO_URL:$TRAVIS_BRANCH-latest
     docker build --target production --tag $LOCAL_TAG_NAME .
     echo "Pushing $LOCAL_TAG_NAME"
     docker tag $LOCAL_TAG_NAME "$REMOTE_FULL_URL"
