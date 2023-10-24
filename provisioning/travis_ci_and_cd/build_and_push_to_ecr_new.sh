@@ -5,7 +5,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
   if [ "$TRAVIS_BRANCH" == "DR-2597-deploy-to-both-qa-environments" ]; then #change back after testing
     export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
     export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
-    DOCKER_REPO_URL=$REMOTE_IMAGE_URL_QA_NEW
+    DOCKER_REPO_URL='685731035297.dkr.ecr.us-east-1.amazonaws.com/fedora-ingest'
 
     # This is needed to login on AWS and push the image on ECR
     # Change it accordingly to your docker repo
