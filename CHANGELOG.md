@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added one-off script to cleanup empty collections and containers. (DR-2557)
+
 ### Updated
 - Merges to qa branch deploy to migrated and unmigrated environments. (DR-2597)
 
