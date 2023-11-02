@@ -4,6 +4,10 @@ services:
 - postgresql
 - mysql
 - docker
+branches:
+  only:
+  - qa
+  - production
 rvm:
 - 2.6.5
 cache: bundler
