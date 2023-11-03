@@ -8,6 +8,7 @@ branches:
   only:
   - qa
   - production
+  - nypl-dams-prod
 rvm:
 - 2.6.5
 cache: bundler

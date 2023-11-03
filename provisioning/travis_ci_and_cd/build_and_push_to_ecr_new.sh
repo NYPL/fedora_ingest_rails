@@ -2,9 +2,9 @@
 # Push only if it's not a pull request
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "$TRAVIS_BRANCH" == "$HOT_DEPLOY_BRANCH" ]; then
   # Push only if we're testing a deployable branch
-  if [ "$TRAVIS_BRANCH" == "qa" ] || [ "$TRAVIS_BRANCH" == "production" ]; then
+  if [ "$TRAVIS_BRANCH" == "qa" ] || [ "$TRAVIS_BRANCH" == "nypl-dams-prod" ]; then
     case "$TRAVIS_BRANCH" in
-      production)
+      nypl-dams-prod)
         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION_NEW
         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION_NEW
         DOCKER_REPO_URL=$REMOTE_IMAGE_URL_PRODUCTION_NEW
