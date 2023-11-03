@@ -7,12 +7,12 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
       nypl-dams-prod)
         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION_NEW
         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION_NEW
-        DOCKER_REPO_URL=$REMOTE_IMAGE_URL_PRODUCTION_NEW
+        REMOTE_FULL_URL=$REMOTE_IMAGE_URL_PRODUCTION_NEW:production-latest
         ;;
       qa)
         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
-        DOCKER_REPO_URL=$REMOTE_IMAGE_URL_QA_NEW
+        REMOTE_FULL_URL=$REMOTE_IMAGE_URL_QA_NEW:qa-latest
         ;;
     esac
 
@@ -24,7 +24,6 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
 
     # Build and push
     LOCAL_TAG_NAME=$IMAGE_NAME:$TRAVIS_BRANCH-latest
-    REMOTE_FULL_URL=$DOCKER_REPO_URL:$TRAVIS_BRANCH-latest
     docker build --target production --tag $LOCAL_TAG_NAME .
     echo "Pushing $LOCAL_TAG_NAME"
     docker tag $LOCAL_TAG_NAME "$REMOTE_FULL_URL"
