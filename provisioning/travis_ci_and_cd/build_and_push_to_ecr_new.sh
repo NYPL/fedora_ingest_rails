@@ -2,10 +2,19 @@
 # Push only if it's not a pull request
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "$TRAVIS_BRANCH" == "$HOT_DEPLOY_BRANCH" ]; then
   # Push only if we're testing a deployable branch
-  if [ "$TRAVIS_BRANCH" == "qa" ]; then #change back after testing
-    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
-    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
-    DOCKER_REPO_URL=$REMOTE_IMAGE_URL_QA_NEW
+  if [ "$TRAVIS_BRANCH" == "qa" ] || [ "$TRAVIS_BRANCH" == "nypl-dams-prod" ]; then
+    case "$TRAVIS_BRANCH" in
+      nypl-dams-prod)
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION_NEW
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION_NEW
+        DOCKER_REPO_URL=$REMOTE_IMAGE_URL_PRODUCTION_NEW
+        ;;
+      qa)
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
+        DOCKER_REPO_URL=$REMOTE_IMAGE_URL_QA_NEW
+        ;;
+    esac
 
     # This is needed to login on AWS and push the image on ECR
     # Change it accordingly to your docker repo
