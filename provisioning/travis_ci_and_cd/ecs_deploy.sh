@@ -1,33 +1,21 @@
 #! /bin/bash
 # Deploy only if it's not a pull request
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "$TRAVIS_BRANCH" == "$HOT_DEPLOY_BRANCH" ]; then
-  # Deploy only if we're testing the master branch
-  if [ "$TRAVIS_BRANCH" == "qa" ] || [ "$TRAVIS_BRANCH" == "production" ] || [ "$TRAVIS_BRANCH" == "$HOT_DEPLOY_BRANCH" ]; then
-
+  if [ "$TRAVIS_BRANCH" == "qa" ] || [ "$TRAVIS_BRANCH" == "nypl-dams-prod" ]; then
     case "$TRAVIS_BRANCH" in
-      production)
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
-        CLUSTER_NAME=$CLUSTER_NAME_PRODUCTION
-        SERVICE_NAME=$SERVICE_NAME_PRODUCTION
-        WEB_APP_SERVICE_NAME="fedora-ingest-rails-web-application-production"
-        WORKER_SERVICE_NAME="fedora-ingest-rails-worker-production"
+      nypl-dams-prod)
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION_NEW
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION_NEW
+        CLUSTER_NAME='fedora-ingest-rails-production'
+        WEB_APP_SERVICE_NAME='fedora-ingest-rails-web-application-production'
+        WORKER_SERVICE_NAME='fedora-ingest-rails-worker-production'
         ;;
       qa)
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
-        CLUSTER_NAME=$CLUSTER_NAME_QA
-        SERVICE_NAME=$SERVICE_NAME_QA
-        WEB_APP_SERVICE_NAME="fedora-ingest-rails-web-application-qa"
-        WORKER_SERVICE_NAME="fedora-ingest-rails-worker-qa"
-        ;;
-      *)
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEVELOPMENT
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEVELOPMENT
-        CLUSTER_NAME=$CLUSTER_NAME_DEVELOPMENT
-        SERVICE_NAME=$SERVICE_NAME_DEVELOPMENT
-        WEB_APP_SERVICE_NAME="fedora-ingest-rails-web-application"
-        WORKER_SERVICE_NAME="fedora-ingest-rails-worker"
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
+        CLUSTER_NAME='fedora-ingest-rails-qa'
+        WEB_APP_SERVICE_NAME='fedora-ingest-rails-web-application-qa'
+        WORKER_SERVICE_NAME='fedora-ingest-rails-worker-qa'
         ;;
     esac
 

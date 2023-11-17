@@ -2,23 +2,17 @@
 # Push only if it's not a pull request
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "$TRAVIS_BRANCH" == "$HOT_DEPLOY_BRANCH" ]; then
   # Push only if we're testing a deployable branch
-  if [ "$TRAVIS_BRANCH" == "qa" ] || [ "$TRAVIS_BRANCH" == "production" ] || [ "$TRAVIS_BRANCH" == "$HOT_DEPLOY_BRANCH" ]; then
-
+  if [ "$TRAVIS_BRANCH" == "qa" ] || [ "$TRAVIS_BRANCH" == "nypl-dams-prod" ]; then
     case "$TRAVIS_BRANCH" in
-      production)
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
-        DOCKER_REPO_URL=$REMOTE_IMAGE_URL_PRODUCTION
+      nypl-dams-prod)
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION_NEW
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION_NEW
+        REMOTE_FULL_URL=$REMOTE_IMAGE_URL_PRODUCTION_NEW:production-latest
         ;;
       qa)
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
-        DOCKER_REPO_URL=$REMOTE_IMAGE_URL_QA
-        ;;
-      *)
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEVELOPMENT
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEVELOPMENT
-        DOCKER_REPO_URL=$REMOTE_IMAGE_URL_DEVELOPMENT
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
+        REMOTE_FULL_URL=$REMOTE_IMAGE_URL_QA_NEW:qa-latest
         ;;
     esac
 
@@ -30,8 +24,6 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
 
     # Build and push
     LOCAL_TAG_NAME=$IMAGE_NAME:$TRAVIS_BRANCH-latest
-    REMOTE_FULL_URL=$DOCKER_REPO_URL:$TRAVIS_BRANCH-latest
-
     docker build --target production --tag $LOCAL_TAG_NAME .
     echo "Pushing $LOCAL_TAG_NAME"
     docker tag $LOCAL_TAG_NAME "$REMOTE_FULL_URL"
