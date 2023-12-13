@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed additional issue causing suppressed captures to be pulled in for indexing. (DR-2690)
+
 ### Added
 - Added one-off script to cleanup empty collections and containers. (DR-2557)
 
