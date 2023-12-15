@@ -19,8 +19,8 @@ before_script:
 script:
 - gem update --system
 - gem install bundler -v '2.2.15'
-- bundle install --jobs=3 --retry=3 --deployment --path=${BUNDLE_PATH:-vendor/bundle}
-- bundle exec rspec
+- rvm use 2.6.5 do bundle install --jobs=3 --retry=3 --deployment --path=${BUNDLE_PATH:-vendor/bundle}
+- rvm use 2.6.5 do bundle exec rspec
 after_success:
 - provisioning/travis_ci_and_cd/build_and_push_to_ecr.sh
 - provisioning/travis_ci_and_cd/ecs_deploy.sh
