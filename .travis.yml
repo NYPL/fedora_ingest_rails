@@ -8,6 +8,9 @@ branches:
   only:
   - qa
   - nypl-dams-prod
+before_install:
+  - gem update --system
+  - gem install bundler -v '2.2.15'
 rvm:
 - 2.6.5
 cache: bundler
@@ -17,10 +20,7 @@ before_script:
 - mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
 - mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 script:
-- gem update --system
-- gem install bundler -v '2.2.15'
-- rvm use 2.6.5 do bundle install --jobs=3 --retry=3 --deployment --path=${BUNDLE_PATH:-vendor/bundle}
-- rvm use 2.6.5 do bundle exec rspec
+- bundle exec rspec
 after_success:
 - provisioning/travis_ci_and_cd/build_and_push_to_ecr.sh
 - provisioning/travis_ci_and_cd/ecs_deploy.sh
