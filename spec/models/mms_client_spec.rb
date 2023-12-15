@@ -38,7 +38,7 @@ RSpec.describe MMSClient, type: :model do
     end
 
     it "makes a request to get an Item's Captures" do
-      expect(HTTP).to receive(:get).with('http://example.com/exports/get_captures/abc-123', params: {}) { double(code: 200) }
+      expect(HTTP).to receive(:get).with('http://example.com/exports/get_captures/abc-123', params: { showAll: 'false' }) { double(code: 200) }
       @mms_client.captures_for_item('abc-123')
     end
 

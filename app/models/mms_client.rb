@@ -283,7 +283,7 @@ class MMSClient
   # [{image_uuid: '123-456', image_id: '1234'}]
   def captures_for_item(uuid)
     response = []
-    api_response = make_request_for('get_captures', uuid)
+    api_response = make_request_for('get_captures', uuid, { showAll: 'false' })
     capture_nodes = Nokogiri::XML(api_response).css('capture')
 
     capture_nodes.each do |capture_node|
