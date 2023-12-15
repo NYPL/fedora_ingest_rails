@@ -9,7 +9,7 @@ branches:
   - qa
   - nypl-dams-prod
 before_install:
-  - gem update --system 3.0.14
+  - gem update --system 3.2.3
   - gem install bundler -v '2.2.15'
 rvm:
 - 2.6.5
