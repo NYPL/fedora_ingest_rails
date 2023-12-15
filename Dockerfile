@@ -22,7 +22,7 @@ ADD ./provisioning/docker_build/environment-variables.conf /etc/nginx/main.d/env
 COPY Gemfile /home/app/fedora_ingest_rails/
 COPY Gemfile.lock /home/app/fedora_ingest_rails/
 WORKDIR /home/app/fedora_ingest_rails
-RUN gem update --system
+RUN gem update --system 3.2.3
 RUN gem install bundler
 
 # Passenger Configuration & App
