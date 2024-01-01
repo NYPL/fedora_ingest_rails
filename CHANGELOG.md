@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 - Stopped deploying to legacy environments. (DR-2661)
+- Updated travis deployer keys after rotation. (DR-2725)
 
 ## [2.0.0] - 2023-10-15
 
