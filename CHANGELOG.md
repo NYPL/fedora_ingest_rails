@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2024-01-16
+
 ### Fixed
 - Fixed additional issue causing suppressed captures to be pulled in for indexing. (DR-2690)
 
