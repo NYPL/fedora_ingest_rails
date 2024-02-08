@@ -32,12 +32,16 @@ module IngestJobHelper
       local_parent_or_item_repo_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: doc_uuid)
 
       doc['dateIndexed_s'] = index_time
+      doc['dateIndexed_dt'] = index_time
 
       if local_parent_or_item_repo_solr_doc.first_indexed.nil?
         doc['firstIndexed_s'] = index_time
+        doc['firstIndexed_dt'] = index_time
         local_parent_and_item_repo_solr_docs_to_update << local_parent_or_item_repo_solr_doc
       else
-        doc['firstIndexed_s'] = local_parent_or_item_repo_solr_doc.first_indexed.to_time.iso8601(3)
+        first_indexed = local_parent_or_item_repo_solr_doc.first_indexed.to_time.iso8601(3)
+        doc['firstIndexed_s'] = first_indexed
+        doc['firstIndexed_dt'] = first_indexed
       end
     end
 
@@ -49,12 +53,12 @@ module IngestJobHelper
     repo_solr.add_docs_to_solr(parent_and_item_repo_docs, true)
 
     local_repo_capture_solr_docs_to_update = []
-    
+
     seen_capture_uuids = []
 
     mms_client.captures_for_item(ingest_request.uuid).each do |capture|
       seen_capture_uuids << capture[:uuid]
-      uuid = capture[:uuid] 
+      uuid = capture[:uuid]
       image_id = capture[:image_id]
       pid = "uuid:#{uuid}"
 
@@ -135,7 +139,10 @@ module IngestJobHelper
 
       local_repo_capture_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: uuid)
       capture_solr_doc['dateIndexed_s'] = index_time
-      capture_solr_doc['firstIndexed_s'] = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601(3) || index_time
+      capture_solr_doc['dateIndexed_dt'] = index_time
+      first_indexed = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601(3) || index_time
+      capture_solr_doc['firstIndexed_s'] = first_indexed
+      capture_solr_doc['firstIndexed_dt'] = first_indexed
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
       # add docs to solr without checking parents this time
@@ -158,10 +165,10 @@ module IngestJobHelper
 
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
-    
+
     # commit changes
     repo_solr.commit_index_changes
-    
+
     # sometimes captures are deleted or suppressed, and we need to pull them back
     repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
 

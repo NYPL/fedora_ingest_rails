@@ -172,14 +172,18 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:parent_or_item_repo_solr_doc_1) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
+          'firstIndexed_dt' => expected_utc_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
+          'dateIndexed_dt' => expected_utc_timestamp,
           'uuid' => repo_doc_1['uuid']
         }
       }
       let(:parent_or_item_repo_solr_doc_2) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
+          'firstIndexed_dt' => expected_utc_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
+          'dateIndexed_dt' => expected_utc_timestamp,
           'uuid' => repo_doc_2['uuid']
         }
       }
@@ -187,7 +191,9 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:expected_capture_solr_doc_1) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
+          'firstIndexed_dt' => expected_utc_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
+          'dateIndexed_dt' => expected_utc_timestamp,
           'highResLink' => nil,
           :uuid => capture_1[:uuid]
         }
@@ -195,7 +201,9 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:expected_capture_solr_doc_2) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
+          'firstIndexed_dt' => expected_utc_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
+          'dateIndexed_dt' => expected_utc_timestamp,
           'highResLink' => nil,
           :uuid => capture_2[:uuid]
         }

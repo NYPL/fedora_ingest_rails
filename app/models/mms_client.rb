@@ -68,6 +68,7 @@ class MMSClient
   SINGLES = [
     'dateDigitized_dt',
     'dateIndexed_s',
+    'dateIndexed_dt',
     'firstInSequence',
     'firstIndexed_s',
     'highResLink',
