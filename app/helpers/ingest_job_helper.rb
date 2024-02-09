@@ -24,7 +24,9 @@ module IngestJobHelper
 
     parent_uuids = []
     local_parent_and_item_repo_solr_docs_to_update = []
-    index_time = Time.now.iso8601(3)
+    index_time_plain = Time.now
+    index_time = index_time_plain.iso8601(3)
+    #index_time = Time.now.iso8601(3)
 
     parent_and_item_repo_docs.each do |doc|
       doc_uuid = doc['uuid']
@@ -32,16 +34,17 @@ module IngestJobHelper
       local_parent_or_item_repo_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: doc_uuid)
 
       doc['dateIndexed_s'] = index_time
-      doc['dateIndexed_dt'] = index_time
+      doc['dateIndexed_dt'] = format_as_solr_dt(index_time_plain)
 
       if local_parent_or_item_repo_solr_doc.first_indexed.nil?
         doc['firstIndexed_s'] = index_time
-        doc['firstIndexed_dt'] = index_time
+        doc['firstIndexed_dt'] = format_as_solr_dt(index_time_plain)
         local_parent_and_item_repo_solr_docs_to_update << local_parent_or_item_repo_solr_doc
       else
-        first_indexed = local_parent_or_item_repo_solr_doc.first_indexed.to_time.iso8601(3)
+        first_indexed_plain = local_parent_or_item_repo_solr_doc.first_indexed.to_time
+        first_indexed = first_indexed_plain.iso8601(3)
         doc['firstIndexed_s'] = first_indexed
-        doc['firstIndexed_dt'] = first_indexed
+        doc['firstIndexed_dt'] = format_as_solr_dt(first_indexed_plain)
       end
     end
 
@@ -120,6 +123,7 @@ module IngestJobHelper
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
 
+
       if highres_permalink.present? && release_master
         capture_solr_doc['highResLink'] = highres_permalink
       else
@@ -139,10 +143,14 @@ module IngestJobHelper
 
       local_repo_capture_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: uuid)
       capture_solr_doc['dateIndexed_s'] = index_time
-      capture_solr_doc['dateIndexed_dt'] = index_time
-      first_indexed = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601(3) || index_time
+      capture_solr_doc['dateIndexed_dt'] = format_as_solr_dt(index_time_plain)
+      first_indexed_plain = local_repo_capture_solr_doc&.first_indexed&.to_time || index_time_plain
+      first_indexed = first_indexed_plain.iso8601(3)
       capture_solr_doc['firstIndexed_s'] = first_indexed
-      capture_solr_doc['firstIndexed_dt'] = first_indexed
+      capture_solr_doc['firstIndexed_dt'] = format_as_solr_dt(first_indexed_plain)
+
+      puts "@JC capture solr doc: #{capture_solr_doc.inspect}"
+
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
       # add docs to solr without checking parents this time
@@ -181,5 +189,9 @@ module IngestJobHelper
 
   def extract_title_from_dublin_core(dublin_core)
     Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip.truncate(250, separator: ' ...')
+  end
+
+  def format_as_solr_dt(datetime)
+    datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
   end
 end
