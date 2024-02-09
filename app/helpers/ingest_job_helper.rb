@@ -26,7 +26,6 @@ module IngestJobHelper
     local_parent_and_item_repo_solr_docs_to_update = []
     index_time_plain = Time.now
     index_time = index_time_plain.iso8601(3)
-    #index_time = Time.now.iso8601(3)
 
     parent_and_item_repo_docs.each do |doc|
       doc_uuid = doc['uuid']
