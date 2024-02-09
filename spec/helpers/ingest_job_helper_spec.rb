@@ -167,23 +167,24 @@ RSpec.describe 'IngestHelper', type: :helper do
 
       let(:known_datetime) { "2023-08-28 18:41:34 -0400" }
       let(:expected_utc_timestamp) { Time.parse(known_datetime).utc.strftime('%Y-%m-%dT%H:%M:%S.%LZ') }
+      let(:expected_dt_timestamp) { Time.parse(known_datetime).strftime('%Y-%m-%dT%H:%M:%SZ') }
 
       let(:expected_parent_and_item_repo_solr_docs) { [parent_or_item_repo_solr_doc_1, parent_or_item_repo_solr_doc_2] }
       let(:parent_or_item_repo_solr_doc_1) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
-          'firstIndexed_dt' => expected_utc_timestamp,
+          'firstIndexed_dt' => expected_dt_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
-          'dateIndexed_dt' => expected_utc_timestamp,
+          'dateIndexed_dt' => expected_dt_timestamp,
           'uuid' => repo_doc_1['uuid']
         }
       }
       let(:parent_or_item_repo_solr_doc_2) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
-          'firstIndexed_dt' => expected_utc_timestamp,
+          'firstIndexed_dt' => expected_dt_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
-          'dateIndexed_dt' => expected_utc_timestamp,
+          'dateIndexed_dt' => expected_dt_timestamp,
           'uuid' => repo_doc_2['uuid']
         }
       }
@@ -191,9 +192,9 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:expected_capture_solr_doc_1) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
-          'firstIndexed_dt' => expected_utc_timestamp,
+          'firstIndexed_dt' => expected_dt_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
-          'dateIndexed_dt' => expected_utc_timestamp,
+          'dateIndexed_dt' => expected_dt_timestamp,
           'highResLink' => nil,
           :uuid => capture_1[:uuid]
         }
@@ -201,9 +202,9 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:expected_capture_solr_doc_2) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
-          'firstIndexed_dt' => expected_utc_timestamp,
+          'firstIndexed_dt' => expected_dt_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
-          'dateIndexed_dt' => expected_utc_timestamp,
+          'dateIndexed_dt' => expected_dt_timestamp,
           'highResLink' => nil,
           :uuid => capture_2[:uuid]
         }
