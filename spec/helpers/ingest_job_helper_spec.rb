@@ -165,7 +165,7 @@ RSpec.describe 'IngestHelper', type: :helper do
     context 'the indexing time is known' do
       before { allow(Time).to receive(:now).and_return(Time.parse(known_datetime)) }
 
-      let(:known_datetime) { "2023-08-28 18:41:34 -0400" }
+      let(:known_datetime) { "2024-02-12 14:06:10 +0000" }
       let(:expected_utc_timestamp) { Time.parse(known_datetime).utc.strftime('%Y-%m-%dT%H:%M:%S.%LZ') }
       let(:expected_dt_timestamp) { Time.parse(known_datetime).strftime('%Y-%m-%dT%H:%M:%SZ') }
 

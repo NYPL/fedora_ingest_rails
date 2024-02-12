@@ -148,8 +148,6 @@ module IngestJobHelper
       capture_solr_doc['firstIndexed_s'] = first_indexed
       capture_solr_doc['firstIndexed_dt'] = format_as_solr_dt(first_indexed_plain)
 
-      puts "@JC capture solr doc: #{capture_solr_doc.inspect}"
-
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
       # add docs to solr without checking parents this time
