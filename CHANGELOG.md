@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added one-off script to cleanup empty collections and containers. (DR-2557)
+- Added firstIndexed_dt and dateIndexed_dt to repoapi solr docs. (DR-2789)
 
 ### Updated
 - Stopped deploying to legacy environments. (DR-2661)
