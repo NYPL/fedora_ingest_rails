@@ -143,4 +143,67 @@ class RepoSolrClient
       page += 1
     end
   end
+  
+  
+  # Assuming you have configured RSolr in your Rails application
+  def update_solr_documents(solr_docs)
+    # Extract unique UUIDs from the array of Solr documents
+    uuids_to_check = solr_docs.map { |doc| doc[:uuid] }.uniq
+
+    # Query Solr for existing documents with the specified UUIDs
+    existing_documents = retrieve_existing_documents(uuids_to_check)
+
+    # Filter the Solr documents to post only those that have matching existing documents
+    documents_to_post = solr_docs.select { |doc| existing_documents.any? { |existing_doc| existing_doc['uuid'] == doc[:uuid] } }
+    
+    # Build the json payload with current timestamps included
+    docs = []
+    documents_to_post.each do |doc|
+      doc["dateIndexed_s"] = RepoSolrDoc.get_datetime_s
+      doc["dateIndexed_dt"] = RepoSolrDoc.get_datetime_dt
+      docs << doc
+    end 
+    
+    single_field_update_for(docs)
+  end
+
+  # Assuming you have configured RSolr in your Rails application
+  def retrieve_existing_documents(uuids)
+    # Assuming 'uuid' is the unique key for Solr documents
+    solr_query = "uuid:(#{uuids.map { |uuid| "\"#{uuid}\"" }.join(' OR ')}) AND title_mtxt_s:[* TO *]"
+
+    # Execute the Solr query and retrieve the matching documents
+    solr_response = @rsolr.get('select', params: { q: solr_query, rows: uuids.length })
+
+    # Extract the documents from the Solr response
+    solr_documents = solr_response['response']['docs']
+
+    solr_documents
+  end
+  
+  def single_field_update_for(unsafe_docs_array)
+    # Only allow select params through. Might need to adjust these as requirements change.
+    permitted_attributes = [:uuid, :field_name, :field_value, :dateIndexed_s, :dateIndexed_dt]
+
+    # Permit only the allowed attributes for each instance
+    permitted_params_array = unsafe_docs_array.map { |params| params.permit(permitted_attributes).to_h }
+
+    # Send docs to solr.
+    # Build the JSON payload for the partial update
+    update_json = []
+    permitted_params_array.each do |data_row|
+      field_name          = data_row[:field_name]
+      new_field_value     = data_row[:field_value]
+      date_indexed_s      = data_row[:dateIndexed_s]
+      date_indexed_dt     = data_row[:dateIndexed_dt]
+
+      # add docs to the update json array
+      update_json << { uuid: data_row[:uuid], field_name => { set: new_field_value },
+                                         "dateIndexed_s" => { set: date_indexed_s },
+                                         "dateIndexed_dt" => { set: date_indexed_dt } }
+    end
+
+    @rsolr.update(data: update_json.to_json, headers: { 'Content-Type' => 'application/json' })
+    @rsolr.commit
+  end
 end
