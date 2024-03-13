@@ -173,7 +173,7 @@ class RepoSolrClient
     solr_query = "uuid:(#{uuids.map { |uuid| "\"#{uuid}\"" }.join(' OR ')}) AND title_mtxt_s:[* TO *]"
 
     # Execute the Solr query and retrieve the matching documents
-    solr_response = @rsolr.get('select', params: { q: solr_query, rows: uuids.length })
+    solr_response = @rsolr.get('select', params: { q: solr_query, rows: uuids.length, fl: "uuid" })
 
     # Extract the documents from the Solr response
     solr_documents = solr_response['response']['docs']

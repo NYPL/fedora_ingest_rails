@@ -14,7 +14,7 @@ class SingleFieldUpdatesController < ApplicationController
     else 
       # Parse the requested updates into batches of 300 and queue in delayed jobs for updating solr.
       # example single_field_updates = [{"uuid":"uuid-uuid-uuid-uuid","field_name":"vrr_requestable","field_value":"true"}]
-      single_field_update_batches = params[:single_field_updates].each_slice(300).to_a
+      single_field_update_batches = params[:single_field_updates].each_slice(100).to_a
       single_field_update_batches.each do |single_batch_array|
         RepoSolrClient.new.delay(queue: 'update_fields').update_solr_documents(single_batch_array)  
       end
