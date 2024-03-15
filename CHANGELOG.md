@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added a new endpoint for sending updates for single field values. (DR-2775)
+- Exposed delayed jobs through delayed job web. (DR-2830)
 
 ## [2.0.1] - 2024-01-16
 
