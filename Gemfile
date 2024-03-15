@@ -12,6 +12,7 @@ gem 'rails', '~> 5.2.4'
 # gem 'sass-rails', '~> 5.0'
 gem 'daemons', '~> 1.2', '>= 1.2.6'
 gem 'delayed_job_active_record', '~> 4.1', '>= 4.1.2'
+gem 'delayed_job_web'
 gem 'http', '~> 3.0'
 gem 'jbuilder', '~> 2.5'
 gem 'mysql2', '~> 0.4.5' # used to connect to Filestore Databases
