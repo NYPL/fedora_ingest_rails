@@ -6,9 +6,7 @@ Rails.application.routes.draw do
   end
 
   match '/delayed_job' => DelayedJobWeb, :anchor => false, :via => [:get]
-  post '/delayed_job/requeue/:id', to: 'delayed_jobs#forbidden_action'
-  post '/delayed_job/remove/:id', to: 'delayed_jobs#forbidden_action'
-  post '/delayed_job/reload/:id', to: 'delayed_jobs#forbidden_action'
+  post '/delayed_job/*path', to: 'delayed_jobs#forbidden_action'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'image_filestore_entries/status/:file_id' => 'image_filestore_entries#status'
