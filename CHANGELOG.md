@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2024-04-15
+
+### Added
+- Added a new endpoint for sending updates for single field values. (DR-2775)
+- Exposed delayed jobs through delayed job web. (DR-2830)
+- Added firstIndexed_dt and dateIndexed_dt to repoapi solr docs. (DR-2789)
+
 ## [2.0.1] - 2024-01-16
 
 ### Fixed

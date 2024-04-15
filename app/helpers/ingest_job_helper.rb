@@ -24,20 +24,28 @@ module IngestJobHelper
 
     parent_uuids = []
     local_parent_and_item_repo_solr_docs_to_update = []
-    index_time = Time.now.iso8601(3)
+    
+    index_time_plain = Time.current
+    index_time_s = RepoSolrDoc.format_as_solr_s(index_time_plain)
+    index_time_dt = RepoSolrDoc.format_as_solr_dt(index_time_plain)
 
     parent_and_item_repo_docs.each do |doc|
       doc_uuid = doc['uuid']
       parent_uuids << doc_uuid
       local_parent_or_item_repo_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: doc_uuid)
 
-      doc['dateIndexed_s'] = index_time
+      doc['dateIndexed_s'] = index_time_s
+      doc['dateIndexed_dt'] = index_time_dt
 
       if local_parent_or_item_repo_solr_doc.first_indexed.nil?
-        doc['firstIndexed_s'] = index_time
+        doc['firstIndexed_s'] = index_time_s
+        doc['firstIndexed_dt'] = index_time_dt
         local_parent_and_item_repo_solr_docs_to_update << local_parent_or_item_repo_solr_doc
       else
-        doc['firstIndexed_s'] = local_parent_or_item_repo_solr_doc.first_indexed.to_time.iso8601(3)
+        first_indexed_plain = local_parent_or_item_repo_solr_doc.first_indexed.to_time
+        first_indexed = first_indexed_plain.iso8601(3)
+        doc['firstIndexed_s'] = first_indexed
+        doc['firstIndexed_dt'] = RepoSolrDoc.format_as_solr_dt(first_indexed_plain)
       end
     end
 
@@ -49,12 +57,12 @@ module IngestJobHelper
     repo_solr.add_docs_to_solr(parent_and_item_repo_docs, true)
 
     local_repo_capture_solr_docs_to_update = []
-    
+
     seen_capture_uuids = []
 
     mms_client.captures_for_item(ingest_request.uuid).each do |capture|
       seen_capture_uuids << capture[:uuid]
-      uuid = capture[:uuid] 
+      uuid = capture[:uuid]
       image_id = capture[:image_id]
       pid = "uuid:#{uuid}"
 
@@ -116,6 +124,7 @@ module IngestJobHelper
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
 
+
       if highres_permalink.present? && release_master
         capture_solr_doc['highResLink'] = highres_permalink
       else
@@ -134,8 +143,13 @@ module IngestJobHelper
       end
 
       local_repo_capture_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: uuid)
-      capture_solr_doc['dateIndexed_s'] = index_time
-      capture_solr_doc['firstIndexed_s'] = local_repo_capture_solr_doc&.first_indexed&.to_time&.iso8601(3) || index_time
+      capture_solr_doc['dateIndexed_s'] = index_time_s
+      capture_solr_doc['dateIndexed_dt'] = index_time_dt
+      first_indexed_plain = local_repo_capture_solr_doc&.first_indexed&.to_time || index_time_plain
+      first_indexed = first_indexed_plain.iso8601(3)
+      capture_solr_doc['firstIndexed_s'] = first_indexed
+      capture_solr_doc['firstIndexed_dt'] = RepoSolrDoc.format_as_solr_dt(first_indexed_plain)
+
       local_repo_capture_solr_docs_to_update << local_repo_capture_solr_doc if local_repo_capture_solr_doc.first_indexed.nil?
 
       # add docs to solr without checking parents this time
@@ -158,16 +172,16 @@ module IngestJobHelper
 
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
-    
+
     # commit changes
     repo_solr.commit_index_changes
-    
+
     # sometimes captures are deleted or suppressed, and we need to pull them back
     repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
 
     # do not update first indexed until we successfully return from commit
-    local_repo_capture_solr_docs_to_update.each { |d| d.update_attributes(first_indexed: index_time) }
-    local_parent_and_item_repo_solr_docs_to_update.each { |d| d.update_attributes(first_indexed: index_time) }
+    local_repo_capture_solr_docs_to_update.each { |d| d.update_attributes(first_indexed: index_time_s) }
+    local_parent_and_item_repo_solr_docs_to_update.each { |d| d.update_attributes(first_indexed: index_time_s) }
 
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: ingest_request.uuid)
   end
