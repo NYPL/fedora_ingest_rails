@@ -18,6 +18,7 @@ gem 'http'#, '~> 3.0'
 gem 'jbuilder'#, '~> 2.5'
 gem 'mysql2'#, '~> 0.4.5' # used to connect to Filestore Databases
 gem 'net-http-digest_auth'#, '~> 1.4.1'
+gem 'net-protocol'
 gem 'nokogiri'#, '< 1.14.0'
 gem 'nypl_log_formatter'#, '~> 0.1.2'
 gem 'redcarpet'
