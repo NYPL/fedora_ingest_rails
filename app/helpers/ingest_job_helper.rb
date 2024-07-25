@@ -12,9 +12,9 @@ module IngestJobHelper
     # Fedora is not available in QA
     fedora_client = FedoraClient.new unless test_mode
 
-    mms_client = MmsClient.new(mms_url: Rails.application.credentials.mms_url,
-                               user_name: Rails.application.credentials.mms_http_basic_username,
-                               password: Rails.application.credentials.mms_http_basic_password)
+    mms_client = MmsClient.new(mms_url: Rails.application.config.mms_url,
+                               user_name: Rails.application.config.mms_http_basic_username,
+                               password: Rails.application.config.mms_http_basic_password)
 
     # Fetch stuff from MMS
     mods                        = mms_client.mods_for(ingest_request.uuid)

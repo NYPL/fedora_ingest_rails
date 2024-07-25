@@ -7,9 +7,9 @@ class FedoraClient
 
   def initialize
     @repository = Rubydora.connect(
-      url: Rails.application.credentials.fedora_url,
-      user: Rails.application.credentials.fedora_username,
-      password: Rails.application.credentials.fedora_password
+      url: Rails.application.config.fedora_url,
+      user: Rails.application.config.fedora_username,
+      password: Rails.application.config.fedora_password
     )
   end
 end

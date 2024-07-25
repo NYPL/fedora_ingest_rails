@@ -9,7 +9,7 @@ RSpec.describe RepoSolrClient, type: :model do
     subject { RepoSolrClient.new }
 
     before(:each) do
-      allow(Rails).to receive_message_chain(:application, :credentials, :repo_solr_url).and_return('http://fake.com/solr')
+      allow(Rails).to receive_message_chain(:application, :config, :repo_solr_url).and_return('http://fake.com/solr')
     end
 
     describe 'update index' do

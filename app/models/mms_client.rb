@@ -335,7 +335,8 @@ class MmsClient
   # This DRYs up the pattern of making a request and throwing an exception for bad responses
   #   - A 410 response means the capture is part of a deleted Item.
   def make_request_for(export_type, uuid, params = {})
-    response = authed_request.get(export_url_for(export_type, uuid), params: params)
+    export_url = export_url_for(export_type, uuid)
+    response = authed_request.get(export_url, params: params)
 
     # Return nil for things that have moved permanently. This will allow the update to go through in a limited fashion.
     if response.code == 410
