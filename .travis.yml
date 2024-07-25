@@ -9,8 +9,6 @@ branches:
   only:
   - qa
   - nypl-dams-prod
-before_install:
-  - gem install bundler
 cache: bundler
 before_script:
 - psql -c 'create database fedora_ingest_rails_test;' -U postgres
