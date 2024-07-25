@@ -7,8 +7,8 @@ require 'rsolr'
 class RepoSolrClient
   def initialize(_options = {})
     # We don't need to instantiate a repo solr client ... until we do. We mock it in some of our tests.
-    if Rails.env != 'test' || ( Rails.env == 'test' && Rails.application.secrets.repo_solr_url == 'http://fake.com/solr' )
-      @rsolr = RSolr.connect url: Rails.application.secrets.repo_solr_url
+    if Rails.env != 'test' || ( Rails.env == 'test' && Rails.application.credentials.repo_solr_url == 'http://fake.com/solr' )
+      @rsolr = RSolr.connect url: Rails.application.credentials.repo_solr_url
       @rsolr_params = { wt: :ruby, q: '*:*' }
     end
   end
@@ -66,7 +66,7 @@ class RepoSolrClient
   end
 
   def get_solr_doc_for(uuid)
-    mms_client = MmsClient.new(mms_url: Rails.application.secrets.mms_url)
+    mms_client = MmsClient.new(mms_url: Rails.application.credentials.mms_url)
     mms_client.repoapi_solr_doc_for(uuid)
   end
 
