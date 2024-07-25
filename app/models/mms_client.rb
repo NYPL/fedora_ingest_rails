@@ -3,7 +3,7 @@
 require 'http'
 require 'nokogiri'
 
-class MMSClient
+class MmsClient
   def initialize(options = {})
     @url = options[:mms_url]
     @basic_username = options[:user_name]

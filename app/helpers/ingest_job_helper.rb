@@ -12,7 +12,7 @@ module IngestJobHelper
     # Fedora is not available in QA
     fedora_client = FedoraClient.new unless test_mode
 
-    mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url,
+    mms_client = MmsClient.new(mms_url: Rails.application.secrets.mms_url,
                                user_name: Rails.application.secrets.mms_http_basic_username,
                                password: Rails.application.secrets.mms_http_basic_password)
 
@@ -24,7 +24,7 @@ module IngestJobHelper
 
     parent_uuids = []
     local_parent_and_item_repo_solr_docs_to_update = []
-    
+
     index_time_plain = Time.current
     index_time_s = RepoSolrDoc.format_as_solr_s(index_time_plain)
     index_time_dt = RepoSolrDoc.format_as_solr_dt(index_time_plain)
@@ -180,8 +180,8 @@ module IngestJobHelper
     repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
 
     # do not update first indexed until we successfully return from commit
-    local_repo_capture_solr_docs_to_update.each { |d| d.update_attributes(first_indexed: index_time_s) }
-    local_parent_and_item_repo_solr_docs_to_update.each { |d| d.update_attributes(first_indexed: index_time_s) }
+    local_repo_capture_solr_docs_to_update.each { |d| d.update(first_indexed: index_time_s) }
+    local_parent_and_item_repo_solr_docs_to_update.each { |d| d.update(first_indexed: index_time_s) }
 
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: ingest_request.uuid)
   end

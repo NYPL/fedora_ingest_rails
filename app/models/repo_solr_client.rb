@@ -6,7 +6,7 @@ require 'rsolr'
 
 class RepoSolrClient
   def initialize(_options = {})
-    # We don't need to instantiate a repo solr client ... until we do. We mock it in some of our tests. 
+    # We don't need to instantiate a repo solr client ... until we do. We mock it in some of our tests.
     if Rails.env != 'test' || ( Rails.env == 'test' && Rails.application.secrets.repo_solr_url == 'http://fake.com/solr' )
       @rsolr = RSolr.connect url: Rails.application.secrets.repo_solr_url
       @rsolr_params = { wt: :ruby, q: '*:*' }
@@ -16,14 +16,14 @@ class RepoSolrClient
   def add_docs_to_solr(solr_docs_array, check_parents=false) 
     if @rsolr
       if check_parents == true
-        
+
         # grab the item document, it will always be first.
         new_item_document = solr_docs_array.first
-        
+
         # commit the parents now, they will be any documents not in first position.
         @rsolr.add solr_docs_array[1..-1]
-        @rsolr.commit 
-        
+        @rsolr.commit
+
         # now process the item with the special method.
         update_index_and_delete_empty_parents(new_item_document)
       else
@@ -66,25 +66,25 @@ class RepoSolrClient
   end
 
   def get_solr_doc_for(uuid)
-    mms_client = MMSClient.new(mms_url: Rails.application.secrets.mms_url)
+    mms_client = MmsClient.new(mms_url: Rails.application.secrets.mms_url)
     mms_client.repoapi_solr_doc_for(uuid)
   end
-  
+
   def update_index_and_delete_empty_parents(new_document)
     return unless @rsolr
-    
+
     # before we commit the current doc, grab the old document for the item    
     old_document = get_doc(new_document['uuid'])['docs'].first
-    
+
     # Add/update the new documents
     @rsolr.add new_document
     @rsolr.commit
-    
+
     # Cleanup old documents if they no longer have children.
     if old_document && old_document['parentUUID'].present?
       # Delete old non-matching parentUUIDs
       old_uuids_to_delete = old_document['parentUUID'] - new_document['parentUUID']
-      
+
       old_uuids_to_delete.each do |uuid|
         # Only delete the doc if it's empty.
         if get_number_of_children_for_parent_uuid(uuid) == 0
@@ -93,20 +93,20 @@ class RepoSolrClient
       end
     end
   end
-  
+
   # remove all captures not updated in current run to ensure bad captures are deleted -- use wisely!
   def delete_unseen_captures_below(item_uuid, seen_uuids)
     return unless @rsolr
-    
+
     query = 'type_s:Capture AND immediateParent_s:"' + item_uuid + '"'
 
     # Fetch the initial response to determine the total number of results
     resp = @rsolr.get('select', params: { q: query, rows: 0 })
-    
+
     unless resp['response']
       raise "Bad response from Solr for immediateParent_s:#{item_uuid}."
     end
-    
+
     total_results = resp['response']['numFound']
     deletes = false
 
@@ -120,10 +120,10 @@ class RepoSolrClient
       break if total_results == 0
       # Set the start parameter for pagination
       start = page * 250
-  
+
       # Fetch documents from Solr with pagination
       response = @rsolr.get('select', params: { q: query, start: start, rows: 250 })
-      
+
       unless response['response']
         raise "Bad response from Solr for immediateParent_s:#{item_uuid}, page #{page}."
       end
@@ -136,15 +136,15 @@ class RepoSolrClient
           deletes = true
         end
       end
-      
+
       # commit deletes for this loop ; depending on performance we may want to adjust this to commit after x number of deletions.
       @rsolr.commit if deletes
-      
+
       page += 1
     end
   end
-  
-  
+
+
   # Assuming you have configured RSolr in your Rails application
   def update_solr_documents(solr_docs)
     # Extract unique UUIDs from the array of Solr documents
@@ -155,15 +155,15 @@ class RepoSolrClient
 
     # Filter the Solr documents to post only those that have matching existing documents
     documents_to_post = solr_docs.select { |doc| existing_documents.any? { |existing_doc| existing_doc['uuid'] == doc[:uuid] } }
-    
+
     # Build the json payload with current timestamps included
     docs = []
     documents_to_post.each do |doc|
       doc["dateIndexed_s"] = RepoSolrDoc.get_datetime_s
       doc["dateIndexed_dt"] = RepoSolrDoc.get_datetime_dt
       docs << doc
-    end 
-    
+    end
+
     single_field_update_for(docs)
   end
 
@@ -180,7 +180,7 @@ class RepoSolrClient
 
     solr_documents
   end
-  
+
   def single_field_update_for(unsafe_docs_array)
     # Only allow select params through. Might need to adjust these as requirements change.
     permitted_attributes = [:uuid, :field_name, :field_value, :dateIndexed_s, :dateIndexed_dt]

@@ -10,6 +10,7 @@ end
 gem 'pg'#, '>= 0.18', '< 2.0'
 gem 'rails'#, '~> 5.2.4'
 # gem 'sass-rails', '~> 5.0'
+gem 'csv'
 gem 'daemons'#, '~> 1.2', '>= 1.2.6'
 gem 'delayed_job_active_record'#, '~> 4.1', '>= 4.1.2'
 gem 'delayed_job_web'
