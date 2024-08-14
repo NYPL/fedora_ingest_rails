@@ -21,7 +21,7 @@ response = solr.get 'select', params: solr_params
 total_found = response['response']['numFound']
 total_count = 0
 
-while total_count <= total_found do
+while total_count < total_found do
   update_json = []
   response = solr.get 'select', params: solr_params
   response['response']['docs'].each do |doc|
