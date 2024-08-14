@@ -12,8 +12,8 @@ require 'rsolr'
 solr = RSolr.connect url: ARGV[0]
 
 solr_params = {
-    q: 'mainTitle:[* TO *] AND -rootCollectionUUID_string:[* TO *]',
-    rows: 500
+    q: 'rootCollectionUUID_s:[* TO *] AND -rootCollectionUUID_string:[* TO *]',
+    rows: 1000
 }
 
 response = solr.get 'select', params: solr_params
