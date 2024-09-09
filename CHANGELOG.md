@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 - Upgraded Ubuntu, Ruby, and Rails versions (TGR-48)
+- Updated AWS keys (DR-3183)
 
 ## Fixed
 - Fixed travis builds (TGR-104)
