@@ -5,6 +5,7 @@ addons:
   apt:
     packages:
       - build-essential
+      - gcc
       - libgmp-dev
       - libssl-dev
 services:
@@ -29,6 +30,9 @@ script:
 after_success:
 - provisioning/travis_ci_and_cd/build_and_push_to_ecr.sh
 - provisioning/travis_ci_and_cd/ecs_deploy.sh
+after_failure:
+  - cat /home/travis/build/NYPL/fedora_ingest_rails/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.8/ext/bigdecimal/mkmf.log
+
 
 env:
   global:
