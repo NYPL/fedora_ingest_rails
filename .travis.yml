@@ -3,13 +3,6 @@ sudo: required
 language: ruby
 rvm:
   - 3.3.3
-addons:
-  apt:
-    packages:
-      - build-essential
-      - gcc
-      - libgmp-dev
-      - libssl-dev
 services:
 - postgresql
 - mysql
