@@ -25,18 +25,6 @@ Rails.application.configure do
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
-  # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :uglifier
-  # config.assets.css_compressor = :sass
-
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
-
-  # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
-
-  # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.action_controller.asset_host = 'http://assets.example.com'
-
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
@@ -90,4 +78,14 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  config.secret_key_base = ENV['SECRET_KEY_BASE']
+  config.fedora_url = ENV['FEDORA_URL']
+  config.fedora_username = ENV['FEDORA_USERNAME']
+  config.fedora_password = ENV['FEDORA_PASSWORD']
+  config.mms_url = ENV['MMS_URL']
+  config.mms_http_basic_username = ENV['MMS_BASIC_USERNAME']
+  config.mms_http_basic_password = ENV['MMS_BASIC_PASSWORD']
+  config.rels_ext_solr_url = ENV['RELS_EXT_SOLR_URL']
+  config.repo_solr_url = ENV['REPO_SOLR_URL']
 end

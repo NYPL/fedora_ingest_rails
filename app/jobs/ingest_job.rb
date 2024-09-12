@@ -9,7 +9,7 @@ IngestJob = Struct.new(:ingest_request_id, :test_mode) do
     ingest_request = IngestRequest.where(id: ingest_request_id).first
     if ingest_request
       ingest!(ingest_request, test_mode)
-      ingest_request.update_attributes(ingested_at: Time.now.utc)
+      ingest_request.update(ingested_at: Time.now.utc)
     end
   end
 end

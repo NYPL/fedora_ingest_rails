@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe MMSClient, type: :model do
+RSpec.describe MmsClient, type: :model do
   before do
-    @mms_client = MMSClient.new(mms_url: 'http://example.com', user_name: 'Kenny Logs-in', password: 'jobinX3')
+    @mms_client = MmsClient.new(mms_url: 'http://example.com', user_name: 'Kenny Logs-in', password: 'jobinX3')
   end
 
   describe 'HTTP Basic authenticated requests' do
@@ -70,12 +70,12 @@ RSpec.describe MMSClient, type: :model do
       let(:expected_hash) { test_hash.dup }
 
       let(:test_string) do
-        MMSClient::SINGLES.each { |s| test_hash[s] = ['first_value', 'second_value'] }
+        MmsClient::SINGLES.each { |s| test_hash[s] = ['first_value', 'second_value'] }
         [test_hash].to_json
       end
 
       let(:expected_result) do
-        MMSClient::SINGLES.each { |s| expected_hash[s] = 'first_value' }
+        MmsClient::SINGLES.each { |s| expected_hash[s] = 'first_value' }
         expected_hash['yearBegin_dt'] = nil # these won't be parse-able datetimes
         expected_hash['yearEnd_dt'] = nil
         [expected_hash]
@@ -103,7 +103,7 @@ RSpec.describe MMSClient, type: :model do
       }
 
       let(:test_string) do
-        MMSClient::REMOVABLE_FIELDS.each { |f| test_hash[f] = 'some value to remove' }
+        MmsClient::REMOVABLE_FIELDS.each { |f| test_hash[f] = 'some value to remove' }
         [test_hash].to_json
       end
 

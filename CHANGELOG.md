@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - New one-off script to add dates where firstIndexed_dt is missing. (DR-2796)
 
+### Updated
+- Upgraded Ubuntu, Ruby, and Rails versions (TGR-48)
+
 ## [2.1.0] - 2024-04-15
 
 ### Added
