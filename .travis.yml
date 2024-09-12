@@ -1,6 +1,12 @@
 dist: jammy
 sudo: required
 language: ruby
+addons:
+  apt:
+    packages:
+      - build-essential
+      - libgmp-dev
+      - libssl-dev
 services:
 - postgresql
 - mysql
