@@ -1,6 +1,8 @@
 dist: jammy
 sudo: required
 language: ruby
+rvm:
+  - 3.3.3
 services:
 - postgresql
 - mysql
@@ -11,7 +13,7 @@ branches:
   - nypl-dams-prod
 before_install:
   - gem update --system '3.3.22'
-  - gem install bundler -v '2.5.16'
+  - gem install bundler -v '2.5.18'
 cache: bundler
 before_script:
 - psql -c 'create database fedora_ingest_rails_test;' -U postgres
