@@ -5,13 +5,13 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ] || [ "
   if [ "$TRAVIS_BRANCH" == "qa" ] || [ "$TRAVIS_BRANCH" == "nypl-dams-prod" ]; then
     case "$TRAVIS_BRANCH" in
       nypl-dams-prod)
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION_NEW
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION_NEW
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PRODUCTION
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PRODUCTION
         REMOTE_FULL_URL=$REMOTE_IMAGE_URL_PRODUCTION_NEW:production-latest
         ;;
       qa)
-        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA_NEW
-        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA_NEW
+        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_QA
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_QA
         REMOTE_FULL_URL=$REMOTE_IMAGE_URL_QA_NEW:qa-latest
         ;;
     esac

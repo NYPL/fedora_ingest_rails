@@ -41,14 +41,6 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
-  # Debug mode disables concatenation and preprocessing of assets.
-  # This option may cause significant delays in view rendering with a large
-  # number of complex assets.
-  config.assets.debug = true
-
-  # Suppress logger output for asset requests.
-  config.assets.quiet = true
-
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
@@ -57,4 +49,13 @@ Rails.application.configure do
 
   # Commenting this out for now, as it's causing build issues with Docker.
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker if defined? Listen
+  config.secret_key_base = '95bfdfa5ad84245fe7031b55a06c125f0621fc514d186c440ea493a630e7f07ed01347d4f485405ade8f184470413ada717bcb6ee32c741c1ae47996f7bac12a'
+  config.fedora_url = ENV['FEDORA_URL']
+  config.fedora_username = ENV['FEDORA_USERNAME']
+  config.fedora_password = ENV['FEDORA_PASSWORD']
+  config.mms_url = ENV['MMS_URL']
+  config.mms_http_basic_username = ENV['MMS_BASIC_USERNAME']
+  config.mms_http_basic_password = ENV['MMS_BASIC_PASSWORD']
+  config.rels_ext_solr_url = ENV['RELS_EXT_SOLR_URL']
+  config.repo_solr_url = ENV['REPO_SOLR_URL']
 end

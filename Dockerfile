@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby26:1.0.9 AS production
+FROM phusion/passenger-ruby33 AS production
 
 # Set correct environment variables.
 ENV HOME /root
@@ -22,7 +22,7 @@ ADD ./provisioning/docker_build/environment-variables.conf /etc/nginx/main.d/env
 COPY Gemfile /home/app/fedora_ingest_rails/
 COPY Gemfile.lock /home/app/fedora_ingest_rails/
 WORKDIR /home/app/fedora_ingest_rails
-RUN gem update --system 3.2.3
+RUN gem update
 RUN gem install bundler
 
 # Passenger Configuration & App

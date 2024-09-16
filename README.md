@@ -82,8 +82,8 @@ Our branches (in order or stability are):
 | Branch     | Environment | AWS Account      |
 |:-----------|:------------|:-----------------|
 | master     | none        | none             |
-| qa         | qa          | nypl-digital-dev |
-| production | production  | nypl-digital-dev |
+| qa         | qa          | nypl-dams-dev    |
+| production | production  | nypl-dams-prod   |
 
 ### Cutting A Feature Branch
 
