@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2024-09-16
+
 ### Added
 - New one-off script to add dates where firstIndexed_dt is missing. (DR-2796)
 
