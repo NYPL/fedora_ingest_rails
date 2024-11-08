@@ -81,6 +81,11 @@ jobs:
           mysql -h 127.0.0.1 -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
           mysql -h 127.0.0.1 -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 
+      - name: Verify MySQL Listening Address
+        run: |
+          docker exec $(docker ps --filter "ancestor=mysql:5.7" -q) \
+            mysql -u root -e "SHOW VARIABLES LIKE 'bind_address';"
+
       - name: Run Tests
         run: |
           bundle exec rspec
