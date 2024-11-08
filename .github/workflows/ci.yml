@@ -26,6 +26,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
+      - name: set up tests
+        run: |
+          touch .env
+
       - name: build application
         run: |
           docker-compose build
