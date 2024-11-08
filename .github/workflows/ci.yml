@@ -48,9 +48,9 @@ jobs:
       AMI_FILESTORE_DATABASE_NAME: ami_filestore_test
       IMAGE_FILESTORE_DATABASE_USER: root
       AMI_FILESTORE_DATABASE_USER: root
-      DATABASE_USERNAME: root
-      DATABASE_PASSWORD: ""  # Empty password
-      DATABASE_HOST: 127.0.0.1
+        #      DATABASE_USERNAME: root
+        #DATABASE_PASSWORD: ""  # Empty password
+        #DATABASE_HOST: 127.0.0.1
 
     steps:
       - name: Check out code
@@ -76,10 +76,10 @@ jobs:
 
       - name: Set up Databases
         run: |
-          psql -h localhost -U postgres -c 'create database fedora_ingest_rails_test;'
-          mysql -h 127.0.0.1 -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
-          mysql -h 127.0.0.1 -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
-          mysql -h 127.0.0.1 -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
+          psql -h postgres -U postgres -c 'create database fedora_ingest_rails_test;'
+          mysql -h mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
+          mysql -h mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
+          mysql -h mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 
       - name: Verify MySQL Listening Address
         run: |

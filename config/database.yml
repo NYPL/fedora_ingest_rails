@@ -32,7 +32,7 @@ ami_filestore:
 # The ENV VARs are for Dockerized localhost, the default Procs are for Travis
 test:
   <<: *default
-  host: <%= ENV.fetch('INGESTOR_TEST_DATABASE_HOST') { 'mysql' } %>
+  host: <%= ENV.fetch('INGESTOR_TEST_DATABASE_HOST') { 'postgres' } %>
   database: fedora_ingest_rails_test
   username: postgres
   password: mypassword
