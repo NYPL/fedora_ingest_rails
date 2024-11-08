@@ -5,36 +5,74 @@ on:
     branches:
       - DR-3256-migrate-ci-to-gh-actions
       - qa
-      - production
+      - nypl-dams-prod
   pull_request:
     branches:
       - qa
-      - production
+      - nypl-dams-prod
 
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 5432:5432
+
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 3306:3306
+
     steps:
-      - name: check out code
+      - name: Check out code
         uses: actions/checkout@v2
 
-      - name: set up docker
-        uses: docker/setup-buildx-action@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.3
+          bundler-cache: true
 
-      - name: install docker compose
+      - name: Update RubyGems and install Bundler
+        run: |
+          gem update --system '3.3.22'
+          gem install bundler -v '2.5.18'
+
+      - name: Wait for Database Services
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker-compose
+          sudo apt-get install -y postgresql-client mysql-client
+          until pg_isready -h localhost -U postgres; do echo "Waiting for PostgreSQL..."; sleep 1; done
+          until mysqladmin ping -h localhost --silent; do echo "Waiting for MySQL..."; sleep 1; done
 
-      - name: set up tests
+      - name: Set up Databases
         run: |
-          touch .env
+          psql -h localhost -U postgres -c 'create database fedora_ingest_rails_test;'
+          mysql -h 127.0.0.1 -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
+          mysql -h 127.0.0.1 -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
+          mysql -h 127.0.0.1 -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 
-      - name: build application
+      - name: Run Tests
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/fedora_ingest_rails_test
         run: |
-          docker-compose build
+          bundle exec rspec
 
-      - name: run tests
-        run: |
-          docker-compose up -d
-          docker-compose exec -T webapp bash -c 'bundle exec rspec'
