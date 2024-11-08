@@ -43,11 +43,11 @@ jobs:
           - 3306:3306
 
     env:
+      RAILS_ENV: test
       IMAGE_FILESTORE_DATABASE_NAME: image_filestore_test
       AMI_FILESTORE_DATABASE_NAME: ami_filestore_test
       IMAGE_FILESTORE_DATABASE_USER: root
       AMI_FILESTORE_DATABASE_USER: root
-      INGESTOR_TEST_DATABASE_HOST: postgres
       DATABASE_USERNAME: root
       DATABASE_PASSWORD: ""  # Empty password
       DATABASE_HOST: 127.0.0.1
