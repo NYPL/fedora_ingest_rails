@@ -31,14 +31,14 @@ jobs:
           - 5432:5432
 
       mysql:
-        image: mysql:5.7
+        image: mysql:5.6
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
         ports:
           - 3306:3306
 
@@ -72,19 +72,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y postgresql-client mysql-client
           until pg_isready -h localhost -U postgres; do echo "Waiting for PostgreSQL..."; sleep 1; done
-          #          until mysqladmin ping -h localhost --silent; do echo "Waiting for MySQL..."; sleep 1; done
+          until mysqladmin ping -h localhost --silent; do echo "Waiting for MySQL..."; sleep 1; done
 
       - name: Set up Databases
         run: |
-          psql -h postgres -U postgres -c 'create database fedora_ingest_rails_test;'
-          mysql -h mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
-          mysql -h mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
-          mysql -h mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
-
-      - name: Verify MySQL Listening Address
-        run: |
-          docker exec $(docker ps --filter "ancestor=mysql:5.7" -q) \
-            mysql -u root -e "SHOW VARIABLES LIKE 'bind_address';"
+          psql -U postgres -c 'create database fedora_ingest_rails_test;'
+          mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
+          mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
+          mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 
       - name: Run Tests
         run: |
