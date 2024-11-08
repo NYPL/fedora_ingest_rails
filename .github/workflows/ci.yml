@@ -48,6 +48,9 @@ jobs:
       IMAGE_FILESTORE_DATABASE_USER: root
       AMI_FILESTORE_DATABASE_USER: root
       INGESTOR_TEST_DATABASE_HOST: postgres
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: ""  # Empty password
+      DATABASE_HOST: 127.0.0.1
 
     steps:
       - name: Check out code
@@ -79,8 +82,6 @@ jobs:
           mysql -h 127.0.0.1 -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 
       - name: Run Tests
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/fedora_ingest_rails_test
         run: |
           bundle exec rspec
 
