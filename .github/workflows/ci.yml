@@ -46,6 +46,7 @@ jobs:
       RAILS_ENV: test
       IMAGE_FILESTORE_DATABASE_NAME: image_filestore_test
       AMI_FILESTORE_DATABASE_NAME: ami_filestore_test
+      IMAGE_FILESTORE_DATABASE_USER: root
 
     steps:
       - name: Check out code
