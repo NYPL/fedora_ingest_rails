@@ -22,7 +22,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_HOST_AUTH_METHOD: trust
-        command: postgres -c shared_buffers=64MB -c work_mem=4MB
+        entrypoint: ["postgres", "-c", "shared_buffers=64MB", "-c", "work_mem=4MB"]
         options: >-
           --health-cmd="pg_isready -U postgres"
           --health-interval=10s
@@ -36,7 +36,7 @@ jobs:
         image: mysql:5.6
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-        command: --innodb-buffer-pool-size=64M
+        entrypoint: ["mysqld", "--innodb-buffer-pool-size=64M"]
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
