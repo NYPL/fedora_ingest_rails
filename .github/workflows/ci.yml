@@ -71,8 +71,8 @@ jobs:
 
       - name: Set up PostgreSQL
         run: |
-          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET shared_buffers TO '64MB';'"
-          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET work_mem TO '4MB';'"
+          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET shared_buffers TO 65536;'"
+          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET work_mem TO 4096;'"
           docker restart ${{ job.services.postgres.id }}
 
       - name: Set up MySQL
