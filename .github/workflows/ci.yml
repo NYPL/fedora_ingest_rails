@@ -68,11 +68,11 @@ jobs:
           gem update --system '3.3.22'
           gem install bundler -v '2.5.18'
 
-      - name: Set up PostgreSQL
-        run: |
-          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET shared_buffers TO 65536;'"
-          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET work_mem TO 4096;'"
-          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'SELECT pg_reload_conf();'"
+          #      - name: Set up PostgreSQL
+          #        run: |
+          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET shared_buffers TO 65536;'"
+          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET work_mem TO 4096;'"
+          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'SELECT pg_reload_conf();'"
 
       - name: Set up MySQL
         run: |
