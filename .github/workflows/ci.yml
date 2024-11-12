@@ -104,7 +104,7 @@ jobs:
       - name: Show Database Logs
         run: |
           echo "PostgreSQL logs:"
-          docker logs $(docker ps -qf "ancestor=postgres:latest")
+          docker logs $(docker ps -qf "ancestor=postgres:11")
           echo "MySQL logs:"
           docker logs $(docker ps -qf "ancestor=mysql:5.6")
 
