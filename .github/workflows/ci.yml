@@ -15,33 +15,33 @@ jobs:
   build_and_test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:11
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_HOST_AUTH_METHOD: trust
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-        ports:
-          - 5432:5432
-
-      mysql:
-        image: mysql:5.6
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-          --memory=512m --cpus=0.5
-        ports:
-          - 3306:3306
+      #    services:
+      #      postgres:
+      #        image: postgres:11
+      #        env:
+      #          POSTGRES_USER: postgres
+      #          POSTGRES_PASSWORD: postgres
+      #          POSTGRES_HOST_AUTH_METHOD: trust
+      #        options: >-
+      #          --health-cmd="pg_isready -U postgres"
+      #          --health-interval=10s
+      #          --health-timeout=5s
+      #          --health-retries=10
+      #        ports:
+      #          - 5432:5432
+      #
+      #      mysql:
+      #        image: mysql:5.6
+      #        env:
+      #          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      #        options: >-
+      #          --health-cmd="mysqladmin ping --silent"
+      #          --health-interval=10s
+      #          --health-timeout=5s
+      #          --health-retries=10
+      #          --memory=512m --cpus=0.5
+      #        ports:
+      #          - 3306:3306
 
     env:
       RAILS_ENV: test
@@ -68,37 +68,41 @@ jobs:
           gem update --system '3.3.22'
           gem install bundler -v '2.5.18'
 
-          #      - name: Set up PostgreSQL
+          #          #      - name: Set up PostgreSQL
+          #          #        run: |
+          #          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET shared_buffers TO 65536;'"
+          #          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET work_mem TO 4096;'"
+          #          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'SELECT pg_reload_conf();'"
+          #
+          #      - name: Set up MySQL
           #        run: |
-          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET shared_buffers TO 65536;'"
-          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET work_mem TO 4096;'"
-          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'SELECT pg_reload_conf();'"
-
-      - name: Set up MySQL
-        run: |
-          docker exec ${{ job.services.mysql.id }} bash -c "echo '[mysqld]' > /etc/mysql/conf.d/custom.cnf"
-          docker exec ${{ job.services.mysql.id }} bash -c "echo 'innodb_buffer_pool_size=64M' >> /etc/mysql/conf.d/custom.cnf"
-          docker restart ${{ job.services.mysql.id }}
-
-          #      - name: Wait for Database Services
+          #          docker exec ${{ job.services.mysql.id }} bash -c "echo '[mysqld]' > /etc/mysql/conf.d/custom.cnf"
+          #          docker exec ${{ job.services.mysql.id }} bash -c "echo 'innodb_buffer_pool_size=64M' >> /etc/mysql/conf.d/custom.cnf"
+          #          docker restart ${{ job.services.mysql.id }}
+          #
+          #          #      - name: Wait for Database Services
+          #          #        run: |
+          #          #          sudo apt-get update
+          #          #          sudo apt-get install -y postgresql-client mysql-client
+          #          #          until pg_isready -h localhost -U postgres; do echo "Waiting for PostgreSQL..."; sleep 1; done
+          #          #          #until mysqladmin ping --silent; do echo "Waiting for MySQL..."; sleep 1; done
+          #
+          #      # Re-check readiness
+          #      - name: Wait for Database Services after restart
           #        run: |
-          #          sudo apt-get update
-          #          sudo apt-get install -y postgresql-client mysql-client
-          #          until pg_isready -h localhost -U postgres; do echo "Waiting for PostgreSQL..."; sleep 1; done
-          #          #until mysqladmin ping --silent; do echo "Waiting for MySQL..."; sleep 1; done
+          #          until docker exec ${{ job.services.postgres.id }} pg_isready -U postgres; do
+          #            echo "Waiting for PostgreSQL to be ready after restart..."
+          #            sleep 2
+          #          done
+          #          # Uncomment if needed for MySQL
+          #          # until docker exec ${{ job.services.mysql.id }} mysqladmin ping --silent; do 
+          #          #   echo "Waiting for MySQL to be ready after restart..."
+          #          #   sleep 2
+          #          # done
 
-      # Re-check readiness
-      - name: Wait for Database Services after restart
+      - name: Start App
         run: |
-          until docker exec ${{ job.services.postgres.id }} pg_isready -U postgres; do
-            echo "Waiting for PostgreSQL to be ready after restart..."
-            sleep 2
-          done
-          # Uncomment if needed for MySQL
-          # until docker exec ${{ job.services.mysql.id }} mysqladmin ping --silent; do 
-          #   echo "Waiting for MySQL to be ready after restart..."
-          #   sleep 2
-          # done
+          docker-compose up -d
 
       - name: Show Database Logs
         run: |
