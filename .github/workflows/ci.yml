@@ -43,15 +43,15 @@ jobs:
       #        ports:
       #          - 3306:3306
 
-    env:
-      RAILS_ENV: test
-      IMAGE_FILESTORE_DATABASE_NAME: image_filestore_test
-      AMI_FILESTORE_DATABASE_NAME: ami_filestore_test
-      IMAGE_FILESTORE_DATABASE_USER: root
-      AMI_FILESTORE_DATABASE_USER: root
-        #      DATABASE_USERNAME: root
-        #DATABASE_PASSWORD: ""  # Empty password
-        #DATABASE_HOST: 127.0.0.1
+      #    env:
+      #      RAILS_ENV: test
+      #      IMAGE_FILESTORE_DATABASE_NAME: image_filestore_test
+      #      AMI_FILESTORE_DATABASE_NAME: ami_filestore_test
+      #      IMAGE_FILESTORE_DATABASE_USER: root
+      #      AMI_FILESTORE_DATABASE_USER: root
+      #        #      DATABASE_USERNAME: root
+      #        #DATABASE_PASSWORD: ""  # Empty password
+      #        #DATABASE_HOST: 127.0.0.1
 
     steps:
       - name: Check out code
@@ -69,17 +69,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.3
-          bundler-cache: true
-
-      - name: Update RubyGems and install Bundler
-        run: |
-          gem update --system '3.3.22'
-          gem install bundler -v '2.5.18'
-
+          #      - name: Set up Ruby
+          #        uses: ruby/setup-ruby@v1
+          #        with:
+          #          ruby-version: 3.3.3
+          #          bundler-cache: true
+          #
+          #      - name: Update RubyGems and install Bundler
+          #        run: |
+          #          gem update --system '3.3.22'
+          #          gem install bundler -v '2.5.18'
+          #
           #          #      - name: Set up PostgreSQL
           #          #        run: |
           #          #          docker exec ${{ job.services.postgres.id }} bash -c "psql -U postgres -c 'ALTER SYSTEM SET shared_buffers TO 65536;'"
@@ -120,9 +120,14 @@ jobs:
           echo 'DATABASE_USER_NAME=postgres' >> .env
           echo 'DATABASE_PASSWORD=mypassword' >> .env
           echo 'DATABASE_HOST=postgres' >> .env
+          echo 'IMAGE_FILESTORE_DATABASE_NAME=image_filestore_test' >> .env
+          echo 'AMI_FILESTORE_DATABASE_NAME=ami_filestore_test' >> .env
+          echo 'IMAGE_FILESTORE_DATABASE_USER=root' >> .env
+          echo 'AMI_FILESTORE_DATABASE_USER=root' >> .env
 
       - name: Start App
         run: |
+          docker-compose build
           docker-compose up -d
 
       - name: Show Database Logs
