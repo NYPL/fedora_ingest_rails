@@ -60,6 +60,7 @@ jobs:
       - name: Clone filestore db
         run: |
           git clone https://github.com/NYPL/filestore_databases_docker ../filestore_databases_docker
+          git clone https://github.com/NYPL/fedoracommons-3.4.2-dockerized ../fedoracommons-3.4.2-dockerized
 
       - name: set up docker
         uses: docker/setup-buildx-action@v2
