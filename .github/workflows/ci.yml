@@ -111,6 +111,15 @@ jobs:
           #          #   echo "Waiting for MySQL to be ready after restart..."
           #          #   sleep 2
           #          # done
+          #
+      - name: set up test environment
+        run: |
+          touch .env
+          echo 'RAILS_ENV=test' >> .env
+          echo 'DATABASE_NAME=fedora_ingest_rails_test' >> .env
+          echo 'DATABASE_USER_NAME=postgres' >> .env
+          echo 'DATABASE_PASSWORD=mypassword' >> .env
+          echo 'DATABASE_HOST=postgres' >> .env
 
       - name: Start App
         run: |
@@ -123,13 +132,13 @@ jobs:
           echo "MySQL logs:"
           docker logs $(docker ps -qf "ancestor=mysql:5.6")
 
-      - name: Set up Databases
-        run: |
-          psql -U postgres -c 'create database fedora_ingest_rails_test;'
-          mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
-          mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
-          mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
-
+          #      - name: Set up Databases
+          #        run: |
+          #          psql -U postgres -c 'create database fedora_ingest_rails_test;'
+          #          mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
+          #          mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
+          #          mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
+          #
       - name: Run Tests
         run: |
           bundle exec rspec
