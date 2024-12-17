@@ -122,8 +122,6 @@ module IngestJobHelper
       # add docs to solr without checking parents this time
       repo_solr.add_docs_to_solr(capture_solr_doc)
 
-      digital_object.save unless test_mode
-
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
 
