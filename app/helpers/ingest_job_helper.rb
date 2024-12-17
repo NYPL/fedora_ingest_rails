@@ -84,7 +84,6 @@ module IngestJobHelper
           highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
         end
       end
-     end
 
       # Datastreams with info from the `Capture` Level
       rels_ext = mms_client.rels_ext_for(uuid)
