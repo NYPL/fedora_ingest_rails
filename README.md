@@ -17,9 +17,7 @@ Then (via DelayedJob):
 * Iterates through those UUIDS and asks MMS for the latest information.
   - Asks other services (like Filestore DB) for more information about the item.
 
-* Turns around and posts that information to Fedora & RELS-EXT Solr
-
-This decouples MMS from direct communication with Fedora in the event of Fedora API changes or downtime.
+* Turns around and posts that information to Repo API Solr
 
 ## Installing & Running
 
@@ -31,7 +29,7 @@ Forget Docker is there.**
 ### Setup
 
 1. Clone this repo.
-1. Clone [NYPL/fedoracommons-3.4.2-dockerized](https://github.com/NYPL/fedoracommons-3.4.2-dockerized) & [NYPL/filestore_databases_docker](https://github.com/NYPL/filestore_databases_docker) in the directory above this. (make them siblings of this app)
+1. Clone [NYPL/filestore_databases_docker](https://github.com/NYPL/filestore_databases_docker) in the directory above this. (make it a sibling of this app)
 1. In this app's root directory `cp ./.env.example ./.env` and fill it out. (See directions in `.env.example`)
 
 #### Setting Up Databases (first run)
@@ -57,10 +55,6 @@ It also spins up 2 workers.
 #### PostgreSQL
 
 The app's database persists in `./database-data/postgres` of _your_ machine.
-
-#### Fedora
-
-Our [dockerized Fedora instance](https://github.com/NYPL/fedoracommons-3.4.2-dockerized) reachable at http://localhost:8080.
 
 #### Filestore Databases
 

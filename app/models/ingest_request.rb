@@ -8,13 +8,8 @@ class IngestRequest < ApplicationRecord
   validate :not_already_pending_validation, if: :new_record?
 
   attr_accessor :test_mode
-  after_create :send_to_fedora
 
   private
-
-  def send_to_fedora
-    Delayed::Job.enqueue(IngestJob.new(id, test_mode))
-  end
 
   def not_already_pending_validation
     if IngestRequest.pending_ingest.where(uuid: uuid).exists?
