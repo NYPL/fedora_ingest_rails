@@ -50,4 +50,6 @@ Rails.application.configure do
   config.mms_http_basic_password = 'fake'
   config.rels_ext_solr_url = 'fake'
   config.repo_solr_url = 'fake'
+
+  config.iiif_link_url = 'fake'
 end

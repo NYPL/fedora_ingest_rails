@@ -55,4 +55,6 @@ Rails.application.configure do
   config.mms_http_basic_password = ENV['MMS_BASIC_PASSWORD']
   config.rels_ext_solr_url = ENV['RELS_EXT_SOLR_URL']
   config.repo_solr_url = ENV['REPO_SOLR_URL']
+
+  config.iiif_host = 'https://iiif-qa.nypl.org'
 end
