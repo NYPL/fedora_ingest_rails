@@ -16,6 +16,7 @@
 !/database-data/postgres/.keep
 /database-data/mysql/*
 !/database-data/mysql/.keep
+/database-data/mms-postgres/*
 /node_modules
 /yarn-error.log
 

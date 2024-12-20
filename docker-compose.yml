@@ -13,11 +13,11 @@ services:
       - '3000:80'
     depends_on:
       - postgres
+      - mms-postgres
       - filestore-db
   filestore-db:
     platform: linux/arm64 # uncomment for M1 macs
     image: mysql:8.0
-    platform: linux/arm64
     environment:
       MYSQL_ROOT_PASSWORD: mysqlpassword
     volumes:
@@ -25,12 +25,19 @@ services:
     ports:
       - '3306:3306'
   postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile-mms-postgres
+    image: postgres:11
+    platform: linux/arm64 # uncomment for M1 macs
+    environment:
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - ./database-data/postgres:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+  mms-postgres:
+    image: postgres:12-bullseye
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
-      - '5432:5432'
+      - '5433:5432'
     volumes:
-      - ./database-data/postgres:/var/lib/postgresql/data
+      - ./database-data/mms-postgres:/var/lib/postgresql/data
