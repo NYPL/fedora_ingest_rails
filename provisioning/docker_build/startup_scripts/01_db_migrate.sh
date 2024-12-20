@@ -5,4 +5,4 @@ if [ "$RAILS_ENV" == "development" ]; then
   sleep 10
 fi
 
-cd /home/app/fedora_ingest_rails && RAILS_ENV=$RAILS_ENV bundle exec rake db:create db:migrate
+#cd /home/app/fedora_ingest_rails && RAILS_ENV=$RAILS_ENV bundle exec rake db:create db:migrate

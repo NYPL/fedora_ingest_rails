@@ -1,10 +1,12 @@
 services:
   webapp:
+    network_mode: mynetwork # uncomment for drr integration
     build:
       context: .
       dockerfile: Dockerfile
       target: development
         #platform: linux/arm64 # uncomment for M1 macs
+    platform: linux/arm64
     env_file:
       - ./.env
     volumes:
@@ -13,18 +15,11 @@ services:
       - '3000:80'
     depends_on:
       - postgres
-      - fedora
       - filestore-db
-  filestore-db:
-    build:
-      context: ../filestore_databases_docker
-      dockerfile: Dockerfile
-    volumes:
-      - ./database-data/mysql:/var/lib/mysql
-    ports:
-      - '3306:3306'
   worker:
+    network_mode: mynetwork # uncomment for drr integration
     image: 'fedora_ingest_rails-webapp:latest'
+    platform: linux/arm64
     env_file:
       - ./.env
     volumes:
@@ -32,19 +27,24 @@ services:
     entrypoint: /home/app/fedora_ingest_rails/bin/delayed_job run
     depends_on:
       - postgres
-      - fedora
       - filestore-db
+  filestore-db:
+    network_mode: mynetwork # uncomment for drr integration
+    image: mysql:8.0
+    platform: linux/arm64
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqlpassword
+    volumes:
+      - ./database-data/mysql:/var/lib/mysql
+    ports:
+      - '3306:3306'
   postgres:
-    image:  postgres:11
+    network_mode: mynetwork # uncomment for drr integration
+    image: postgres:12-bullseye
+    platform: linux/arm64
     environment:
       POSTGRES_PASSWORD: mypassword
     volumes:
       - ./database-data/postgres:/var/lib/postgresql/data
     ports:
       - '5432'
-  fedora:
-    build:
-      context: ../fedoracommons-3.4.2-dockerized
-      dockerfile: Dockerfile
-    ports:
-      - '8080:8080'

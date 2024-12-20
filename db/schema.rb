@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_04_12_181309) do
+ActiveRecord::Schema[7.2].define(version: 2023_04_12_181309) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,5 +42,4 @@ ActiveRecord::Schema[7.1].define(version: 2023_04_12_181309) do
     t.datetime "first_indexed", precision: nil
     t.index ["uuid"], name: "index_repo_solr_docs_on_uuid", unique: true
   end
-
 end

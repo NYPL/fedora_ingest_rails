@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 # This class talks to the MySQL database that stores the images that are in isilon.
-class AmiFilestoreEntry < ActiveRecord::Base
-  has_many :identifiers, as: :identifiable
+class Identifier < ActiveRecord::Base
+  belongs_to :identifiable, polymorphic: true
 
   establish_connection(:ami_filestore)
-  self.table_name = 'captures'
+  self.table_name = 'identifiers'
 
 #  belongs_to :source
 #

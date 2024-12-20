@@ -22,7 +22,7 @@ image_filestore:
   reconnect: true
 
 ami_filestore:
-  adapter: mysql2
+  adapter: postgresql
   host:     <%= ENV.fetch('AMI_FILESTORE_DATABASE_HOST') { 'localhost' } %>
   database: <%= ENV.fetch('AMI_FILESTORE_DATABASE_NAME') %>
   username: <%= ENV.fetch('AMI_FILESTORE_DATABASE_USER') %>

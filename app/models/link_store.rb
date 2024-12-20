@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This class talks to the MySQL database that stores the images that are in isilon.
-class ImageFilestoreEntry < ActiveRecord::Base
+class LinkStore < ActiveRecord::Base
   establish_connection(:image_filestore)
   self.table_name = 'link_store'
 
