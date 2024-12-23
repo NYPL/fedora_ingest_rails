@@ -1,6 +1,6 @@
 services:
   webapp:
-    platform: linux/arm64 # uncomment for M1 macs
+    #platform: linux/arm64 # uncomment for M1 macs
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,7 +16,7 @@ services:
       - mms-postgres
       - filestore-db
   filestore-db:
-    platform: linux/arm64 # uncomment for M1 macs
+    #platform: linux/arm64 # uncomment for M1 macs
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: mysqlpassword
@@ -25,8 +25,8 @@ services:
     ports:
       - '3306:3306'
   postgres:
+    #platform: linux/arm64 # uncomment for M1 macs
     image: postgres:11
-    platform: linux/arm64 # uncomment for M1 macs
     environment:
       POSTGRES_PASSWORD: mypassword
     volumes:
@@ -34,6 +34,7 @@ services:
     ports:
       - '5432:5432'
   mms-postgres:
+    #platform: linux/arm64 # uncomment for M1 macs
     image: postgres:12-bullseye
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
