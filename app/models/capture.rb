@@ -6,10 +6,4 @@ class Capture < ActiveRecord::Base
 
   establish_connection(:ami_filestore)
   self.table_name = 'captures'
-
-#  belongs_to :source
-#
-#  def readonly?
-#    true
-#  end
 end

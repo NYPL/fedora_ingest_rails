@@ -6,10 +6,4 @@ class Identifier < ActiveRecord::Base
 
   establish_connection(:ami_filestore)
   self.table_name = 'identifiers'
-
-#  belongs_to :source
-#
-#  def readonly?
-#    true
-#  end
 end
