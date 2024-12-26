@@ -13,7 +13,6 @@ services:
       - '3000:80'
     depends_on:
       - postgres
-      - fedora
       - filestore-db
   filestore-db:
     build:
@@ -32,7 +31,6 @@ services:
     entrypoint: /home/app/fedora_ingest_rails/bin/delayed_job run
     depends_on:
       - postgres
-      - fedora
       - filestore-db
   postgres:
     image:  postgres:11
@@ -42,9 +40,3 @@ services:
       - ./database-data/postgres:/var/lib/postgresql/data
     ports:
       - '5432'
-  fedora:
-    build:
-      context: ../fedoracommons-3.4.2-dockerized
-      dockerfile: Dockerfile
-    ports:
-      - '8080:8080'

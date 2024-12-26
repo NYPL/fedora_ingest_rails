@@ -8,11 +8,11 @@ class IngestRequest < ApplicationRecord
   validate :not_already_pending_validation, if: :new_record?
 
   attr_accessor :test_mode
-  after_create :send_to_fedora
+  after_create :enqueue_ingest
 
   private
 
-  def send_to_fedora
+  def enqueue_ingest
     Delayed::Job.enqueue(IngestJob.new(id, test_mode))
   end
 
