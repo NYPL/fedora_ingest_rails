@@ -8,8 +8,13 @@ class IngestRequest < ApplicationRecord
   validate :not_already_pending_validation, if: :new_record?
 
   attr_accessor :test_mode
+  after_create :enqueue_ingest
 
   private
+
+  def enqueue_ingest
+    Delayed::Job.enqueue(IngestJob.new(id, test_mode))
+  end
 
   def not_already_pending_validation
     if IngestRequest.pending_ingest.where(uuid: uuid).exists?
