@@ -1,93 +1,109 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 RSpec.describe RepoSolrClient, type: :model do
+  let(:mock_rsolr) { double('RSolr') }
+  subject { RepoSolrClient.new }
 
-  describe 'RepoSolrClient' do
-    let(:solr_mock) { double('SolrInstance') }
-    subject { RepoSolrClient.new }
+  before do
+    # Mock RSolr connection
+    allow(RSolr).to receive(:connect).and_return(mock_rsolr)
 
-    before(:each) do
-      allow(Rails).to receive_message_chain(:application, :config, :repo_solr_url).and_return('http://fake.com/solr')
+    # Stub RSolr methods
+    allow(mock_rsolr).to receive(:get).and_return({ "response" => { "docs" => [] } })
+    allow(mock_rsolr).to receive(:update).and_return(nil)
+    allow(mock_rsolr).to receive(:commit).and_return(nil)
+    allow(mock_rsolr).to receive(:add).and_return(nil)
+
+    subject.instance_variable_set(:@rsolr, mock_rsolr)
+
+    stub_const("RepoSolrClient::NYPL_LOCATIONS", ["Location1", "Location2"])
+  end
+
+  describe '#get_number_of_children_for_parent_uuid' do
+    it 'returns the correct number of children' do
+      allow(mock_rsolr).to receive(:get).with('select', params: { q: 'parentUUID:"parent1" AND type_s:Item', rows: 0 })
+                                        .and_return({ "response" => { "numFound" => 5 } })
+
+      result = subject.get_number_of_children_for_parent_uuid("parent1")
+      expect(result).to eq(5)
     end
 
-    describe 'update index' do
-      it 'removes the parent document if the parent will be empty once this is updated' do
-        # Configure mock behavior
-        allow(solr_mock).to receive(:get).with('select', params: { q: 'uuid:uuid1' } )
-          .and_return('response' => {'docs' => [{'uuid' => 'uuid1', 'parentUUID' => ['old_uuid1']}]})
-        allow(solr_mock).to receive(:get).with('select', params: { q: "parentUUID:\"old_uuid1\" AND type_s:Item" } )
-          .and_return('response' => {'docs' => [], 'numFound' => 0 })
-        allow(solr_mock).to receive(:delete_by_query)
-        allow(solr_mock).to receive(:add)
-        allow(solr_mock).to receive(:commit)
+    it 'returns nil if @rsolr is not set' do
+      subject.instance_variable_set(:@rsolr, nil)
+      result = subject.get_number_of_children_for_parent_uuid("parent1")
+      expect(result).to be_nil
+    end
+  end
 
-        # Use the mock in the RepoSolrClient instance
-        allow(RSolr).to receive(:connect).and_return(solr_mock)
+  describe '#get_representative_children_for' do
+    context 'when type is Item' do
+      it 'returns up to two captures sorted by orderInSequence and imageID_string' do
+        allow(mock_rsolr).to receive(:get).and_return({
+          "response" => {
+            "docs" => [
+              { "uuid" => "child1", "orderInSequence" => 1, "imageID_string" => "image1" },
+              { "uuid" => "child2", "orderInSequence" => 2, "imageID_string" => "image2" },
+              { "uuid" => "child3", "orderInSequence" => 3, "imageID_string" => "image3" }
+            ]
+          }
+        })
 
-        # Create a new document with updated parentUUIDs
-        new_document = { 'uuid' => 'uuid1', 'parentUUID' => ['new_parent_uuid1'] }
-        subject.update_index_and_delete_empty_parents(new_document)
-
-        # Verify mock interactions
-        expect(solr_mock).to have_received(:get).with('select', params: { q: "parentUUID:\"old_uuid1\" AND type_s:Item" } )
-        expect(solr_mock).to have_received(:delete_by_query).with('uuid:old_uuid1')
-        expect(solr_mock).to have_received(:add).with(new_document)
-        expect(solr_mock).to have_received(:commit)
+        result = subject.get_representative_children_for("parent1", "item")
+        expect(result.size).to eq(3)
+        expect(result.map { |doc| doc["uuid"] }).to eq(["child1", "child2", "child3"])
       end
+    end
+  end
 
-      it 'does not remove the parent document if the parent will not be empty once this is updated' do
-        allow(solr_mock).to receive(:get).with('select', params: { q: 'uuid:uuid10' } )
-          .and_return('response' => {'docs' => [{'uuid' => 'uuid10', 'parentUUID' => ['old_populated_uuid1']}]})
-        allow(solr_mock).to receive(:get).with('select', params: { q: "parentUUID:\"old_populated_uuid1\" AND type_s:Item" } )
-          .and_return('response' => {'docs' => [{'uuid' => 'uuid10', 'parentUUID' => ['old_populated_uuid1']}, {'uuid' => 'uuid11', 'parentUUID' => ['old_populated_uuid1']}], 'numFound' => 2 })
-        allow(solr_mock).to receive(:delete_by_query)
-        allow(solr_mock).to receive(:add)
-        allow(solr_mock).to receive(:commit)
+  describe '#update_key_fields' do
+    let(:solr_docs_array) do
+      [
+        { "uuid" => "item1", "type_s" => "http://uri.nypl.org/vocabulary/repository_terms#Item", "parentUUID" => ["parent1"], "typeOfResource_mtxt_s" => ["sound recording"] }
+      ]
+    end
 
-        # Use the mock in the RepoSolrClient instance
-        allow(RSolr).to receive(:connect).and_return(solr_mock)
+    it 'updates Solr with processed fields' do
+      allow(subject).to receive(:get_representative_children_for).and_return([
+        { "uuid" => "capture1", "type_s" => "http://uri.nypl.org/vocabulary/repository_terms#Capture", "parentUUID" => ["item1"], "typeOfResource_mtxt_s" => ["sound recording"], "imageID_string" => "image1", "orderInSequence" => 1 }
+      ])
+      allow(subject).to receive(:get_number_of_children_for_parent_uuid).and_return(5)
 
-        # Create a new document with updated parentUUIDs
-        second_new_document = { 'uuid' => 'uuid10', 'parentUUID' => ['new_parent_uuid1'] }
-        subject.update_index_and_delete_empty_parents(second_new_document)
+      subject.update_key_fields(solr_docs_array)
 
-        # Verify mock interactions
-        expect(solr_mock).to have_received(:get).with('select', params: { q: "parentUUID:\"old_populated_uuid1\" AND type_s:Item" } )
-        expect(solr_mock).to_not have_received(:delete_by_query).with('uuid:old_populated_uuid1')
-        expect(solr_mock).to have_received(:add).with(second_new_document)
-        expect(solr_mock).to have_received(:commit)
+      expect(mock_rsolr).to have_received(:update) do |args|
+        updates = JSON.parse(args[:data])
+        item_update = updates.find { |doc| doc["uuid"] == "item1" }
+
+        expect(item_update["containsMultipleCaptures"]).to eq(false)
+        expect(item_update["numItems_s"]).to eq(1)
+        expect(item_update["containsAVMaterial"]).to eq(true)
+        expect(item_update["containsOnSiteMaterial"]).to eq(false)
+        expect(item_update["imageID"]).to eq("image1")
       end
+    end
 
-      it 'deletes unseen captures' do
-        allow(solr_mock).to receive(:get).with('select', params: { q: 'type_s:Capture AND immediateParent_s:"fake-item-with-suppressed-capture"', rows: 0 })
-          .and_return('response' => {'numFound' => 2,
-                                     'docs' => []
-                                    })
-        allow(solr_mock).to receive(:get).with('select', params: { q: 'type_s:Capture AND immediateParent_s:"fake-item-with-suppressed-capture"', rows: 250, start: 0 })
-          .and_return('response' => {'numFound' => 2,
-                                     'docs' => [{'uuid' => 'good-capture', 'immediateParent_s' => ['fake-item-with-suppressed-capture']},
-                                                {'uuid' => 'suppressed-capture', 'immediateParent_s' => ['fake-item-with-suppressed-capture']}]
-                                    })
-        allow(solr_mock).to receive(:get).with('select', params: { q: 'type_s:Capture AND immediateParent_s:"fake-item-with-suppressed-capture"', rows: 250, start: 250 })
-          .and_return('response' => {'numFound' => 0,
-                                     'docs' => []
-                                    })
-        allow(solr_mock).to receive(:delete_by_id).with('good-capture')
-        allow(solr_mock).to receive(:delete_by_id).with('suppressed-capture')
-        allow(solr_mock).to receive(:commit)
-
-        # Use the mock in the RepoSolrClient instance
-        allow(RSolr).to receive(:connect).and_return(solr_mock)
-
-        subject.delete_unseen_captures_below('fake-item-with-suppressed-capture',['good-capture'])
-
-        # Expect that 'delete_by_id' was called with the specific argument
-        expect(solr_mock).to_not have_received(:delete_by_id).with('good-capture')
-        expect(solr_mock).to have_received(:delete_by_id).with('suppressed-capture')
+    it 'skips updates for Capture documents' do
+      subject.update_key_fields(solr_docs_array)
+      expect(mock_rsolr).to have_received(:update) do |args|
+        updates = JSON.parse(args[:data])
+        expect(updates.none? { |doc| doc["uuid"] == "capture1" }).to be true
       end
+    end
+  end
 
+  describe '#update_index_and_delete_empty_parents' do
+    let(:new_document) { { "uuid" => "item1", "parentUUID" => ["new_parent1"] } }
+
+    it 'deletes old parents with no children and updates remaining parents' do
+      allow(subject).to receive(:get_doc).with("item1").and_return({ "docs" => [{ "uuid" => "item1", "parentUUID" => ["old_parent1"] }] })
+      allow(subject).to receive(:get_doc).with("old_parent1").and_return({ "docs" => [{ "uuid" => "old_parent1" }] })
+      allow(subject).to receive(:get_number_of_children_for_parent_uuid).with("old_parent1").and_return(0)
+      allow(subject).to receive(:remove_doc_for).with("old_parent1")
+
+      subject.update_index_and_delete_empty_parents(new_document)
+
+      expect(subject).to have_received(:remove_doc_for).with("old_parent1")
+      expect(mock_rsolr).to have_received(:add).with(new_document)
     end
   end
 end
