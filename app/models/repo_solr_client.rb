@@ -87,6 +87,10 @@ class RepoSolrClient
   end
 
   def update_key_fields(solr_docs_array)
+    if !solr_docs_array.is_a? Array
+      solr_docs_array = [solr_docs_array]
+    end
+    
     return unless @rsolr && solr_docs_array.present?
   
     nypl_locations_query = NYPL_LOCATIONS.map { |loc| "\"#{loc}\"" }.join(" OR ")
