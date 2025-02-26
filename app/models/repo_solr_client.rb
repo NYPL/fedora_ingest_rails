@@ -216,7 +216,7 @@ class RepoSolrClient
       old_uuids_to_process = old_document['parentUUID'] - new_document['parentUUID']
 
       old_uuids_to_process.each do |uuid|
-        old_parent = get_doc(uuid)['docs'].first
+        old_parent = get_doc(uuid)['docs']
         
         # Delete the doc entirely if it no longer has children.
         if get_number_of_children_for_parent_uuid(uuid) == 0
