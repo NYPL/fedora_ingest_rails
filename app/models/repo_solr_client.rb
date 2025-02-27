@@ -53,6 +53,8 @@ class RepoSolrClient
       else
         @rsolr.add solr_docs_array
       end
+    else
+      puts "Skipping solr requests."
     end
   end
 
@@ -99,6 +101,7 @@ class RepoSolrClient
   
     # Prepare updates in bulk
     updates = solr_docs_array.map do |solr_doc|
+      puts "Updating #{uuid} ..."
       uuid = solr_doc["uuid"]
       type = solr_doc["type_s"]&.gsub("http://uri.nypl.org/vocabulary/repository_terms#", "")
   
