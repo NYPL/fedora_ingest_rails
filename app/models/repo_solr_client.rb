@@ -37,10 +37,8 @@ class RepoSolrClient
 
   def add_docs_to_solr(solr_docs_array, check_parents=false)
     if @rsolr
-      update_key_fields(solr_docs_array)
-
       if check_parents == true
-
+        
         # grab the item document, it will always be first.
         new_item_document = solr_docs_array.first
 
@@ -53,6 +51,8 @@ class RepoSolrClient
       else
         @rsolr.add solr_docs_array
       end
+      
+      update_key_fields(solr_docs_array)
     else
       puts "Skipping solr requests."
     end
