@@ -101,8 +101,8 @@ class RepoSolrClient
   
     # Prepare updates in bulk
     updates = solr_docs_array.map do |solr_doc|
-      puts "Updating #{uuid} ..."
       uuid = solr_doc["uuid"]
+      puts "Updating #{uuid} ..."
       type = solr_doc["type_s"]&.gsub("http://uri.nypl.org/vocabulary/repository_terms#", "")
   
       # Skip Captures always as the fields we're adding don't pertain to them. 
