@@ -131,6 +131,11 @@ module IngestJobHelper
     # sometimes captures are deleted or suppressed, and we need to pull them back
     repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
 
+    # do not update first indexed until we successfully return from commit
+    # this should only update first indexed where it is not yet set
+    local_repo_capture_solr_docs_to_update.each { |d| d.update(first_indexed: index_time_s) }
+    local_parent_and_item_repo_solr_docs_to_update.each { |d| d.update(first_indexed: index_time_s) }
+
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: ingest_request.uuid)
   end
 
