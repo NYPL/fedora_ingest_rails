@@ -85,5 +85,5 @@ Rails.application.configure do
   config.mms_http_basic_password = ENV['MMS_BASIC_PASSWORD']
   config.repo_solr_url = ENV['REPO_SOLR_URL']
 
-  config.iiif_host = ENV['IIIF_HOST'] || 'https://iiif-qa.nypl.org' # qa environment override from task definition
+  config.iiif_host = ENV['IIIF_HOST'] || 'https://iiif-prod.nypl.org' # qa environment override from task definition
 end
