@@ -16,7 +16,6 @@ CSV.foreach(csv_file, headers: :first_row) do |row|
   file_uuid         = row[0]
   filestore_entry   = ImageFilestoreEntry.where(uuid: file_uuid).first
   full_res_path     = "#{Rails.application.config.iiif_host}/index.php?id=#{filestore_entry.file_id}&t=u"
-  puts full_res_path
   highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
   puts "Updated permalink for #{file_uuid}, image_id: #{filestore_entry.file_id}, #{full_res_path}"
 end
