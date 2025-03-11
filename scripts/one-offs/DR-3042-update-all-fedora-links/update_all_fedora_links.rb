@@ -10,7 +10,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'config', 'environment'))
 
-csv_file = File.join(File.dirname(__FILE__), "iiif_links.csv")
+csv_file = File.join(File.dirname(__FILE__), "fedora_links.csv")
 
 CSV.foreach(csv_file, headers: :first_row) do |row|
   file_uuid         = row[0]
