@@ -18,7 +18,15 @@ class PermalinkClient
     # `/record` will find or create a shortened link.
     # There's no need to manually look it up.
     # The providing the same uuid for a given URL makes the shortened URL returned deterministically the same.
-    uri = URI.parse "#{@base_links_url}/link-admin/record?url=#{not_permalink_string}&username=fedora_ingest_rails&redirect=false&uuid=#{@uuid}"
+    uri_params = {
+      url: not_permalink_string,
+      username: "fedora_ingest_rails",
+      uuid: @uuid
+    }
+    uri = URI.parse "#{@base_links_url}/link-admin/record"
+    
+    uri.query = URI.encode_www_form(uri_params)
+    
     res = authed_request(uri, 'POST')
     if res.code.eql? '201'
       @logger.info('Found or created permalink', url: not_permalink_string, mintedCode: res.body.to_s)

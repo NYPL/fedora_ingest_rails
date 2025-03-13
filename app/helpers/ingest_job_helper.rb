@@ -9,9 +9,6 @@ module IngestJobHelper
 
   def ingest!(ingest_request, test_mode = false)
 
-    # Fedora is not available in QA
-    fedora_client = FedoraClient.new unless test_mode
-
     mms_client = MmsClient.new(mms_url: Rails.application.config.mms_url,
                                user_name: Rails.application.config.mms_http_basic_username,
                                password: Rails.application.config.mms_http_basic_password)
@@ -73,29 +70,6 @@ module IngestJobHelper
         || (PUBLIC_DOMAIN_RIGHTS_CODES.include?(use))
       }
 
-      # Fedora is not available in QA
-      unless test_mode
-        digital_object = fedora_client.repository.find_or_initialize(pid)
-        digital_object.label = extract_title_from_dublin_core(dublin_core)[0..249]
-        digital_object.save
-        ##  For some reason this can only be done on saved objects
-        digital_object.models << 'info:fedora/nypl-model:image' # KK TODO: Ask JV why we do this and if it should apply to AMI.
-
-        # Datastreams with info from the `Item` Level
-        if mods.present?
-          fedora_client.repository.add_datastream(pid: pid, dsid: 'MODSXML', content: mods, mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'MODS XML record for this object')
-        end
-
-        if dublin_core.present?
-          fedora_client.repository.add_datastream(pid: pid, dsid: 'DC',      content: dublin_core, formatURI: 'http://www.openarchives.org/OAI/2.0/oai_dc/', mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'DC XML record for this object')
-        end
-
-        # Datastreams with info from the `Capture` level
-        if rights.present?
-          fedora_client.repository.add_datastream(pid: pid, dsid: 'RIGHTS',  content: rights, mimeType: 'text/xml', checksumType: 'MD5', dsLabel: 'Rights XML record for this object')
-        end
-      end
-
       # Datastreams with info from the filestore database of image derivatives
       image_filestore_entries = ImageFilestoreEntry.where(file_id: capture[:image_id], status: 4)
       highres_permalink = nil
@@ -106,15 +80,10 @@ module IngestJobHelper
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
         if file_label == 'MASTER_IMAGE' && release_master
-          full_res_path = "#{FEDORA_LINK_URL}/objects/#{pid}/datastreams/MASTER_IMAGE/content"
+          # temporary until iiif changes are approved.
+          full_res_path = "http://repo.nypl.org/fedora/objects/uuid:#{capture[:uuid]}/datastreams/MASTER_IMAGE/content""
+          # full_res_path = "#{Rails.application.config.iiif_host}/index.php?id=#{capture[:image_id]}&t=u"
           highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
-        end
-
-        unless test_mode
-          if file_label != 'Unknown'
-            datastream_options = { pid: pid, dsid: file_label, content: nil, controlGroup: 'E', mimeType: mime_type, checksumType: 'DISABLED', dsLocation: "http://local.fedora.server/resolver/#{file_uuid}", dsLabel: file_label + ' for this object', altIds: [highres_permalink] }
-            fedora_client.repository.add_datastream(datastream_options)
-          end
         end
       end
 
@@ -155,21 +124,6 @@ module IngestJobHelper
       # add docs to solr without checking parents this time
       repo_solr.add_docs_to_solr(capture_solr_doc)
 
-      # Fedora is not available in qa
-      unless test_mode || rels_ext.blank?
-        # Post the datastream to the repository
-        fedora_client.repository.add_datastream(
-          pid: pid,
-          dsid: 'RELS-EXT',
-          content: rels_ext,
-          mimeType: 'application/rdf+xml',
-          checksumType: 'MD5',
-          dsLabel: 'RELS-EXT XML record for this object'
-        )
-      end
-
-      digital_object.save unless test_mode
-
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
 
@@ -180,6 +134,7 @@ module IngestJobHelper
     repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
 
     # do not update first indexed until we successfully return from commit
+    # this should only update first indexed where it is not yet set
     local_repo_capture_solr_docs_to_update.each { |d| d.update(first_indexed: index_time_s) }
     local_parent_and_item_repo_solr_docs_to_update.each { |d| d.update(first_indexed: index_time_s) }
 

@@ -80,12 +80,10 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.secret_key_base = ENV['SECRET_KEY_BASE']
-  config.fedora_url = ENV['FEDORA_URL']
-  config.fedora_username = ENV['FEDORA_USERNAME']
-  config.fedora_password = ENV['FEDORA_PASSWORD']
   config.mms_url = ENV['MMS_URL']
   config.mms_http_basic_username = ENV['MMS_BASIC_USERNAME']
   config.mms_http_basic_password = ENV['MMS_BASIC_PASSWORD']
-  config.rels_ext_solr_url = ENV['RELS_EXT_SOLR_URL']
   config.repo_solr_url = ENV['REPO_SOLR_URL']
+
+  config.iiif_host = ENV['IIIF_HOST'] || 'https://iiif-prod.nypl.org' # qa environment override from task definition
 end

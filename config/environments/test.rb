@@ -45,12 +45,11 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.secret_key_base = 'dcf6716d56b60a041b72e829d2d9a5382bce4f575544737dd2a924ca166002fb94dcb9e1107058270841998a0d5f12380b3fb0052a2fa3ca50d22852b2d9d031'
-  config.fedora_url = 'fake'
-  config.fedora_username = 'fake'
-  config.fedora_password = 'fake'
   config.mms_url = 'fake'
   config.mms_http_basic_username = 'fake'
   config.mms_http_basic_password = 'fake'
   config.rels_ext_solr_url = 'fake'
   config.repo_solr_url = 'fake'
+
+  config.iiif_host = 'fake'
 end
