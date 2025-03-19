@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.1.0] - 2025-03-12
 
+### Added
+- Added one-off script to be run to cleanup links to Fedora. (DR-3042)
+
 ### Removed
 - Removed Fedora integration (DR-3005)
 
