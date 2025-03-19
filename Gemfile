@@ -24,7 +24,7 @@ gem 'redcarpet'
 gem 'rsolr'
 gem 'rsolr-ext'
 gem 'rubydora'
-gem 'stringio', '3.1.2'
+gem 'stringio', '3.1.5'
 
 gem 'aws-sdk-s3'
 gem 'uglifier'
