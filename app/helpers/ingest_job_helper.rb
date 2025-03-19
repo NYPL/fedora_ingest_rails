@@ -80,9 +80,7 @@ module IngestJobHelper
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
         if file_label == 'MASTER_IMAGE' && release_master
-          # temporary until iiif changes are approved.
-          full_res_path = "http://repo.nypl.org/fedora/objects/uuid:#{capture[:uuid]}/datastreams/MASTER_IMAGE/content""
-          # full_res_path = "#{Rails.application.config.iiif_host}/index.php?id=#{capture[:image_id]}&t=u"
+          full_res_path = "#{Rails.application.config.iiif_host}/index.php?id=#{capture[:image_id]}&t=u"
           highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
         end
       end
