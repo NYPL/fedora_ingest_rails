@@ -78,6 +78,7 @@ RSpec.describe RepoSolrClient, type: :model do
         expect(item_update["numItems_s"]).to eq(1)
         expect(item_update["containsAVMaterial"]).to eq(true)
         expect(item_update["containsOnSiteMaterial"]).to eq(false)
+        expect(item_update["containsUnrestrictedMaterial"]).to eq(false)
         expect(item_update["imageID"]).to eq("image1")
       end
     end
