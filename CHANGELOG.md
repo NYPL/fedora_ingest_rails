@@ -4,8 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2025-03-25
+
+### Updated
+- Updated code to mint permalinks bound for IIIF/Cantaloupe instead of Fedora. (DR-3006)
 
 ## [3.1.0] - 2025-03-12
+
+### Added
+- Added one-off script to be run to cleanup links to Fedora. (DR-3042)
 
 ### Removed
 - Removed Fedora integration (DR-3005)
