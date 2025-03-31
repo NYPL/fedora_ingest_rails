@@ -142,6 +142,15 @@ class RepoSolrClient
         nypl_conditions || onsite_conditions
       end
       update_hash["containsOnSiteMaterial"] = onsite_material
+      
+      # Set containsUnrestrictedMaterial
+      unrestriced_material = representative_docs.any? do |doc|
+        unrestricted_conditions = doc["use_rtxt_s"]&.include?("Can be displayed on NYPL premises") &&
+                                  doc["use_rtxt_s"]&.include?("Can be used on NYPL website") &&
+                                  !doc["useRestriction_rtxt_s"]&.any? { |r| NYPL_LOCATIONS.include?(r) }
+        unrestricted_conditions
+      end
+      update_hash["containsUnrestrictedMaterial"] = unrestriced_material
   
       # Set imageID_string via imageID (it's a copyfield)
       capture = representative_docs.find do |doc|
@@ -201,8 +210,14 @@ class RepoSolrClient
         fl: "uuid,parentUUID,use_rtxt_s",
         rows: 1
       })["response"]["docs"]
+      
+      unrestricted_child = @rsolr.get("select", params: {
+        q: "parentUUID:\"#{uuid}\" AND use_rtxt_s:\"Can be displayed on NYPL premises\" AND use_rtxt_s:\"Can be used on NYPL website\" AND -useRestriction_rtxt_s:(#{NYPL_LOCATIONS.map { |loc| "\"#{loc}\"" }.join(" OR ")})",
+        fl: "uuid,parentUUID,use_rtxt_s",
+        rows: 1
+      })["response"]["docs"]
 
-      [capture, av_child, onsite_child_with_location, onsite_child_without_location].flatten
+      [capture, av_child, onsite_child_with_location, onsite_child_without_location, unrestricted_child].flatten
     end
   end
 
