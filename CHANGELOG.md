@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+## [3.2.1] - 2025-04-03
+
+### Added
+- Added method to add containsUnrestrictedMaterial to solr docs. (DR-3425)
+
 ## [3.2.0] - 2025-03-25
 
 ### Updated
