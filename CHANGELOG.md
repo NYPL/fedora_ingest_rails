@@ -16,8 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.1] - 2025-04-03
+
 ### Added
 - Added method to add containsUnrestrictedMaterial to solr docs. (DR-3425)
+
+## [3.2.0] - 2025-03-25
+
+### Updated
+- Updated code to mint permalinks bound for IIIF/Cantaloupe instead of Fedora. (DR-3006)
 
 ## [3.1.0] - 2025-03-12
 
