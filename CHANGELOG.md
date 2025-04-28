@@ -9,13 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added one-off script to update titles and dates. (DR-3577)
 
-## [3.2.0] - 2025-03-25
-
-### Updated
-- Updated code to mint permalinks bound for IIIF/Cantaloupe instead of Fedora. (DR-3006)
-
-## Unreleased
-
 ## [3.2.1] - 2025-04-03
 
 ### Added
