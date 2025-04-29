@@ -22,9 +22,9 @@ total_count = 0
 
 def fetch_docs_from_solr(solr, type)
   solr.get('select', params: {
-    q: "-fullMainTitle_mtxt:[ * TO * ] type_s:#{type} AND mainTitle:[ * TO * ]",
-    fl: "mods_st, yearBegin_dt, yearEnd_dt, uuid",
-    rows: 100
+    q: "-fullMainTitle_mtxt:[ * TO * ] AND type_s:#{type} AND mainTitle_st:[ * TO * ]",
+    fl: "mods_st, yearBegin_dt, yearEnd_dt, uuid, fullMainTitle_mtxt, type_s, mainTitle_st",
+    rows: 2000
   }).dig('response', 'docs')
 end
 
@@ -33,7 +33,20 @@ def extract_title_from_mods(mods_xml)
   ndoc.remove_namespaces!
 
   mods = ndoc.root
-  title_info = mods.at_xpath("titleInfo[@usage='primary']") || mods.at_xpath('titleInfo')
+  title_infos = mods.xpath('titleInfo')
+
+  # Pick the primary only if it has non-empty children
+  title_info = title_infos.find do |ti|
+    usage = ti['usage']
+    has_real_content = ti.element_children.any? { |e| !e.inner_text.strip.empty? }
+    usage == 'primary' && has_real_content
+  end
+
+  # If no good primary, fall back to first titleInfo with content
+  title_info ||= title_infos.find do |ti|
+    ti.element_children.any? { |e| !e.inner_text.strip.empty? }
+  end
+
   return '' unless title_info
 
   title = ''
