@@ -88,6 +88,22 @@ class RepoSolrClient
     mms_client.repoapi_solr_doc_for(uuid)
   end
 
+  def update_key_fields_for_parent_uuids(uuids_array)
+    if @rsolr
+      uuid_clause = "uuid:(#{uuids_array.map { |uuid| "\"#{uuid}\""}.join(' ') })"
+      rsolr_params = { q: "*:*",
+        fq: uuid_clause,
+        rows: 100 # overkill; we will never have this many parents.
+      }
+
+      response = @rsolr.get 'select', params: rsolr_params
+      solr_docs = response["response"]["docs"]
+      if solr_docs
+        update_key_fields(solr_docs)
+      end
+    end
+  end
+
   def update_key_fields(solr_docs_array)
     if !solr_docs_array.is_a? Array
       solr_docs_array = [solr_docs_array]

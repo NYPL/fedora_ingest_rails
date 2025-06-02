@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed issue where a final update was not happening for parent uuids. (DR-3678)
+
 ## [3.2.2] - 2025-04-30
 
 ### Added

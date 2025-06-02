@@ -107,4 +107,49 @@ RSpec.describe RepoSolrClient, type: :model do
       expect(mock_rsolr).to have_received(:add).with(new_document)
     end
   end
+
+  describe '#update_key_fields_for_parent_uuids' do
+    let(:uuids) { ['uuid-1', 'uuid-2'] }
+
+    let(:solr_response) do
+      {
+        "response" => {
+          "docs" => [
+            { "uuid" => "uuid-1", "title" => "Parent 1" },
+            { "uuid" => "uuid-2", "title" => "Parent 2" }
+          ]
+        }
+      }
+    end
+
+    it 'sends the correct Solr query and calls update_key_fields with docs' do
+      expected_fq = 'uuid:("uuid-1" "uuid-2")'
+
+      expect(mock_solr).to receive(:get).with('select', params: {
+        q: '*:*',
+        fq: expected_fq,
+        rows: 100
+      }).and_return(solr_response)
+
+      expect(client).to receive(:update_key_fields).with(solr_response["response"]["docs"])
+
+      client.update_key_fields_for_parent_uuids(uuids)
+    end
+
+    it 'does not call update_key_fields if Solr returns no docs' do
+      empty_response = { "response" => { "docs" => [] } }
+
+      expect(mock_solr).to receive(:get).and_return(empty_response)
+      expect(client).to receive(:update_key_fields).with([])
+
+      client.update_key_fields_for_parent_uuids(uuids)
+    end
+
+    it 'does nothing if @rsolr is nil' do
+      client.instance_variable_set(:@rsolr, nil)
+      expect(client).not_to receive(:update_key_fields)
+
+      client.update_key_fields_for_parent_uuids(uuids)
+    end
+  end
 end
