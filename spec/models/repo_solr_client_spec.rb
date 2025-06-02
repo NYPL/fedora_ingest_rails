@@ -125,7 +125,7 @@ RSpec.describe RepoSolrClient, type: :model do
     it 'sends the correct Solr query and calls update_key_fields with docs' do
       expected_fq = 'uuid:("uuid-1" "uuid-2")'
 
-      expect(mock_solr).to receive(:get).with('select', params: {
+      expect(mock_rsolr).to receive(:get).with('select', params: {
         q: '*:*',
         fq: expected_fq,
         rows: 100
@@ -139,7 +139,7 @@ RSpec.describe RepoSolrClient, type: :model do
     it 'does not call update_key_fields if Solr returns no docs' do
       empty_response = { "response" => { "docs" => [] } }
 
-      expect(mock_solr).to receive(:get).and_return(empty_response)
+      expect(mock_rsolr).to receive(:get).and_return(empty_response)
       expect(client).to receive(:update_key_fields).with([])
 
       client.update_key_fields_for_parent_uuids(uuids)
