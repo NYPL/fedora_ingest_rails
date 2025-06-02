@@ -133,7 +133,7 @@ RSpec.describe RepoSolrClient, type: :model do
 
       expect(subject).to receive(:update_key_fields).with(solr_response["response"]["docs"])
 
-      client.update_key_fields_for_parent_uuids(uuids)
+      subject.update_key_fields_for_parent_uuids(uuids)
     end
 
     it 'does not call update_key_fields if Solr returns no docs' do
@@ -142,14 +142,14 @@ RSpec.describe RepoSolrClient, type: :model do
       expect(mock_rsolr).to receive(:get).and_return(empty_response)
       expect(subject).to receive(:update_key_fields).with([])
 
-      client.update_key_fields_for_parent_uuids(uuids)
+      subject.update_key_fields_for_parent_uuids(uuids)
     end
 
     it 'does nothing if @rsolr is nil' do
-      client.instance_variable_set(:@rsolr, nil)
+      subject.instance_variable_set(:@rsolr, nil)
       expect(subject).not_to receive(:update_key_fields)
 
-      client.update_key_fields_for_parent_uuids(uuids)
+      subject.update_key_fields_for_parent_uuids(uuids)
     end
   end
 end
