@@ -136,6 +136,9 @@ module IngestJobHelper
     local_repo_capture_solr_docs_to_update.each { |d| d.update(first_indexed: index_time_s) }
     local_parent_and_item_repo_solr_docs_to_update.each { |d| d.update(first_indexed: index_time_s) }
 
+    # update parents based on new info, from the bottom to the top.
+    repo_solr.update_key_fields_for_parent_uuids(parent_uuids.reverse)
+
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: ingest_request.uuid)
   end
 
