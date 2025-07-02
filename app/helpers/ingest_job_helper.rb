@@ -138,11 +138,27 @@ module IngestJobHelper
 
     # update parents based on new info, from the bottom to the top.
     repo_solr.update_key_fields_for_parent_uuids(parent_uuids.reverse)
+    
+    # now go through and precache all captures. 
+    mms_client.captures_for_item(ingest_request.uuid).each do |capture|
+      image_id = capture[:image_id]
+      
+      # These are the sizes I think are most commonly used by DCFL, but wondering if there are others we should include.
+      # Each new call naturally ups the processing time. 
+      urls = [
+        "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/90,/0/default.jpg",
+        "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/200,/0/default.jpg",
+        "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/!760,760/0/default.jpg"
+      ]
+
+      urls.each { |url| fetch_url(url) }
+    end
 
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: ingest_request.uuid)
   end
-
-  def extract_title_from_dublin_core(dublin_core)
-    Nokogiri::XML(dublin_core).remove_namespaces!.css('title').text.strip.truncate(250, separator: ' ...')
+  
+  def fetch_url(url)
+    uri = URI(url)
+    res = Net::HTTP.delay.get_response(uri) # no need to catch exceptions here, because I want to see errors. 
   end
 end
