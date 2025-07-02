@@ -146,8 +146,9 @@ module IngestJobHelper
       # These are the sizes I think are most commonly used by DCFL, but wondering if there are others we should include.
       # Each new call naturally ups the processing time. 
       urls = [
-        "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/2/#{image_id}/full/!300,300/0/default.jpg",
-        "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/2/#{image_id}/full/!760,760/0/default.jpg"
+        "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/90,/0/default.jpg",
+        "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/200,/0/default.jpg",
+        "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/!760,760/0/default.jpg"
       ]
 
       urls.each { |url| fetch_url(url) }
