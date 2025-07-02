@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.4] - 2025-07-02
+
+### Added
+- Added precaching to ingest routine for captures and added a script for precaching targeted collections. (DR-3740)
+
 ## [3.2.3] - 2025-06-09
 
 ### Fixed
