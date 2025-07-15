@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Revert precaching. (NO-REF)
+
 ## [3.2.4] - 2025-07-02
 
 ### Added
