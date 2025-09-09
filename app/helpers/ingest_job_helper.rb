@@ -79,10 +79,10 @@ module IngestJobHelper
         file_name   = f.file_name
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
-        if file_label == 'MASTER_IMAGE' && release_master
-          full_res_path = "#{Rails.application.config.iiif_host}/index.php?id=#{capture[:image_id]}&t=u"
-          highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
-        end
+        # if file_label == 'MASTER_IMAGE' && release_master
+        #   full_res_path = "#{Rails.application.config.iiif_host}/index.php?id=#{capture[:image_id]}&t=u"
+        #   highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
+        # end
       end
 
       # Datastreams with info from the `Capture` Level
