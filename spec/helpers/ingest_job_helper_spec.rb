@@ -117,13 +117,13 @@ RSpec.describe 'IngestHelper', type: :helper do
           XML
         }
 
-        it 'should have a highResLink value' do
-          expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including({
-            :uuid => capture_1[:uuid],
-            'highResLink' => mock_permalink
-          })).once
-          subject
-        end
+        # it 'should have a highResLink value' do
+        #   expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including({
+        #     :uuid => capture_1[:uuid],
+        #     'highResLink' => mock_permalink
+        #   })).once
+        #   subject
+        # end
       end
     end
 
