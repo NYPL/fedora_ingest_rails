@@ -79,10 +79,6 @@ module IngestJobHelper
         file_name   = f.file_name
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
-        # if file_label == 'MASTER_IMAGE' && release_master
-        #   full_res_path = "#{Rails.application.config.iiif_host}/index.php?id=#{capture[:image_id]}&t=u"
-        #   highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
-        # end
       end
 
       # Datastreams with info from the `Capture` Level
@@ -138,21 +134,6 @@ module IngestJobHelper
 
     # update parents based on new info, from the bottom to the top.
     repo_solr.update_key_fields_for_parent_uuids(parent_uuids.reverse)
-    
-    # # now go through and precache all captures.
-    # mms_client.captures_for_item(ingest_request.uuid).each do |capture|
-    #   image_id = capture[:image_id]
-    #
-    #   # These are the sizes I think are most commonly used by DCFL, but wondering if there are others we should include.
-    #   # Each new call naturally ups the processing time.
-    #   urls = [
-    #     "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/90,/0/default.jpg",
-    #     "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/200,/0/default.jpg",
-    #     "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/!760,760/0/default.jpg"
-    #   ]
-    #
-    #   urls.each { |url| fetch_url(url) }
-    # end
 
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: ingest_request.uuid)
   end
