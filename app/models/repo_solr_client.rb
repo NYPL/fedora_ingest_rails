@@ -308,8 +308,8 @@ class RepoSolrClient
           if mms_client.rights_for(doc['uuid']).include?("No uses specified.")
 
             # suppress the records in file store to prevent serving to iiif
-            if doc["imageID_string"].present? # Only need to do this if we have an imageID (i.e., not AMI)
-              ImageFilestoreEntry.suppress_all_for_file_id(doc["imageID_string"])
+            if doc['imageID_string'].present? # Only need to do this if we have an imageID (i.e., not AMI)
+              ImageFilestoreEntry.suppress_all_for_file_id(doc['imageID_string'])
             end
 
             Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuid)

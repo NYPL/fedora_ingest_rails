@@ -165,12 +165,12 @@ RSpec.describe RepoSolrClient, type: :model do
       solr_doc = { 'uuid' => unseen_uuid, 'imageID_string' => 'img-1' }
 
       # Stub initial query (rows: 0)
-      allow(mock_solr).to receive(:get).with('select', params: hash_including(rows: 0)).and_return(
+      allow(mock_rsolr).to receive(:get).with('select', params: hash_including(rows: 0)).and_return(
         'response' => { 'numFound' => 1 }
       )
 
       # Stub paged query (page 0)
-      allow(mock_solr).to receive(:get).with('select', params: hash_including(start: 0, rows: 250)).and_return(
+      allow(mock_rsolr).to receive(:get).with('select', params: hash_including(start: 0, rows: 250)).and_return(
         'response' => { 'docs' => [solr_doc] }
       )
 
@@ -178,8 +178,8 @@ RSpec.describe RepoSolrClient, type: :model do
       allow(mms_client).to receive(:rights_for).with(unseen_uuid).and_return(["No uses specified."])
 
       # Stub delete and commit
-      expect(mock_solr).to receive(:delete_by_id).with(unseen_uuid)
-      expect(mock_solr).to receive(:commit)
+      expect(mock_rsolr).to receive(:delete_by_id).with(unseen_uuid)
+      expect(mock_rsolr).to receive(:commit)
 
       # Act
       service_instance.delete_unseen_captures_below(item_uuid, seen_uuids, mms_client)

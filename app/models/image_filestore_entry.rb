@@ -57,7 +57,7 @@ class ImageFilestoreEntry < ActiveRecord::Base
   def self.suppress_all_for_file_id(file_id)
     # only do this in qa and production
     if Rails.env.production?
-      image_filestore_entries = where(file_id: doc["imageID_string"], status: 4)
+      image_filestore_entries = where(file_id: file_id, status: 4)
       image_filestore_entries.each do |ife|
         ife.update_column(:suppressed, 1)
       end

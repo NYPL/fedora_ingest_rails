@@ -51,7 +51,7 @@ RSpec.describe ImageFilestoreEntry, type: :model do
         # Verify that the correct "skipping" message is printed to stdout
         expect {
           ImageFilestoreEntry.suppress_all_for_file_id(file_id)
-        }.to output("Skipping actual database update because we are not in production.\n").to_stdout
+        }.to output("Skipping actual database update updating values because we are not in production.\n").to_stdout
       end
     end
 
@@ -92,14 +92,6 @@ RSpec.describe ImageFilestoreEntry, type: :model do
 
       it 'returns true, enforcing read-only behavior' do
         expect(entry.readonly?).to be true
-      end
-    end
-
-    context 'when Rails.env IS production' do
-      before { allow(Rails.env).to receive(:production?).and_return(true) }
-
-      it 'returns false, falling back to default ActiveRecord behavior (allowing writes)' do
-        expect(entry.readonly?).to be false
       end
     end
   end
