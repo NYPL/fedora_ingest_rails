@@ -50,7 +50,7 @@ RSpec.describe ImageFilestoreEntry, type: :model do
         # Verify that the correct "skipping" message is printed to stdout
         expect {
           ImageFilestoreEntry.suppress_all_for_file_id(file_id)
-        }.to output("Skipping actual database update updating values because we are not in production.\n").to_stdout
+        }.to output("Skipping setting to suppressed because we are not in production.\n").to_stdout
       end
     end
   end

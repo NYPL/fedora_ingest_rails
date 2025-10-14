@@ -62,7 +62,20 @@ class ImageFilestoreEntry < ActiveRecord::Base
         ife.update_column(:suppressed, 1)
       end
     else
-      puts "Skipping actual database update updating values because we are not in production."
+      puts "Skipping setting to suppressed because we are not in production."
+    end
+  end
+  
+  def self.unsuppress_all_for_file_id(file_id)
+    # only do this in qa and production
+    # and only do an update if suppressed
+    if Rails.env.production?
+      image_filestore_entries = where(file_id: file_id, status: 4, suppressed: 1)
+      image_filestore_entries.each do |ife|
+        ife.update_column(:suppressed, 0)
+      end
+    else
+      puts "Skipping removing suppression because we are not in production."
     end
   end
 end
