@@ -5,14 +5,17 @@ class ImageFilestoreEntry < ActiveRecord::Base
   establish_connection(:image_filestore)
   self.table_name = 'file_store'
 
+  # Don't post updates unless env if production please
+  unless Rails.env.production?
+    def readonly?
+      true
+    end
+  end
+
   # This DB's columns have capital letters.
   # ActiveRecord dislikes that. This maps it to downcased.
   columns = %w[id file_name checksum file_id time_stamp type w h status src iid uuid cdate size quar]
   columns.each { |column| alias_attribute(column.to_sym, column.upcase.to_sym) }
-
-  def readonly?
-    true
-  end
 
   def types_dictionary
     { 'j' => 'JP2',
@@ -49,5 +52,17 @@ class ImageFilestoreEntry < ActiveRecord::Base
 
   def self.has_file?(file_id)
     where(file_id: file_id).any?
+  end
+
+  def self.suppress_all_for_file_id(file_id)
+    # only do this in qa and production
+    if Rails.env.production?
+      image_filestore_entries = where(file_id: doc["imageID_string"], status: 4)
+      image_filestore_entries.each do |ife|
+        ife.update_column(:suppressed, 1)
+      end
+    else
+      puts "Skipping actual database update updating values because we are not in production."
+    end
   end
 end

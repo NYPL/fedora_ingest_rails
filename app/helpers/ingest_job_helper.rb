@@ -129,7 +129,7 @@ module IngestJobHelper
     repo_solr.commit_index_changes
 
     # sometimes captures are deleted or suppressed, and we need to pull them back
-    repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
+    repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids, mms_client)
 
     # do not update first indexed until we successfully return from commit
     # this should only update first indexed where it is not yet set
