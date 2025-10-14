@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe RepoSolrClient, type: :model do
   let(:mock_rsolr) { double('RSolr') }
-  let(:mms_client) { instance_double(MMSClient) }
+  let(:mms_client) { instance_double(MmsClient) }
   subject { RepoSolrClient.new }
 
   before do
