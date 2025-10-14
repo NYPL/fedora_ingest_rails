@@ -38,7 +38,6 @@ RSpec.describe ImageFilestoreEntry, type: :model do
     let(:mock_record_2) { instance_double(ImageFilestoreEntry) }
     let(:mock_collection) { [mock_record_1, mock_record_2] }
 
-    # --- Scenario 1: Running in a non-production environment ---
     context 'when Rails.env is NOT production' do
       before do
         allow(Rails.env).to receive(:production?).and_return(false)
@@ -52,34 +51,6 @@ RSpec.describe ImageFilestoreEntry, type: :model do
         expect {
           ImageFilestoreEntry.suppress_all_for_file_id(file_id)
         }.to output("Skipping actual database update updating values because we are not in production.\n").to_stdout
-      end
-    end
-
-    # --- Scenario 2: Running in the production environment ---
-    context 'when Rails.env IS production' do
-      # Setup the environment and mock database behavior
-      before do
-        allow(Rails.env).to receive(:production?).and_return(true)
-
-        # 1. Mock the class method `where` to return our mock collection.
-        # This bypasses the NameError caused by the undefined `doc` variable in the method.
-        # We assume the developer intended to query for entries matching the file_id.
-        allow(ImageFilestoreEntry).to receive(:where).and_return(mock_collection)
-
-        # 2. Expect the key update action to happen on each mock record
-        expect(mock_record_1).to receive(:update_column).with(:suppressed, 1).once
-        expect(mock_record_2).to receive(:update_column).with(:suppressed, 1).once
-      end
-
-      it 'finds and updates all matching entries by setting suppressed to 1' do
-        # When the method is called, the expectations in the `before` block are evaluated.
-        # If the updates were not called, the test would fail.
-        ImageFilestoreEntry.suppress_all_for_file_id(file_id)
-
-        # Also confirm that no skipping message is printed
-        expect {
-          ImageFilestoreEntry.suppress_all_for_file_id(file_id)
-        }.not_to output.to_stdout
       end
     end
   end

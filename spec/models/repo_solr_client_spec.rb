@@ -181,8 +181,7 @@ RSpec.describe RepoSolrClient, type: :model do
       expect(mock_rsolr).to receive(:delete_by_id).with(unseen_uuid)
       expect(mock_rsolr).to receive(:commit)
 
-      # Act
-      service_instance.delete_unseen_captures_below(item_uuid, seen_uuids, mms_client)
+      subject.delete_unseen_captures_below(item_uuid, seen_uuids, mms_client)
     end
   end
 end
