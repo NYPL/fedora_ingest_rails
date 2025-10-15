@@ -268,7 +268,7 @@ class RepoSolrClient
   end
 
   # remove all captures not updated in current run to ensure bad captures are deleted -- use wisely!
-  def delete_unseen_captures_below(item_uuid, seen_uuids)
+  def delete_unseen_captures_below(item_uuid, seen_uuids, mms_client)
     return unless @rsolr
 
     query = 'type_s:Capture AND immediateParent_s:"' + item_uuid + '"'
@@ -301,12 +301,21 @@ class RepoSolrClient
         raise "Bad response from Solr for immediateParent_s:#{item_uuid}, page #{page}."
       end
 
-      # Loop through the Solr response and delete if UUID not in seen_uuids
+      # Loop through the Solr response and delete if UUID not in seen_uuids and capture has no uses specified in MMS
+      # Additionally, set suppressed to true in image file store.
       response['response']['docs'].each do |doc|
         unless seen_uuids.include?(doc['uuid'])
-          Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuid)
-          @rsolr.delete_by_id(doc['uuid'])
-          deletes = true
+          if mms_client.rights_for(doc['uuid']).include?("No uses specified.")
+
+            # suppress the records in file store to prevent serving to iiif
+            if doc['imageID_string'].present? # Only need to do this if we have an imageID (i.e., not AMI)
+              ImageFilestoreEntry.suppress_all_for_file_id(doc['imageID_string'])
+            end
+
+            Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuid)
+            @rsolr.delete_by_id(doc['uuid'])
+            deletes = true
+          end
         end
       end
 

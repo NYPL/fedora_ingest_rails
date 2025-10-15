@@ -339,6 +339,7 @@ class MmsClient
     response = authed_request.get(export_url, params: params)
 
     # Return nil for things that have moved permanently. This will allow the update to go through in a limited fashion.
+    # N.B. - Suppressed captures WILL return a response for all exports. This is to allow them to be managed in MMS. They will just have no rights specified. -KaK
     if response.code == 410
       nil
 

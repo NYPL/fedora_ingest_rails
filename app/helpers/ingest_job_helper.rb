@@ -79,10 +79,6 @@ module IngestJobHelper
         file_name   = f.file_name
         extension   = file_name.split('.')[-1]
         mime_type   = f.get_mimetype(extension)
-        # if file_label == 'MASTER_IMAGE' && release_master
-        #   full_res_path = "#{Rails.application.config.iiif_host}/index.php?id=#{capture[:image_id]}&t=u"
-        #   highres_permalink = PermalinkClient.new(uuid: file_uuid).fetch_or_mint_permalink(full_res_path)
-        # end
       end
 
       # Datastreams with info from the `Capture` Level
@@ -121,6 +117,9 @@ module IngestJobHelper
 
       # add docs to solr without checking parents this time
       repo_solr.add_docs_to_solr(capture_solr_doc)
+      
+      # ensure the suppressed value is set to false in the database
+      ImageFilestoreEntry.unsuppress_all_for_file_id(capture_solr_doc["imageID_string"]) if capture_solr_doc["imageID_string"].present?
 
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
@@ -129,7 +128,7 @@ module IngestJobHelper
     repo_solr.commit_index_changes
 
     # sometimes captures are deleted or suppressed, and we need to pull them back
-    repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
+    repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids, mms_client)
 
     # do not update first indexed until we successfully return from commit
     # this should only update first indexed where it is not yet set
@@ -138,21 +137,6 @@ module IngestJobHelper
 
     # update parents based on new info, from the bottom to the top.
     repo_solr.update_key_fields_for_parent_uuids(parent_uuids.reverse)
-    
-    # # now go through and precache all captures.
-    # mms_client.captures_for_item(ingest_request.uuid).each do |capture|
-    #   image_id = capture[:image_id]
-    #
-    #   # These are the sizes I think are most commonly used by DCFL, but wondering if there are others we should include.
-    #   # Each new call naturally ups the processing time.
-    #   urls = [
-    #     "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/90,/0/default.jpg",
-    #     "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/200,/0/default.jpg",
-    #     "https://#{"qa-" if Rails.env != 'production'}iiif.nypl.org/iiif/3/#{image_id}/full/!760,760/0/default.jpg"
-    #   ]
-    #
-    #   urls.each { |url| fetch_url(url) }
-    # end
 
     Delayed::Worker.logger.info('Done ingesting all captures of Item', uuid: ingest_request.uuid)
   end
