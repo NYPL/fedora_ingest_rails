@@ -26,7 +26,6 @@ RSpec.describe 'IngestHelper', type: :helper do
     let(:mock_mms_client) {
       double('mms_client',
         :mods_for => mods,
-        :dublin_core_for => dublin_core,
         :repo_docs_for => repo_docs,
         :captures_for_item => captures,
         :rights_for => rights,
@@ -37,7 +36,6 @@ RSpec.describe 'IngestHelper', type: :helper do
     }
 
     let(:mods) { 'some_mods' }
-    let(:dublin_core) { 'some_dublin_core' }
     let(:repo_docs) { [repo_doc_1, repo_doc_2] }
     let(:repo_doc_1) { { 'uuid' => 'repo_doc_1_uuid' } }
     let(:repo_doc_2) { { 'uuid' => 'repo_doc_2_uuid' } }
@@ -65,7 +63,7 @@ RSpec.describe 'IngestHelper', type: :helper do
       allow(Delayed::Worker).to receive(:logger).and_return(mock_logger)
       allow(MmsClient).to receive(:new).and_return(mock_mms_client)
       allow(RepoSolrClient).to receive(:new).and_return(mock_repo_solr_client)
-      allow(mock_repo_solr_client).to receive(:delete_unseen_captures_below).with("MyString", ["capture_1_uuid", "capture_2_uuid"])
+      allow(mock_repo_solr_client).to receive(:delete_unseen_captures_below).with("MyString", ["capture_1_uuid", "capture_2_uuid"], mock_mms_client)
       allow(mock_repo_solr_client).to receive(:update_key_fields_for_parent_uuids)
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_1[:uuid]).and_return(capture_1).once
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_2[:uuid]).and_return(capture_2).once

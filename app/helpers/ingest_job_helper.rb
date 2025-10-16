@@ -15,7 +15,6 @@ module IngestJobHelper
 
     # Fetch stuff from MMS
     mods                        = mms_client.mods_for(ingest_request.uuid)
-    dublin_core                 = mms_client.dublin_core_for(ingest_request.uuid)
     type_of_resource            = Nokogiri::XML(mods).css('typeOfResource:first').text
     parent_and_item_repo_docs   = mms_client.repo_docs_for(ingest_request.uuid)
 
@@ -117,6 +116,9 @@ module IngestJobHelper
 
       # add docs to solr without checking parents this time
       repo_solr.add_docs_to_solr(capture_solr_doc)
+      
+      # ensure the suppressed value is set to false in the database
+      ImageFilestoreEntry.unsuppress_all_for_file_id(capture_solr_doc["imageID_string"]) if capture_solr_doc["imageID_string"].present?
 
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
@@ -125,7 +127,7 @@ module IngestJobHelper
     repo_solr.commit_index_changes
 
     # sometimes captures are deleted or suppressed, and we need to pull them back
-    repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids)
+    repo_solr.delete_unseen_captures_below(ingest_request.uuid, seen_capture_uuids, mms_client)
 
     # do not update first indexed until we successfully return from commit
     # this should only update first indexed where it is not yet set

@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe RepoSolrClient, type: :model do
   let(:mock_rsolr) { double('RSolr') }
+  let(:mms_client) { instance_double(MmsClient) }
   subject { RepoSolrClient.new }
 
   before do
@@ -13,6 +14,9 @@ RSpec.describe RepoSolrClient, type: :model do
     allow(mock_rsolr).to receive(:update).and_return(nil)
     allow(mock_rsolr).to receive(:commit).and_return(nil)
     allow(mock_rsolr).to receive(:add).and_return(nil)
+
+    # Stub the logger
+    allow(Delayed::Worker.logger).to receive(:info)
 
     subject.instance_variable_set(:@rsolr, mock_rsolr)
 
@@ -150,6 +154,34 @@ RSpec.describe RepoSolrClient, type: :model do
       expect(subject).not_to receive(:update_key_fields)
 
       subject.update_key_fields_for_parent_uuids(uuids)
+    end
+  end
+
+  describe "#delete_unseen_captures_below" do
+    it 'deletes an unseen capture with "No uses specified" and commits the delete' do
+      # Arrange: Solr setup for one result, MMS setup for 'No uses'
+      seen_uuids = ['capture-1']
+      unseen_uuid = 'capture-2'
+      solr_doc = { 'uuid' => unseen_uuid, 'imageID_string' => 'img-1' }
+
+      # Stub initial query (rows: 0)
+      allow(mock_rsolr).to receive(:get).with('select', params: hash_including(rows: 0)).and_return(
+        'response' => { 'numFound' => 1 }
+      )
+
+      # Stub paged query (page 0)
+      allow(mock_rsolr).to receive(:get).with('select', params: hash_including(start: 0, rows: 250)).and_return(
+        'response' => { 'docs' => [solr_doc] }
+      )
+
+      # Stub MMS response
+      allow(mms_client).to receive(:rights_for).with(unseen_uuid).and_return(["No uses specified."])
+
+      # Stub delete and commit
+      expect(mock_rsolr).to receive(:delete_by_id).with(unseen_uuid)
+      expect(mock_rsolr).to receive(:commit)
+
+      subject.delete_unseen_captures_below('item-1', seen_uuids, mms_client)
     end
   end
 end
