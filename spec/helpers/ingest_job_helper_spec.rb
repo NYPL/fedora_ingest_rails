@@ -26,7 +26,6 @@ RSpec.describe 'IngestHelper', type: :helper do
     let(:mock_mms_client) {
       double('mms_client',
         :mods_for => mods,
-        :dublin_core_for => dublin_core,
         :repo_docs_for => repo_docs,
         :captures_for_item => captures,
         :rights_for => rights,
@@ -37,7 +36,6 @@ RSpec.describe 'IngestHelper', type: :helper do
     }
 
     let(:mods) { 'some_mods' }
-    let(:dublin_core) { 'some_dublin_core' }
     let(:repo_docs) { [repo_doc_1, repo_doc_2] }
     let(:repo_doc_1) { { 'uuid' => 'repo_doc_1_uuid' } }
     let(:repo_doc_2) { { 'uuid' => 'repo_doc_2_uuid' } }

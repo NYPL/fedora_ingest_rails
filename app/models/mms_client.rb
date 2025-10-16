@@ -262,10 +262,6 @@ class MmsClient
     make_request_for('full_rels_ext_solr_docs', uuid)
   end
 
-  def dublin_core_for(uuid)
-    make_request_for('dc', uuid)
-  end
-
   # Returns on this level solr doc
   def repo_doc_for(uuid)
     string_response = make_request_for('repo_solr_doc', uuid)
@@ -339,7 +335,7 @@ class MmsClient
     response = authed_request.get(export_url, params: params)
 
     # Return nil for things that have moved permanently. This will allow the update to go through in a limited fashion.
-    # N.B. - Suppressed captures WILL return a response for all exports. This is to allow them to be managed in MMS. They will just have no rights specified. -KaK
+    # N.B. - Suppressed captures WILL return a response for all exports (except dublin core apparently). This is to allow them to be managed in MMS. They will just have no rights specified. -KaK
     if response.code == 410
       nil
 

@@ -32,19 +32,9 @@ RSpec.describe MmsClient, type: :model do
       @mms_client.rights_for('abc-123')
     end
 
-    it 'makes a request to get Dublin Core' do
-      expect(HTTP).to receive(:get).with('http://example.com/exports/dc/abc-123', params: {}) { double(code: 200) }
-      @mms_client.dublin_core_for('abc-123')
-    end
-
     it "makes a request to get an Item's Captures" do
       expect(HTTP).to receive(:get).with('http://example.com/exports/get_captures/abc-123', params: { showAll: 'false' }) { double(code: 200) }
       @mms_client.captures_for_item('abc-123')
-    end
-
-    it 'Throws exceptions on bad requests' do
-      expect(HTTP).to receive(:get).with('http://example.com/exports/dc/abc-123', params: {}) { double(code: 500) }
-      expect { @mms_client.dublin_core_for('abc-123') }.to raise_error(Exception)
     end
   end
 

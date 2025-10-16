@@ -15,7 +15,6 @@ module IngestJobHelper
 
     # Fetch stuff from MMS
     mods                        = mms_client.mods_for(ingest_request.uuid)
-    dublin_core                 = mms_client.dublin_core_for(ingest_request.uuid)
     type_of_resource            = Nokogiri::XML(mods).css('typeOfResource:first').text
     parent_and_item_repo_docs   = mms_client.repo_docs_for(ingest_request.uuid)
 
