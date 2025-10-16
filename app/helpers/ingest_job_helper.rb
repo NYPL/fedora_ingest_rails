@@ -118,7 +118,7 @@ module IngestJobHelper
       repo_solr.add_docs_to_solr(capture_solr_doc)
       
       # ensure the suppressed value is set to false in the database
-      ImageFilestoreEntry.unsuppress_all_for_file_id(capture_solr_doc["imageID_string"]) if capture_solr_doc["imageID_string"].present?
+      ImageFilestoreEntry.unsuppress_all_for_file_id(capture_solr_doc['imageID']) if capture_solr_doc['imageID'].present?
 
       Delayed::Worker.logger.info("ingested capture #{uuid}", uuid: ingest_request.uuid)
     end
