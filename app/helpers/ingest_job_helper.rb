@@ -45,8 +45,11 @@ module IngestJobHelper
       end
     end
 
-    # magic uuid for our one and only oral history collection. TODO:     Make this more universal. KAK - Sept 20 2021
-    in_oral_history_collection = parent_uuids.include?('da4687f0-cc71-0130-fb40-58d385a7b928')
+    ocr_collection_uuids = [
+      "da4687f0-cc71-0130-fb40-58d385a7b928",  # Oral History Collection
+      "9ea5d5b0-1117-0132-7932-58d385a7b928",  # Green Books Collection
+    ]
+    is_ocr_collection = (parent_uuids & ocr_collection_uuids).any?
 
     # add docs to solr, setting the flag to check the old parents for existence.
     repo_solr = RepoSolrClient.new
@@ -93,15 +96,22 @@ module IngestJobHelper
         capture_solr_doc['highResLink'] = nil # unpublishes the link if it exists.
       end
 
-      if in_oral_history_collection
-        mets_alto = S3Client.new.mets_alto_for(uuid)
-        capture_solr_doc['mets_alto'] = mets_alto
-        capture_solr_doc['hasOCR'] = capture_solr_doc['mets_alto'].present?
+      if is_ocr_collection
+        ocr_content = S3Client.new.ocr_for(uuid)
 
-        # Get the plain text from the alto.
-        ndoc = Nokogiri::XML(mets_alto)
-        plain_text = ndoc.xpath('//String').collect { |s| s.at('@CONTENT').text }.join(" ")
-        capture_solr_doc['captureText_ocrtext'] = plain_text
+        # Get the plain text from the ocr content
+        if not ocr_content.nil?
+          if ocr_content.include?("<alto>")
+            capture_solr_doc['mets_alto'] = ocr_content
+            capture_solr_doc['hasOCR'] = capture_solr_doc['mets_alto'].present?
+            capture_solr_doc['captureText_ocrtext'] = Nokogiri::XML(ocr_content).xpath('//String').collect { |s| s.at('@CONTENT').text }.join(" ")
+
+          elsif ocr_content.include?("</html>")
+            capture_solr_doc['hocr'] = ocr_content
+            capture_solr_doc['hasOCR'] = capture_solr_doc['hocr'].present?
+            capture_solr_doc['captureText_ocrtext'] = Nokogiri::HTML(ocr_content).xpath('//*[local-name()="span" and @class="ocrx_word"]').collect { |s| s.text }.join(" ").squish
+          end
+        end
       end
 
       local_repo_capture_solr_doc = RepoSolrDoc.find_or_create_by!(uuid: uuid)
