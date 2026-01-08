@@ -5,26 +5,32 @@ class S3Client
     @s3 ||= Aws::S3::Client.new(region: (ENV['AWS_REGION'] || 'us-east-1'), access_key_id: ENV['AWS_ACCESS_KEY_ID'], secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'])
   end
 
-  def mets_alto_for(uuid)
+  def ocr_for(uuid)
     begin
-      response = @s3.get_object(bucket: ENV['S3_BUCKET_NAME'], key: "mets_altos/#{uuid}.xml")
-      raw_xml = response&.body&.read
+      response = @s3.get_object(bucket: ENV['S3_BUCKET_NAME'], key: "ocr/#{uuid}")
+      raw_text = response&.body&.read
     rescue Exception => e
-      puts "mets alto could not be retrieved for uuid: #{uuid} because #{e}"
+      puts "ocr could not be retrieved for uuid: #{uuid} because #{e}"
     end
 
-    return nil unless raw_xml
+    return nil unless raw_text
 
-    mets_alto_doc = Nokogiri::XML(raw_xml)
-    mets_alto_doc.remove_namespaces!
-    mets_alto = mets_alto_doc.to_xml
-                             .to_s
-                             .squish # remove extra whitespace
-                             .gsub("<?xml version=\"1.0\" standalone=\"no\"?>\n", '')
-                             .gsub(' schemaLocation="http://schema.ccs-gmbh.com/ALTO alto.xsd"','')
-                             .gsub('> <','><') # remove single whitespaces between xml tags
-                             .gsub("\n",'')
-                             .gsub("\t",'')
-    mets_alto
+    if raw_text.include?("<alto>")
+      mets_alto_doc = Nokogiri::XML(raw_text)
+      mets_alto_doc.remove_namespaces!
+      mets_alto = mets_alto_doc.to_xml
+                              .to_s
+                              .squish # remove extra whitespace
+                              .gsub("<?xml version=\"1.0\" standalone=\"no\"?>\n", '')
+                              .gsub(' schemaLocation="http://schema.ccs-gmbh.com/ALTO alto.xsd"','')
+                              .gsub('> <','><') # remove single whitespaces between xml tags
+                              .gsub("\n",'')
+                              .gsub("\t",'')
+      mets_alto
+    elsif raw_text.include?("</html>")
+      hocr_doc = Nokogiri::HTML(raw_text)
+      hocr_doc = hocr_doc.to_html.to_s.squish
+      hocr_doc
+    end
   end
 end
