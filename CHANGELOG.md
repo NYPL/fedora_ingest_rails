@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed logic that was skipping suppressed capture updates. (DR-4073)
+
 ## [3.2.6] - 2025-10-16
 
 ### Changed
