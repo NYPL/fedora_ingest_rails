@@ -164,13 +164,8 @@ RSpec.describe RepoSolrClient, type: :model do
       unseen_uuid = 'capture-2'
       solr_doc = { 'uuid' => unseen_uuid, 'imageID_string' => 'img-1' }
 
-      # Stub initial query (rows: 0)
-      allow(mock_rsolr).to receive(:get).with('select', params: hash_including(rows: 0)).and_return(
-        'response' => { 'numFound' => 1 }
-      )
-
-      # Stub paged query (page 0)
-      allow(mock_rsolr).to receive(:get).with('select', params: hash_including(start: 0, rows: 250)).and_return(
+      # Stub single query for all docs
+      allow(mock_rsolr).to receive(:get).with('select', params: hash_including(rows: 10000)).and_return(
         'response' => { 'docs' => [solr_doc] }
       )
 
