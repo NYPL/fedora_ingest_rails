@@ -29,7 +29,8 @@ RUN gem install bundler
 RUN rm /etc/nginx/sites-enabled/default
 ADD ./provisioning/docker_build/fedora_ingest_rails.conf /etc/nginx/sites-enabled/fedora_ingest_rails.conf
 COPY --chown=app:app . /home/app/fedora_ingest_rails
-RUN bundle install -V --without test development
+ENV BUNDLER_WITHOUT="development test"
+RUN bundle install -V
 
 # Enables ngnix+passenger
 RUN rm -f /etc/service/nginx/down
