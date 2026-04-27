@@ -273,57 +273,38 @@ class RepoSolrClient
 
     query = 'type_s:Capture AND immediateParent_s:"' + item_uuid + '"'
 
-    # Fetch the initial response to determine the total number of results
-    resp = @rsolr.get('select', params: { q: query, rows: 0 })
-
-    unless resp['response']
+    # Fetch all captures at once. Max captures for an item is ~4000, 
+    # so rows: 10000 provides a safe margin without needing pagination.
+    # Restricting fields ('fl') reduces payload size significantly.
+    response = @rsolr.get('select', params: { q: query, rows: 10000, fl: 'uuid,imageID_string' })
+    
+    unless response['response']
       raise "Bad response from Solr for immediateParent_s:#{item_uuid}."
     end
-
-    total_results = resp['response']['numFound']
+    
     deletes = false
 
-    # Calculate the total pages to loop through
-    total_pages = (total_results + 249) / 250
+    # Loop through the Solr response and delete if UUID not in seen_uuids and capture has no uses specified in MMS
+    # Additionally, set suppressed to true in image file store.
+    response['response']['docs'].each do |doc|
+      unless seen_uuids.include?(doc['uuid'])
+        rights = mms_client.rights_for(doc['uuid'])
+        if rights.nil? || rights.include?("No uses specified.")
 
-    # Initialize variables for pagination
-    page = 0
-
-    while page <= total_pages do
-      break if total_results == 0
-      # Set the start parameter for pagination
-      start = page * 250
-
-      # Fetch documents from Solr with pagination
-      response = @rsolr.get('select', params: { q: query, start: start, rows: 250 })
-
-      unless response['response']
-        raise "Bad response from Solr for immediateParent_s:#{item_uuid}, page #{page}."
-      end
-
-      # Loop through the Solr response and delete if UUID not in seen_uuids and capture has no uses specified in MMS
-      # Additionally, set suppressed to true in image file store.
-      response['response']['docs'].each do |doc|
-        unless seen_uuids.include?(doc['uuid'])
-          if mms_client.rights_for(doc['uuid']).include?("No uses specified.")
-
-            # suppress the records in file store to prevent serving to iiif
-            if doc['imageID_string'].present? # Only need to do this if we have an imageID (i.e., not AMI)
-              ImageFilestoreEntry.suppress_all_for_file_id(doc['imageID_string'])
-            end
-
-            Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuid)
-            @rsolr.delete_by_id(doc['uuid'])
-            deletes = true
+          # suppress the records in file store to prevent serving to iiif
+          if doc['imageID_string'].present? # Only need to do this if we have an imageID (i.e., not AMI)
+            ImageFilestoreEntry.suppress_all_for_file_id(doc['imageID_string'])
           end
+
+          Delayed::Worker.logger.info("Deleting capture with UUID: #{doc['uuid']}", uuid: item_uuid)
+          @rsolr.delete_by_id(doc['uuid'])
+          deletes = true
         end
       end
-
-      # commit deletes for this loop ; depending on performance we may want to adjust this to commit after x number of deletions.
-      @rsolr.commit if deletes
-
-      page += 1
     end
+
+    # commit all deletes after the loop completes
+    @rsolr.commit if deletes
   end
 
 
