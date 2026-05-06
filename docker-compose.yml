@@ -1,10 +1,11 @@
 services:
   webapp:
+    # platform: linux/arm64 # uncomment for M1 macs
     build:
       context: .
       dockerfile: Dockerfile
       target: development
-        #platform: linux/arm64 # uncomment for M1 macs
+    image: 'fedora_ingest_rails-webapp:latest'
     env_file:
       - ./.env
     volumes:
@@ -15,11 +16,13 @@ services:
       - postgres
       - filestore-db
   filestore-db:
-    build:
-      context: ../filestore_databases_docker
-      dockerfile: Dockerfile
+    image: mysql:5.6
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqlpassword
     volumes:
       - ./database-data/mysql:/var/lib/mysql
+      - ./resources:/docker-entrypoint-initdb.d/
     ports:
       - '3306:3306'
   worker:
@@ -39,4 +42,4 @@ services:
     volumes:
       - ./database-data/postgres:/var/lib/postgresql/data
     ports:
-      - '5432'
+      - '5432:5432'

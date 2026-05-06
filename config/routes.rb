@@ -15,5 +15,7 @@ Rails.application.routes.draw do
 
   resources :ingest_requests, only: [:create], defaults: { format: :json }
   resources :ingest_history, only: [:show], defaults: { format: :json }
-  resource :stats, only: [:show], defaults: { format: :json }
+  resource :stats, only: [:show]
+
+  root to: 'stats#show'
 end
