@@ -36,10 +36,6 @@ module IngestJobHelper
       doc['dateIndexed_s'] = index_time_s
       doc['dateIndexed_dt'] = index_time_dt
 
-      if doc_uuid == ingest_request.uuid
-        doc['has_allMaps_data'] = item_has_allMaps_data
-      end
-
       if local_parent_or_item_repo_solr_doc.first_indexed.nil?
         doc['firstIndexed_s'] = index_time_s
         doc['firstIndexed_dt'] = index_time_dt
@@ -57,6 +53,10 @@ module IngestJobHelper
       "9ea5d5b0-1117-0132-7932-58d385a7b928",  # Green Books Collection
     ]
     is_ocr_collection = (parent_uuids & ocr_collection_uuids).any?
+
+    if doc_uuid == ingest_request.uuid # this check prevents the has_allMaps_data field from getting set on parent docs
+      doc['has_allMaps_data'] = item_has_allMaps_data
+    end
 
     # add docs to solr, setting the flag to check the old parents for existence.
     repo_solr = RepoSolrClient.new
