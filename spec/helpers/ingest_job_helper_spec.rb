@@ -261,5 +261,22 @@ RSpec.describe 'IngestHelper', type: :helper do
         end
       end
     end
+
+    context 'mapwarper data' do
+      let(:capture_1_uuid) { capture_1[:uuid] }
+      let(:item_uuid) { ingest_request.uuid }
+
+      before do
+        allow(MapwarperDataset).to receive(:has_uuid?).with(capture_1_uuid).and_return(true)
+        allow(MapwarperDataset).to receive(:has_uuid?).with(capture_2[:uuid]).and_return(false)
+      end
+
+      it 'adds has_allMaps_data to the capture and item docs' do
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(array_including(hash_including('uuid' => item_uuid, 'has_allMaps_data' => true)), true).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(:uuid => capture_1[:uuid], 'has_allMaps_data' => true)).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(:uuid => capture_2[:uuid], 'has_allMaps_data' => false)).once
+        subject
+      end
+    end
   end
 end
