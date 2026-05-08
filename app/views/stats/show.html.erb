@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Indexing Stats</title>
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+      margin: 40px; 
+      background-color: #f4f4f9; 
+      color: #333; 
+    }
+    .stats-container { 
+      background: white; 
+      padding: 30px; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+      max-width: 600px; 
+      margin: auto; 
+    }
+    h1 { color: #2c3e50; text-align: center; margin-bottom: 5px; }
+    .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 0.9em; }
+    .section-title { margin-top: 20px; color: #2c3e50; font-size: 1.2em; border-bottom: 2px solid #3498db; padding-bottom: 5px; display: inline-block; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; }
+    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+    th { background-color: #f8f9fa; color: #34495e; font-weight: 600; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px; }
+    tr:last-child td { border-bottom: none; }
+    .stat-value { font-family: monospace; font-size: 1.1em; color: #2980b9; text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="stats-container">
+    <h1>Overview and Job Stats</h1>
+    <div class="subtitle">API JSON format available at <a href="/stats.json">/stats.json</a></div>
+    
+    <h2 class="section-title">Delayed Jobs</h2>
+    <table>
+      <tbody>
+        <tr><td>Total Jobs Count</td><td class="stat-value"><%= @total_jobs_count %></td></tr>
+        <tr><td>Workable Jobs Count</td><td class="stat-value"><%= @workable_jobs_count %></td></tr>
+        <tr><td>Errored Jobs Count</td><td class="stat-value"><%= @errored_jobs_count %></td></tr>
+        <tr>
+          <td>Oldest Workable Job (ID)</td>
+          <td class="stat-value"><%= @oldest_workable_job.present? ? @oldest_workable_job.id : 'None' %></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="section-title">Ingest Requests</h2>
+    <table>
+      <tbody>
+        <tr><td>Ingested Count</td><td class="stat-value"><%= @total_ingested_count %></td></tr>
+        <tr><td>Pending Ingest Count</td><td class="stat-value"><%= @total_pending_ingest_count %></td></tr>
+        <tr><td>Total Ingest Requests</td><td class="stat-value"><%= @total_ingest_requests_count %></td></tr>
+        <tr>
+          <td>Oldest Not Ingested (ID)</td>
+          <td class="stat-value"><%= @oldest_not_ingested.present? ? @oldest_not_ingested.id : 'None' %></td>
+        </tr>
+        <tr>
+          <td>Last Ingested (ID)</td>
+          <td class="stat-value"><%= @last_ingested.present? ? @last_ingested.id : 'None' %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Fixed docker-compose steps to no longer require separate repo and updated homepage and README. (NO-REF)
+
+## [3.3.2] - 2026-04-27
+
+### Fixed
 - Fixed logic that was skipping suppressed capture updates. (DR-4073)
+
+## [3.3.1] - 2026-01-08
+
+## Changed
+- Fix Docker image builds (NO-REF)
 
 ## [3.3] - 2026-01-07
 
