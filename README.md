@@ -3,7 +3,6 @@
 | `qa`              | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)             |
 | `nypl-dams-prod`  | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=nypl-dams-prod)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
 
-
 ## Fedora Ingest Rails
 
 This is a Rails port of the Java application [FedoraIngest](https://github.com/NYPL/FedoraIngest/blob/qa/README.md).

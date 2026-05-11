@@ -38,7 +38,7 @@ RSpec.describe 'IngestHelper', type: :helper do
     let(:mods) { 'some_mods' }
     let(:repo_docs) { [repo_doc_1, repo_doc_2] }
     let(:repo_doc_1) { { 'uuid' => 'repo_doc_1_uuid' } }
-    let(:repo_doc_2) { { 'uuid' => 'repo_doc_2_uuid' } }
+    let(:repo_doc_2) { { 'uuid' => ingest_request.uuid } }
     let(:captures) { [capture_1, capture_2] }
     let(:capture_1) { { :uuid => 'capture_1_uuid' } }
     let(:capture_2) { { :uuid => 'capture_2_uuid' } }
@@ -63,7 +63,8 @@ RSpec.describe 'IngestHelper', type: :helper do
       allow(Delayed::Worker).to receive(:logger).and_return(mock_logger)
       allow(MmsClient).to receive(:new).and_return(mock_mms_client)
       allow(RepoSolrClient).to receive(:new).and_return(mock_repo_solr_client)
-      allow(mock_repo_solr_client).to receive(:delete_unseen_captures_below).with("MyString", ["capture_1_uuid", "capture_2_uuid"], mock_mms_client)
+      allow(MapwarperDataset).to receive(:has_uuid?).and_return(false)
+      allow(mock_repo_solr_client).to receive(:delete_unseen_captures_below).with(ingest_request.uuid, ["capture_1_uuid", "capture_2_uuid"], mock_mms_client)
       allow(mock_repo_solr_client).to receive(:update_key_fields_for_parent_uuids)
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_1[:uuid]).and_return(capture_1).once
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_2[:uuid]).and_return(capture_2).once
@@ -166,24 +167,24 @@ RSpec.describe 'IngestHelper', type: :helper do
       let(:expected_utc_timestamp) { Time.parse(known_datetime).utc.strftime('%Y-%m-%dT%H:%M:%S.%LZ') }
       let(:expected_dt_timestamp) { Time.parse(known_datetime).strftime('%Y-%m-%dT%H:%M:%SZ') }
 
-      let(:expected_parent_and_item_repo_solr_docs) { [parent_or_item_repo_solr_doc_1, parent_or_item_repo_solr_doc_2] }
-      let(:parent_or_item_repo_solr_doc_1) {
-        {
-          'firstIndexed_s' => expected_utc_timestamp,
-          'firstIndexed_dt' => expected_dt_timestamp,
-          'dateIndexed_s' => expected_utc_timestamp,
-          'dateIndexed_dt' => expected_dt_timestamp,
-          'uuid' => repo_doc_1['uuid']
-        }
-      }
-      let(:parent_or_item_repo_solr_doc_2) {
-        {
-          'firstIndexed_s' => expected_utc_timestamp,
-          'firstIndexed_dt' => expected_dt_timestamp,
-          'dateIndexed_s' => expected_utc_timestamp,
-          'dateIndexed_dt' => expected_dt_timestamp,
-          'uuid' => repo_doc_2['uuid']
-        }
+      let(:expected_parent_and_item_repo_solr_docs) {
+        [
+          {
+            'firstIndexed_s' => expected_utc_timestamp,
+            'firstIndexed_dt' => expected_dt_timestamp,
+            'dateIndexed_s' => expected_utc_timestamp,
+            'dateIndexed_dt' => expected_dt_timestamp,
+            'uuid' => repo_doc_1['uuid']
+          },
+          {
+            'firstIndexed_s' => expected_utc_timestamp,
+            'firstIndexed_dt' => expected_dt_timestamp,
+            'dateIndexed_s' => expected_utc_timestamp,
+            'dateIndexed_dt' => expected_dt_timestamp,
+            'has_allMaps_data' => false,
+            'uuid' => repo_doc_2['uuid']
+          }
+        ]
       }
 
       let(:expected_capture_solr_doc_1) {
@@ -192,20 +193,24 @@ RSpec.describe 'IngestHelper', type: :helper do
           'firstIndexed_dt' => expected_dt_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
           'dateIndexed_dt' => expected_dt_timestamp,
+          'has_allMaps_data' => false,
           'highResLink' => nil,
           :uuid => capture_1[:uuid]
         }
       }
+
       let(:expected_capture_solr_doc_2) {
         {
           'firstIndexed_s' => expected_utc_timestamp,
           'firstIndexed_dt' => expected_dt_timestamp,
           'dateIndexed_s' => expected_utc_timestamp,
           'dateIndexed_dt' => expected_dt_timestamp,
+          'has_allMaps_data' => false,
           'highResLink' => nil,
           :uuid => capture_2[:uuid]
         }
       }
+
 
       it 'adds firstIndexed_s and dateIndexed_s to all the repo solr docs' do
         expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(expected_parent_and_item_repo_solr_docs, true).once
@@ -259,6 +264,23 @@ RSpec.describe 'IngestHelper', type: :helper do
           subject
           RepoSolrDoc.all.each { |doc| expect(doc.first_indexed).not_to be_nil }
         end
+      end
+    end
+
+    context 'mapwarper data' do
+      let(:capture_1_uuid) { capture_1[:uuid] }
+      let(:item_uuid) { ingest_request.uuid }
+
+      before do
+        allow(MapwarperDataset).to receive(:has_uuid?).with(capture_1_uuid).and_return(true)
+        allow(MapwarperDataset).to receive(:has_uuid?).with(capture_2[:uuid]).and_return(false)
+      end
+
+      it 'adds has_allMaps_data to the capture and item docs' do
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(array_including(hash_including('uuid' => item_uuid, 'has_allMaps_data' => true)), true).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(:uuid => capture_1[:uuid], 'has_allMaps_data' => true)).once
+        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(:uuid => capture_2[:uuid], 'has_allMaps_data' => false)).once
+        subject
       end
     end
   end

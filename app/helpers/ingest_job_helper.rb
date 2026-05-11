@@ -17,6 +17,9 @@ module IngestJobHelper
     mods                        = mms_client.mods_for(ingest_request.uuid)
     type_of_resource            = Nokogiri::XML(mods).css('typeOfResource:first').text
     parent_and_item_repo_docs   = mms_client.repo_docs_for(ingest_request.uuid)
+    captures                    = mms_client.captures_for_item(ingest_request.uuid)
+
+    item_has_allMaps_data = captures.any? { |c| MapwarperDataset.has_uuid?(c[:uuid]) }
 
     parent_uuids = []
     local_parent_and_item_repo_solr_docs_to_update = []
@@ -32,6 +35,10 @@ module IngestJobHelper
 
       doc['dateIndexed_s'] = index_time_s
       doc['dateIndexed_dt'] = index_time_dt
+
+      if doc_uuid == ingest_request.uuid # this check prevents the has_allMaps_data field from getting set on parent docs
+        doc['has_allMaps_data'] = item_has_allMaps_data
+      end
 
       if local_parent_or_item_repo_solr_doc.first_indexed.nil?
         doc['firstIndexed_s'] = index_time_s
@@ -59,7 +66,7 @@ module IngestJobHelper
 
     seen_capture_uuids = []
 
-    mms_client.captures_for_item(ingest_request.uuid).each do |capture|
+    captures.each do |capture|
       seen_capture_uuids << capture[:uuid]
       uuid = capture[:uuid]
       image_id = capture[:image_id]
@@ -88,7 +95,7 @@ module IngestJobHelper
 
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
-
+      capture_solr_doc['has_allMaps_data'] = MapwarperDataset.has_uuid?(uuid)
 
       if highres_permalink.present? && release_master
         capture_solr_doc['highResLink'] = highres_permalink
