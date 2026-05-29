@@ -11,5 +11,6 @@ Bundler.require(*Rails.groups)
 
 module FedoraIngestRails
   class Application < Rails::Application
+    config.autoload_paths << Rails.root.join('lib')
   end
 end
