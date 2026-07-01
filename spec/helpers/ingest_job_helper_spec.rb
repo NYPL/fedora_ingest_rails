@@ -63,7 +63,6 @@ RSpec.describe 'IngestHelper', type: :helper do
       allow(Delayed::Worker).to receive(:logger).and_return(mock_logger)
       allow(MmsClient).to receive(:new).and_return(mock_mms_client)
       allow(RepoSolrClient).to receive(:new).and_return(mock_repo_solr_client)
-      allow(MapwarperDataset).to receive(:has_uuid?).and_return(false)
       allow(mock_repo_solr_client).to receive(:delete_unseen_captures_below).with(ingest_request.uuid, ["capture_1_uuid", "capture_2_uuid"], mock_mms_client)
       allow(mock_repo_solr_client).to receive(:update_key_fields_for_parent_uuids)
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_1[:uuid]).and_return(capture_1).once
@@ -264,23 +263,6 @@ RSpec.describe 'IngestHelper', type: :helper do
           subject
           RepoSolrDoc.all.each { |doc| expect(doc.first_indexed).not_to be_nil }
         end
-      end
-    end
-
-    context 'mapwarper data' do
-      let(:capture_1_uuid) { capture_1[:uuid] }
-      let(:item_uuid) { ingest_request.uuid }
-
-      before do
-        allow(MapwarperDataset).to receive(:has_uuid?).with(capture_1_uuid).and_return(true)
-        allow(MapwarperDataset).to receive(:has_uuid?).with(capture_2[:uuid]).and_return(false)
-      end
-
-      it 'adds has_allMaps_data to the capture and item docs' do
-        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(array_including(hash_including('uuid' => item_uuid, 'has_allMaps_data' => true)), true).once
-        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(:uuid => capture_1[:uuid], 'has_allMaps_data' => true)).once
-        expect(mock_repo_solr_client).to receive(:add_docs_to_solr).with(hash_including(:uuid => capture_2[:uuid], 'has_allMaps_data' => false)).once
-        subject
       end
     end
   end
