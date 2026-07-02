@@ -58,11 +58,18 @@ RSpec.describe 'IngestHelper', type: :helper do
         :commit_index_changes => true
       )
     }
+    let(:mock_s3_client) {
+      double('s3_client',
+        :has_allmaps_data => false,
+        :ocr_for => nil
+      )
+    }
 
     before do
       allow(Delayed::Worker).to receive(:logger).and_return(mock_logger)
       allow(MmsClient).to receive(:new).and_return(mock_mms_client)
       allow(RepoSolrClient).to receive(:new).and_return(mock_repo_solr_client)
+      allow(S3Client).to receive(:new).and_return(mock_s3_client)
       allow(mock_repo_solr_client).to receive(:delete_unseen_captures_below).with(ingest_request.uuid, ["capture_1_uuid", "capture_2_uuid"], mock_mms_client)
       allow(mock_repo_solr_client).to receive(:update_key_fields_for_parent_uuids)
       allow(mock_mms_client).to receive(:repo_doc_for).with(capture_1[:uuid]).and_return(capture_1).once
@@ -127,7 +134,7 @@ RSpec.describe 'IngestHelper', type: :helper do
 
     context 'a repo doc uuid is in the oral history collection' do
       let(:repo_doc_1) { { 'uuid' => 'da4687f0-cc71-0130-fb40-58d385a7b928' } }
-      let(:mock_s3_client) { double('s3_client', :ocr_for => mets_alto) }
+      let(:mock_s3_client) { double('s3_client', :has_allmaps_data => false, :ocr_for => mets_alto) }
       let(:mets_alto) { "<?xml version=\"1.0\"?><alto><String CONTENT=\"ADrLPH\" ID=\"St_1.1.1.3\" HPOS=\"2536\" VPOS=\"1400\" HEIGHT=\"140\" WIDTH=\"700\" STYLEREFS=\"Style_1\" WC=\"7.3\" CC=\"007000\"/></alto>" }
 
       let(:parent_or_item_repo_solr_doc_1_partial) { { 'uuid' => repo_doc_1['uuid'] } }
