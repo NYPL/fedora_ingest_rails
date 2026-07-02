@@ -46,3 +46,4 @@ class S3Client
     end
     @allmaps_data.include?(uuid)
   end
+end
