@@ -33,4 +33,17 @@ class S3Client
       hocr_doc
     end
   end
+
+  def has_allmaps_data(uuid)
+    # populate allmaps list if not available yet. store the list in an instance variable so that it can be reused for subsequent calls to this method.
+    @allmaps_data ||= begin
+      response = @s3.get_object(bucket: ENV['S3_BUCKET_NAME'], key: "allmaps_data/allmaps_captures.txt")
+      raw_text = response&.body&.read
+      raw_text.split("\n").map(&:strip)
+    rescue Aws::S3::Errors::NotFound
+      puts "unable to locate allmaps_captures.txt in S3"
+      false
+    end
+    @allmaps_data.include?(uuid)
+  end
 end
