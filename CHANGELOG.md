@@ -4,12 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+## [3.4.1] - 2026-07-09
+
+### Changed
+- Use S3 as source of truth for Allmaps indexing, not hardcoded geojson file (DR-4175)
+- Update OCR S3 path (DR-4134)
+
 ## [3.4] - 2026-05-29
 
 ### Changed
 - Add support for AllMaps indexing. (DR-4105)
-
-## [Unreleased]
 
 ### Fixed
 - Fixed docker-compose steps to no longer require separate repo and updated homepage and README. (NO-REF)

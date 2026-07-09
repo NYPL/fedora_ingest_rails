@@ -19,7 +19,8 @@ module IngestJobHelper
     parent_and_item_repo_docs   = mms_client.repo_docs_for(ingest_request.uuid)
     captures                    = mms_client.captures_for_item(ingest_request.uuid)
 
-    item_has_allMaps_data = captures.any? { |c| MapwarperDataset.has_uuid?(c[:uuid]) }
+    s3_client = S3Client.new
+    item_has_allmaps_data = captures.any? { |c| s3_client.has_allmaps_data(c[:uuid]) }
 
     parent_uuids = []
     local_parent_and_item_repo_solr_docs_to_update = []
@@ -37,7 +38,7 @@ module IngestJobHelper
       doc['dateIndexed_dt'] = index_time_dt
 
       if doc_uuid == ingest_request.uuid # this check prevents the has_allMaps_data field from getting set on parent docs
-        doc['has_allMaps_data'] = item_has_allMaps_data
+        doc['has_allMaps_data'] = item_has_allmaps_data
       end
 
       if local_parent_or_item_repo_solr_doc.first_indexed.nil?
@@ -95,7 +96,7 @@ module IngestJobHelper
 
       # Repo API solr for capture.
       capture_solr_doc = mms_client.repo_doc_for(uuid)
-      capture_solr_doc['has_allMaps_data'] = MapwarperDataset.has_uuid?(uuid)
+      capture_solr_doc['has_allMaps_data'] = s3_client.has_allmaps_data(uuid)
 
       if highres_permalink.present? && release_master
         capture_solr_doc['highResLink'] = highres_permalink
@@ -109,8 +110,9 @@ module IngestJobHelper
         # Get the plain text from the ocr content
         if not ocr_content.nil?
           if ocr_content.include?("<alto>")
+            capture_solr_doc['ocr_text'] = "#{ENV['OCR_SOLR_FILE_PATH']}/ocr/#{uuid}"
             capture_solr_doc['mets_alto'] = ocr_content
-            capture_solr_doc['hasOCR'] = capture_solr_doc['mets_alto'].present?
+            capture_solr_doc['hasOCR'] = true
             capture_solr_doc['captureText_ocrtext'] = Nokogiri::XML(ocr_content).xpath('//String').collect { |s| s.at('@CONTENT').text }.join(" ")
 
           elsif ocr_content.include?("</html>")
