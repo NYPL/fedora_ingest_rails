@@ -10,6 +10,12 @@ IngestJob = Struct.new(:ingest_request_id, :test_mode) do
     if ingest_request
       ingest!(ingest_request, test_mode)
       ingest_request.update(ingested_at: Time.now.utc)
+
+
+
+
+
+      
     end
   end
 end
