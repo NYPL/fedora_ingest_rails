@@ -38,4 +38,26 @@ RSpec.describe S3Client, type: :model do
       end
     end
   end
+
+  describe '#ocr_collections' do
+    subject { S3Client.new.ocr_collections }
+
+    context 'when the collection list can be read from S3' do
+      let(:mock_aws_s3_response) { double('aws_s3_response', :body => mock_aws_s3_response_body) }
+      let(:mock_aws_s3_response_body) { double('aws_s3_response_body', :read => "uuid_1\nuuid_2\n") }
+
+      it 'returns an array of collection uuids' do
+        expect(subject).to eq(['uuid_1', 'uuid_2'])
+      end
+    end
+
+    context 'when the collection list is missing from S3' do
+      let(:mock_aws_s3_response) { double('aws_s3_response') }
+      before { allow(mock_aws_s3_client).to receive(:get_object).and_raise(Aws::S3::Errors::NotFound.new(nil, 'not found')) }
+
+      it 'returns an empty array' do
+        expect(subject).to eq([])
+      end
+    end
+  end
 end
