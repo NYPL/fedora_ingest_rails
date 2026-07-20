@@ -106,7 +106,7 @@ module IngestJobHelper
 
         # Get the plain text from the ocr content
         if not ocr_content.nil?
-          if ocr_content.include?("<alto>")
+          if ocr_content.include?("<alto")
             capture_solr_doc['ocr_text'] = "#{ENV['OCR_SOLR_FILE_PATH']}/ocr/#{uuid}"
             capture_solr_doc['mets_alto'] = ocr_content
             capture_solr_doc['hasOCR'] = true

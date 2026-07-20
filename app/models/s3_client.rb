@@ -15,7 +15,7 @@ class S3Client
 
     return nil unless raw_text
 
-    if raw_text.include?("<alto>")
+    if raw_text.include?("<alto")
       mets_alto_doc = Nokogiri::XML(raw_text)
       mets_alto_doc.remove_namespaces!
       mets_alto = mets_alto_doc.to_xml
