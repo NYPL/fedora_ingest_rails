@@ -53,10 +53,7 @@ module IngestJobHelper
       end
     end
 
-    ocr_collection_uuids = [
-      "da4687f0-cc71-0130-fb40-58d385a7b928",  # Oral History Collection
-      "9ea5d5b0-1117-0132-7932-58d385a7b928",  # Green Books Collection
-    ]
+    ocr_collection_uuids = s3_client.ocr_collections
     is_ocr_collection = (parent_uuids & ocr_collection_uuids).any?
 
     # add docs to solr, setting the flag to check the old parents for existence.
@@ -105,7 +102,7 @@ module IngestJobHelper
       end
 
       if is_ocr_collection
-        ocr_content = S3Client.new.ocr_for(uuid)
+        ocr_content = s3_client.ocr_for(uuid)
 
         # Get the plain text from the ocr content
         if not ocr_content.nil?

@@ -30,6 +30,18 @@ class S3Client
     end
   end
 
+  def ocr_collections
+    @ocr_data ||= begin
+      response = @s3.get_object(bucket: ENV['S3_BUCKET_NAME'], key: "ocr_collections.txt")
+      raw_text = response&.body&.read
+      raw_text.split("\n").map(&:strip)
+    rescue Aws::S3::Errors::NotFound
+      puts "unable to locate ocr_collections.txt in S3"
+      []
+    end
+    @ocr_data
+  end
+
   def has_allmaps_data(uuid)
     # populate allmaps list if not available yet. store the list in an instance variable so that it can be reused for subsequent calls to this method.
     @allmaps_data ||= begin
