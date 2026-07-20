@@ -108,7 +108,6 @@ module IngestJobHelper
         if not ocr_content.nil?
           if ocr_content.include?("<alto")
             capture_solr_doc['ocr_text'] = "#{ENV['OCR_SOLR_FILE_PATH']}/ocr/#{uuid}"
-            capture_solr_doc['mets_alto'] = ocr_content
             capture_solr_doc['hasOCR'] = true
             capture_solr_doc['captureText_ocrtext'] = Nokogiri::XML(ocr_content).xpath('//String').collect { |s| s.at('@CONTENT').text }.join(" ")
           end
