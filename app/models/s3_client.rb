@@ -27,10 +27,6 @@ class S3Client
                               .gsub("\n",'')
                               .gsub("\t",'')
       mets_alto
-    elsif raw_text.include?("</html>")
-      hocr_doc = Nokogiri::HTML(raw_text)
-      hocr_doc = hocr_doc.to_html.to_s.squish
-      hocr_doc
     end
   end
 

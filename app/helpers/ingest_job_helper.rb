@@ -114,11 +114,6 @@ module IngestJobHelper
             capture_solr_doc['mets_alto'] = ocr_content
             capture_solr_doc['hasOCR'] = true
             capture_solr_doc['captureText_ocrtext'] = Nokogiri::XML(ocr_content).xpath('//String').collect { |s| s.at('@CONTENT').text }.join(" ")
-
-          elsif ocr_content.include?("</html>")
-            capture_solr_doc['hocr'] = ocr_content
-            capture_solr_doc['hasOCR'] = capture_solr_doc['hocr'].present?
-            capture_solr_doc['captureText_ocrtext'] = Nokogiri::HTML(ocr_content).xpath('//*[local-name()="span" and @class="ocrx_word"]').collect { |s| s.text }.join(" ").squish
           end
         end
       end
