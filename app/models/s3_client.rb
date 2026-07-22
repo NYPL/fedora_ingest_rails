@@ -15,7 +15,7 @@ class S3Client
 
     return nil unless raw_text
 
-    if raw_text.include?("<alto>")
+    if raw_text.include?("<alto")
       mets_alto_doc = Nokogiri::XML(raw_text)
       mets_alto_doc.remove_namespaces!
       mets_alto = mets_alto_doc.to_xml
@@ -27,11 +27,19 @@ class S3Client
                               .gsub("\n",'')
                               .gsub("\t",'')
       mets_alto
-    elsif raw_text.include?("</html>")
-      hocr_doc = Nokogiri::HTML(raw_text)
-      hocr_doc = hocr_doc.to_html.to_s.squish
-      hocr_doc
     end
+  end
+
+  def ocr_collections
+    @ocr_data ||= begin
+      response = @s3.get_object(bucket: ENV['S3_BUCKET_NAME'], key: "ocr_collections.txt")
+      raw_text = response&.body&.read
+      raw_text.split("\n").map(&:strip)
+    rescue Aws::S3::Errors::NotFound
+      puts "unable to locate ocr_collections.txt in S3"
+      []
+    end
+    @ocr_data
   end
 
   def has_allmaps_data(uuid)

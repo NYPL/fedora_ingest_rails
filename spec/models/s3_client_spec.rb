@@ -21,17 +21,6 @@ RSpec.describe S3Client, type: :model do
       end
     end
 
-    context 'the hocr gets returned' do
-      let(:mock_aws_s3_response) { double('aws_s3_response', :body => mock_aws_s3_response_body) }
-      let(:mock_aws_s3_response_body) { double('aws_s3_response_body', :read => hocr) }
-      let(:hocr) { "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"><head><title></title><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" /><meta name='ocr-system' content='tesseract 3.04.00' /><meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par ocr_line ocrx_word'/></head><body><div class='ocr_page' id='page_1' title='image \"./1962/5215078g.jpg\"; bbox 0 0 3041 4044; ppageno 0'><div class='ocr_carea' id='block_1_1' title=\"bbox 0 0 532 404\"><p class='ocr_par' dir='ltr' id='par_1_1' title=\"bbox 0 0 532 404\"><span class='ocr_line' id='line_1_1' title=\"bbox 0 0 532 404; baseline 0 3640\"><span class='ocrx_word' id='word_1_1' title='bbox 0 0 532 404; x_wconf 95' lang='eng' dir='ltr'></span></span></p></div><div class='ocr_carea' id='block_1_2' title=\"bbox 1249 425 1777 493\"><p class='ocr_par' dir='ltr' id='par_1_2' title=\"bbox 1249 425 1777 493\"><span class='ocr_line' id='line_1_2' title=\"bbox 1249 425 1777 493; baseline 0 -12\"><span class='ocrx_word' id='word_1_2' title='bbox 1249 425 1409 483; x_wconf 91' lang='eng' dir='ltr'>New</span><span class='ocrx_word' id='word_1_3' title='bbox 1440 426 1604 482; x_wconf 88' lang='eng' dir='ltr'><strong>York</strong></span><span class='ocrx_word' id='word_1_4' title='bbox 1635 425 1777 493; x_wconf 82' lang='eng' dir='ltr'><strong>City</strong></span></span></p></div></div></body></html>" }
-      let(:expected_return_value) { "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> <?xml version=\"1.0\" encoding=\"UTF-8\"?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\"> <head> <title></title> <meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"> <meta name=\"ocr-system\" content=\"tesseract 3.04.00\"> <meta name=\"ocr-capabilities\" content=\"ocr_page ocr_carea ocr_par ocr_line ocrx_word\"> </head> <body><div class=\"ocr_page\" id=\"page_1\" title='image \"./1962/5215078g.jpg\"; bbox 0 0 3041 4044; ppageno 0'> <div class=\"ocr_carea\" id=\"block_1_1\" title=\"bbox 0 0 532 404\"><p class=\"ocr_par\" dir=\"ltr\" id=\"par_1_1\" title=\"bbox 0 0 532 404\"><span class=\"ocr_line\" id=\"line_1_1\" title=\"bbox 0 0 532 404; baseline 0 3640\"><span class=\"ocrx_word\" id=\"word_1_1\" title=\"bbox 0 0 532 404; x_wconf 95\" lang=\"eng\" dir=\"ltr\"></span></span></p></div> <div class=\"ocr_carea\" id=\"block_1_2\" title=\"bbox 1249 425 1777 493\"><p class=\"ocr_par\" dir=\"ltr\" id=\"par_1_2\" title=\"bbox 1249 425 1777 493\"><span class=\"ocr_line\" id=\"line_1_2\" title=\"bbox 1249 425 1777 493; baseline 0 -12\"><span class=\"ocrx_word\" id=\"word_1_2\" title=\"bbox 1249 425 1409 483; x_wconf 91\" lang=\"eng\" dir=\"ltr\">New</span><span class=\"ocrx_word\" id=\"word_1_3\" title=\"bbox 1440 426 1604 482; x_wconf 88\" lang=\"eng\" dir=\"ltr\"><strong>York</strong></span><span class=\"ocrx_word\" id=\"word_1_4\" title=\"bbox 1635 425 1777 493; x_wconf 82\" lang=\"eng\" dir=\"ltr\"><strong>City</strong></span></span></p></div> </div></body> </html>" }
-
-      it 'returns the expected unescaped hocr string' do
-        expect(subject).to eq(expected_return_value)
-      end
-    end
-
     context 'the S3 response cannot be parsed as expected' do
       let(:mock_aws_s3_response) { 'some_unexpected_response' }
 
@@ -46,6 +35,28 @@ RSpec.describe S3Client, type: :model do
 
       it 'catches the exception and returns nil' do
         expect(subject).to eq(nil)
+      end
+    end
+  end
+
+  describe '#ocr_collections' do
+    subject { S3Client.new.ocr_collections }
+
+    context 'when the collection list can be read from S3' do
+      let(:mock_aws_s3_response) { double('aws_s3_response', :body => mock_aws_s3_response_body) }
+      let(:mock_aws_s3_response_body) { double('aws_s3_response_body', :read => "uuid_1\nuuid_2\n") }
+
+      it 'returns an array of collection uuids' do
+        expect(subject).to eq(['uuid_1', 'uuid_2'])
+      end
+    end
+
+    context 'when the collection list is missing from S3' do
+      let(:mock_aws_s3_response) { double('aws_s3_response') }
+      before { allow(mock_aws_s3_client).to receive(:get_object).and_raise(Aws::S3::Errors::NotFound.new(nil, 'not found')) }
+
+      it 'returns an empty array' do
+        expect(subject).to eq([])
       end
     end
   end
