@@ -5,7 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [3.4.2] - 2026-07-22
+
+### Changed
 - Use S3 as source of truth for OCR Collections (DR-4183)
+- Remove `mets_alto` and `hOCR` field indexing (NO-REF)
 
 ## [3.4.1] - 2026-07-09
 
