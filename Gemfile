@@ -29,6 +29,7 @@ gem 'stringio', '3.2.0'
 gem 'aws-sdk-s3'
 gem 'uglifier'
 gem 'will_paginate'
+gem 'rack-session', '>= 2.1.2'
 
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
