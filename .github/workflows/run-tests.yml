@@ -1,0 +1,32 @@
+name: Run Tests
+
+on:
+  workflow_call:
+  push:
+  pull_request:
+    branches:
+      - nypl-dams-prod
+      - qa
+
+permissions:
+  contents: read
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .env file
+        run: cp .env.example .env
+
+      - name: Run docker compose
+        uses: hoverkraft-tech/compose-action@v2
+
+      - name: Initialize database
+        run: docker compose run --rm webapp bundle exec rails db:prepare
+
+      - name: Run Tests
+        run: |
+          docker compose run webapp /bin/bash -c "cd /home/app/fedora_ingest_rails && bundle exec rspec"
