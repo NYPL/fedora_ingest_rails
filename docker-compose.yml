@@ -17,6 +17,7 @@ services:
       - filestore-db
   filestore-db:
     image: mysql:5.6
+    container_name: filestore-db
     platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: mysqlpassword
@@ -37,6 +38,7 @@ services:
       - filestore-db
   postgres:
     image:  postgres:11
+    container_name: postgres-db
     environment:
       POSTGRES_PASSWORD: mypassword
     volumes:
