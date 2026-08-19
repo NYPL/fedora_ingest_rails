@@ -26,10 +26,10 @@ jobs:
 
       - name: Initialize database
         run: |
-          docker exec -it postgres-db psql -c 'create database fedora_ingest_rails_test;' -U postgres
-          docker exec -it filestore-db mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
-          docker exec -it filestore-db mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
-          docker exec -it filestore-db mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
+          docker compose exec postgres-db psql -c 'create database fedora_ingest_rails_test;' -U postgres
+          docker compose exec filestore-db mysql -uroot -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
+          docker compose exec filestore-db mysql -uroot ami_filestore_test < ./db/resources/ami_filestore_schema.sql
+          docker compose exec filestore-db mysql -uroot image_filestore_test < ./db/resources/image_filestore_schema.sql
 
       - name: Run Tests
         run: |
