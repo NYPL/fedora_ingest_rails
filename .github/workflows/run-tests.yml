@@ -23,6 +23,9 @@ jobs:
 
       - name: Run docker compose
         uses: hoverkraft-tech/compose-action@v2
+        with:
+          # Specify services so we don't need to spin up the delayed job worker
+          services: "webapp filestore-db postgres"
 
       - name: Initialize database
         run: |
