@@ -8,7 +8,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'pg'
-gem 'rails'
+gem 'rails', '~> 8.0.5.1'
 gem 'csv'
 gem 'daemons'
 gem 'delayed_job_active_record'
