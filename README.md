@@ -1,7 +1,7 @@
-| Branch            | Status                                                                                                                                      |
-|:------------------|:--------------------------------------------------------------------------------------------------------------------------------------------|
-| `qa`              | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=qa)](https://travis-ci.org/NYPL/fedora_ingest_rails)             |
-| `nypl-dams-prod`  | [![Build Status](https://travis-ci.org/NYPL/fedora_ingest_rails.svg?branch=nypl-dams-prod)](https://travis-ci.org/NYPL/fedora_ingest_rails) |
+| Branch       | Status                                                                                                                                  |
+|:-------------|:----------------------------------------------------------------------------------------------------------------------------------------|
+| `qa`                     | [![Build Status](https://github.com/NYPL/fedora_ingest_rails/actions/workflows/deploy-qa.yml/badge.svg)](https://github.com/NYPL/fedora_ingest_rails/actions/workflows/deploy-qa.yml)                         |
+| `nypl-dams-prod`         | [![Build Status](https://github.com/NYPL/fedora_ingest_rails/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/NYPL/fedora_ingest_rails/actions/workflows/deploy-production.yml)         |
 
 ## Fedora Ingest Rails
 
@@ -65,20 +65,20 @@ Run tests through docker-compose:
 
 Our branches (in order or stability are):
 
-| Branch          | Environment | AWS Account      |
-|:----------------|:------------|:-----------------|
-| qa              | qa          | nypl-dams-dev    |
-| nypl-dams-prod  | production  | nypl-dams-prod   |
+| Branch          | Environment | AWS Account            |
+|:----------------|:------------|:-----------------------|
+| qa              | qa          | nypl-dams-dev          |
+| nypl-dams-prod  | production  | nypl-dams-production   |
 
 ### Cutting A Feature Branch
 
 1. Feature branches are cut from `qa`.
 2. Once the feature branch is ready to be merged, file a pull request of the branch _into_ qa.
-3. We 'promote' branches by merging from the less mature branch to the more mature branch. (qa => nypl-dams-prod) 
+3. We 'promote' branches by merging from the less mature branch to the more mature branch. (qa => nypl-dams-prod)
 
 ### Deploying
 
-We use Travis for continuous deployment.
+We use github actions for continuous deployment.
 Merging to certain branches automatically deploys to the environment associated to
 that branch.
 
@@ -87,9 +87,11 @@ that branch.
 | `your-pr`   | `qa`              | qa env                        |
 | `qa`        | `nypl-dams-prod`  | production env                |
 
-For insight into how CD works look at [.travis.yml](./.travis.yml) and the
-[provisioning/travis_ci_and_cd](./provisioning/travis_ci_and_cd) directory.
-The approach is inspired by [this blog post](https://dev.mikamai.com/2016/05/17/continuous-delivery-with-travis-and-ecs/) ([google cached version](https://webcache.googleusercontent.com/search?q=cache:NodZ-GZnk6YJ:https://dev.mikamai.com/2016/05/17/continuous-delivery-with-travis-and-ecs/+&cd=1&hl=en&ct=clnk&gl=us&client=firefox-b-1-ab)).
+For insight into how CD works look at our github actions:
+  - [Tests](./.github/workflows/test.yml)
+  - [QA Deploy](./.github/workflows/deploy-qa.yml)
+  - [Production Deploy](./.github/workflows/deploy-production.yml)
+
 
 ## Amazon & ECS Deployment Configuration
 
@@ -97,6 +99,5 @@ See [Amazon And ECS](./documentation/amazon-and-ecs.md).
 
 ## Debugging
 
-You may want to start a rails console or hit an endpoint for debugging purposes.  
+You may want to start a rails console or hit an endpoint for debugging purposes.
 See the [debugging documentation](./documentation/debugging.md).
- 

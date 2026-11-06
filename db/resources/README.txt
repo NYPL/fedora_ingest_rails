@@ -1,1 +1,1 @@
-This is only used by Travis for the test suite.
+This is only used by Github actions for the test suite.

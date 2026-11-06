@@ -171,6 +171,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added new endpoint to respond with capture status. (DR-2075)
 
+### Updated
+- Deploy via Github actions
+
 ## [1.0.4] - 2022-09-09
 
 ### Updated
@@ -203,8 +206,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2021-04-21
 
 ### Added
-- Added CHANGELOG.md. 
+- Added CHANGELOG.md.
 - Added new Repo Solr Client model to update repo api solr core when updates come through ingest. (DR-1059)
 
 ### Changed
-- Upgraded postgres version. 
+- Upgraded postgres version.
