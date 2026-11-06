@@ -1,0 +1,49 @@
+name: Deploy QA
+
+on:
+  push:
+    branches: ['qa']
+
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  run_tests:
+    name: Run Tests
+    uses: ./.github/workflows/test.yml
+
+  deploy:
+    needs: run_tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials for Production environment account
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::685731035297:role/GithubActionsDeployerRole
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: fedora-ingest
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build --target production -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:qa-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:qa-latest
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service --cluster fedora-ingest-rails-qa --service fedora-ingest-rails-web-application-qa --force-new-deployment
+          aws ecs update-service --cluster fedora-ingest-rails-qa --service fedora-ingest-rails-worker-qa --force-new-deployment
