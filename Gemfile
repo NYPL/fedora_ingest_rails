@@ -9,6 +9,7 @@ end
 
 gem 'pg'
 gem 'rails', '~> 8.0.5.1'
+gem 'connection_pool', '~> 2.5'
 gem 'csv'
 gem 'daemons'
 gem 'delayed_job_active_record'
