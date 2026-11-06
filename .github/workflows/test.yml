@@ -1,0 +1,62 @@
+name: Run Tests
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6.5'
+          bundler-cache: true
+
+      - name: Set up test databases
+        run: |
+          psql -c 'create database fedora_ingest_rails_test;' -U postgres -h localhost
+          mysql -uroot -h127.0.0.1 -e 'CREATE DATABASE ami_filestore_test; CREATE DATABASE image_filestore_test'
+          mysql -uroot -h127.0.0.1 ami_filestore_test < ./db/resources/ami_filestore_schema.sql
+          mysql -uroot -h127.0.0.1 image_filestore_test < ./db/resources/image_filestore_schema.sql
+        env:
+          PGPASSWORD: postgres
+
+      - name: Run tests
+        run: bundle exec rspec
+        env:
+          AMI_FILESTORE_DATABASE_HOST: 127.0.0.1
+          AMI_FILESTORE_DATABASE_NAME: ami_filestore_test
+          AMI_FILESTORE_DATABASE_USER: root
+          IMAGE_FILESTORE_DATABASE_HOST: 127.0.0.1
+          IMAGE_FILESTORE_DATABASE_NAME: image_filestore_test
+          IMAGE_FILESTORE_DATABASE_USER: root
